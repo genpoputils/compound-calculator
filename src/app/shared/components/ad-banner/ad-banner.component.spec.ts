@@ -19,14 +19,22 @@ describe('AdBannerComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should render the Advertisement label compliant with Google AdSense policy', () => {
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.textContent).toContain('Advertisement');
-  });
-
-  it('should render preview placeholder state when ads are not live', () => {
+  it('should render nothing by default when ads are not live and placeholders are disabled', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(adsenseService.isLive()).toBe(false);
+    expect(el.textContent?.trim()).toBe('');
+    expect(el.querySelector('ins.adsbygoogle')).toBeNull();
+  });
+
+  it('should render preview placeholder state only when showPlaceholder is explicitly true', () => {
+    adsenseService.updateConfig({
+      showPlaceholder: true
+    });
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(adsenseService.isLive()).toBe(false);
+    expect(el.textContent).toContain('Advertisement');
     expect(el.textContent).toContain('AdSense Ready');
     expect(el.querySelector('ins.adsbygoogle')).toBeNull();
   });
@@ -43,6 +51,7 @@ describe('AdBannerComponent', () => {
 
     const el = fixture.nativeElement as HTMLElement;
     expect(adsenseService.isLive()).toBe(true);
+    expect(el.textContent).toContain('Advertisement');
     const insTag = el.querySelector('ins.adsbygoogle');
     expect(insTag).toBeTruthy();
     expect(insTag?.getAttribute('data-ad-client')).toBe('ca-pub-9999999999999999');

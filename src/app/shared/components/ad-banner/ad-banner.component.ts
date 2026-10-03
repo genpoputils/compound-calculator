@@ -18,17 +18,17 @@ export type AdSlotType = 'leaderboard' | 'in-content' | 'bottom';
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div
-      class="w-full mx-auto my-2 text-center"
-      [ngClass]="containerClasses()"
-    >
-      <!-- Required AdSense Label per Google Policy -->
-      <div class="text-[10px] uppercase font-semibold text-slate-400 dark:text-slate-500 tracking-wider mb-1.5 select-none">
-        Advertisement
-      </div>
+    <!-- LIVE ADSENSE AD UNIT -->
+    @if (adsenseService.isLive()) {
+      <div
+        class="w-full mx-auto my-2 text-center"
+        [ngClass]="containerClasses()"
+      >
+        <!-- Required AdSense Label per Google Policy -->
+        <div class="text-[10px] uppercase font-semibold text-slate-400 dark:text-slate-500 tracking-wider mb-1.5 select-none">
+          Advertisement
+        </div>
 
-      <!-- LIVE ADSENSE AD UNIT -->
-      @if (adsenseService.isLive()) {
         <div class="overflow-hidden flex items-center justify-center min-h-[90px] w-full">
           <ins
             class="adsbygoogle block w-full text-center"
@@ -39,9 +39,17 @@ export type AdSlotType = 'leaderboard' | 'in-content' | 'bottom';
             [attr.data-full-width-responsive]="fullWidthResponsive() ? 'true' : 'false'"
           ></ins>
         </div>
-      } @else {
-        <!-- PREVIEW / PLACEHOLDER STATE (Pre-Approval & Dev Mode) -->
-        <!-- Prevents layout shift (CLS) and guarantees polished UI -->
+      </div>
+    } @else if (showPlaceholder()) {
+      <!-- OPTIONAL PREVIEW / PLACEHOLDER STATE (Only shown if showPlaceholder is explicitly true) -->
+      <div
+        class="w-full mx-auto my-2 text-center"
+        [ngClass]="containerClasses()"
+      >
+        <div class="text-[10px] uppercase font-semibold text-slate-400 dark:text-slate-500 tracking-wider mb-1.5 select-none">
+          Advertisement
+        </div>
+
         <div
           class="relative w-full rounded-2xl border border-dashed border-slate-300/80 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/40 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 transition-colors shadow-2xs"
           [ngClass]="slotDimensionsClass()"
@@ -73,8 +81,8 @@ export type AdSlotType = 'leaderboard' | 'in-content' | 'bottom';
             </span>
           </div>
         </div>
-      }
-    </div>
+      </div>
+    }
   `
 })
 export class AdBannerComponent implements OnInit, AfterViewInit {
@@ -86,6 +94,10 @@ export class AdBannerComponent implements OnInit, AfterViewInit {
   readonly format = input<string>('auto');
   readonly fullWidthResponsive = input<boolean>(true);
   readonly className = input<string>('');
+
+  readonly showPlaceholder = computed<boolean>(() => {
+    return Boolean(this.adsenseService.config().showPlaceholder);
+  });
 
   readonly resolvedSlotId = computed<string>(() => {
     const direct = this.slotId();

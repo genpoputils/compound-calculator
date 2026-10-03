@@ -15,9 +15,14 @@ export interface AdSenseConfig {
   publisherId: string;
   /**
    * Master switch to enable live Google AdSense ad requests.
-   * When false, a polished placeholder/preview banner is shown to prevent layout shift.
+   * When false, ad slots are hidden unless showPlaceholder is explicitly set to true.
    */
   enabled: boolean;
+  /**
+   * Whether to display ad placeholders in pre-approval/development mode.
+   * Defaults to false so end-users never see placeholders.
+   */
+  showPlaceholder?: boolean;
   /**
    * Dedicated slot IDs created in Google AdSense Dashboard -> Ads -> By ad unit
    */
@@ -31,6 +36,7 @@ export interface AdSenseConfig {
 export const DEFAULT_ADSENSE_CONFIG: AdSenseConfig = {
   publisherId: '', // e.g. 'ca-pub-0000000000000000'
   enabled: false,  // Set to true once approved by Google AdSense
+  showPlaceholder: false, // Ensure users never see placeholders
   slots: {
     topLeaderboard: '',
     inContent: '',
