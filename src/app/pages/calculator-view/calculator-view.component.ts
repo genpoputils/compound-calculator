@@ -344,7 +344,7 @@ export class CalculatorViewComponent implements OnInit {
           : `Remaining Balance: ${this.currencyService.formatFull(res.futureValue)} (${this.currencyService.formatCompact(res.futureValue)})`,
         `Real Value (Today's Money): ${this.currencyService.formatFull(res.realFutureValue)}`,
         `---------------------------------------`,
-        `Calculated free at: https://compoundcalculator.org/swp-calculator`
+        `Calculated free at: https://genpoputils.github.io/compound-calculator/swp-calculator`
       ].join('\n');
     } else {
       formattedSummary = [
@@ -356,7 +356,7 @@ export class CalculatorViewComponent implements OnInit {
         `Inflation-adjusted (Today's Value): ${this.currencyService.formatFull(res.realFutureValue)}`,
         `Duration: ${res.durationYears} Years`,
         `---------------------------------------`,
-        `Calculated free at: https://compoundcalculator.org`
+        `Calculated free at: https://genpoputils.github.io/compound-calculator`
       ].join('\n');
     }
 

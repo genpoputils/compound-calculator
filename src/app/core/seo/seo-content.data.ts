@@ -28,7 +28,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Compound Interest Calculator - Calculate Future Investment Growth',
       description: 'Accurately calculate compound interest growth on your investments. Explore annual, quarterly, monthly, and daily compounding frequencies with inflation adjustments.',
-      canonicalUrl: 'https://compoundcalculator.org/compound-calculator',
+      canonicalUrl: 'https://genpoputils.github.io/compound-calculator/compound-calculator',
       keywords: 'compound interest calculator, investment growth, interest compounding, lump sum calculator, compound interest formula',
       schema: {
         '@context': 'https://schema.org',
@@ -88,7 +88,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Regular Investment Calculator - Recurring Monthly & Annual Portfolio Growth',
       description: 'Model recurring contributions into your investment portfolio. Plan monthly, quarterly, or yearly investments and project wealth accumulation over time.',
-      canonicalUrl: 'https://compoundcalculator.org/investment-calculator',
+      canonicalUrl: 'https://genpoputils.github.io/compound-calculator/investment-calculator',
       keywords: 'regular investment calculator, recurring deposit, monthly investment growth, wealth builder, portfolio projection',
       schema: {
         '@context': 'https://schema.org',
@@ -140,7 +140,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'SIP Calculator - Systematic Investment Plan Growth & Mutual Fund Returns',
       description: 'Calculate future wealth from your monthly Systematic Investment Plan (SIP). See total invested capital, estimated returns, and final corpus.',
-      canonicalUrl: 'https://compoundcalculator.org/sip-calculator',
+      canonicalUrl: 'https://genpoputils.github.io/compound-calculator/sip-calculator',
       keywords: 'sip calculator, mutual fund sip, systematic investment plan, monthly sip returns, wealth corpus',
       schema: {
         '@context': 'https://schema.org',
@@ -192,7 +192,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Step-Up SIP Calculator - Annual Contribution Increase & Accelerated Wealth',
       description: 'Model the compounding power of increasing your monthly investment by 5%, 10%, or 15% each year as your income grows. See how Step-Up SIP doubles your wealth.',
-      canonicalUrl: 'https://compoundcalculator.org/step-up-investment-calculator',
+      canonicalUrl: 'https://genpoputils.github.io/compound-calculator/step-up-investment-calculator',
       keywords: 'step up sip calculator, top up sip, annual contribution increase, step up investment, accelerated compounding',
       schema: {
         '@context': 'https://schema.org',
@@ -244,7 +244,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Retirement Savings Calculator - Future Corpus & Inflation-Adjusted Purchasing Power',
       description: 'Plan your retirement with step-up investments, nominal corpus forecasts, inflation-adjusted purchasing power, and retirement expense projections.',
-      canonicalUrl: 'https://compoundcalculator.org/retirement-calculator',
+      canonicalUrl: 'https://genpoputils.github.io/compound-calculator/retirement-calculator',
       keywords: 'retirement calculator, retirement savings, fire calculator, inflation adjusted retirement, pension planning, retirement expense projection',
       schema: {
         '@context': 'https://schema.org',
@@ -296,7 +296,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Inflation Calculator - Future Living Costs & Purchasing Power Erosion',
       description: 'Calculate the real cost of inflation. See how price increases erode purchasing power and what today\'s money will buy 10, 20, or 30 years from now.',
-      canonicalUrl: 'https://compoundcalculator.org/inflation-calculator',
+      canonicalUrl: 'https://genpoputils.github.io/compound-calculator/inflation-calculator',
       keywords: 'inflation calculator, purchasing power loss, future cost of living, rupee depreciation, inflation impact',
       schema: {
         '@context': 'https://schema.org',
@@ -348,7 +348,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Savings Goal Calculator - Required Monthly Investment to Reach Target Corpus',
       description: 'Reverse-engineer your financial goals. Calculate the exact monthly or annual investment required to achieve your dream corpus, house down payment, or college fund.',
-      canonicalUrl: 'https://compoundcalculator.org/savings-goal-calculator',
+      canonicalUrl: 'https://genpoputils.github.io/compound-calculator/savings-goal-calculator',
       keywords: 'savings goal calculator, target corpus, goal planner, required monthly investment, financial goal calculator',
       schema: {
         '@context': 'https://schema.org',
@@ -399,7 +399,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'SWP Calculator - Systematic Withdrawal Plan & Portfolio Longevity',
       description: 'Calculate your systematic monthly payouts, portfolio longevity, and ending capital balance with our interactive global SWP calculator.',
-      canonicalUrl: 'https://compoundcalculator.org/swp-calculator',
+      canonicalUrl: 'https://genpoputils.github.io/compound-calculator/swp-calculator',
       keywords: 'swp calculator, systematic withdrawal plan, portfolio longevity, retirement withdrawal calculator, regular payout calculator',
       schema: {
         '@context': 'https://schema.org',
