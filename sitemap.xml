@@ -1,48 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://compoundcalculator.org/</loc>
+    <loc>https://genpoputils.github.io/compound-calculator/</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://compoundcalculator.org/compound-calculator</loc>
+    <loc>https://genpoputils.github.io/compound-calculator/compound-calculator</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://compoundcalculator.org/investment-calculator</loc>
+    <loc>https://genpoputils.github.io/compound-calculator/step-up-investment-calculator</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://compoundcalculator.org/sip-calculator</loc>
+    <loc>https://genpoputils.github.io/compound-calculator/investment-calculator</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://compoundcalculator.org/step-up-investment-calculator</loc>
+    <loc>https://genpoputils.github.io/compound-calculator/sip-calculator</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://compoundcalculator.org/retirement-calculator</loc>
+    <loc>https://genpoputils.github.io/compound-calculator/retirement-calculator</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://compoundcalculator.org/inflation-calculator</loc>
+    <loc>https://genpoputils.github.io/compound-calculator/swp-calculator</loc>
+    <lastmod>2026-10-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://genpoputils.github.io/compound-calculator/inflation-calculator</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://compoundcalculator.org/savings-goal-calculator</loc>
+    <loc>https://genpoputils.github.io/compound-calculator/savings-goal-calculator</loc>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://compoundcalculator.org/swp-calculator</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
   </url>
 </urlset>
