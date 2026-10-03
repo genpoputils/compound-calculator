@@ -35,4 +35,26 @@ describe('UrlStateService', () => {
     expect(restored.stepUpInput.expectedAnnualReturn).toBe(14);
     expect(restored.stepUpInput.durationYears).toBe(18);
   });
+
+  it('should encode and restore savings-goal parameters including inflation', () => {
+    const params = service.getQueryParams('savings-goal', DEFAULT_CALCULATOR_STATE);
+    expect(params['target']).toBe(5000000);
+    expect(params['inflation']).toBe(6);
+
+    const mockParams = {
+      target: '10000000',
+      savings: '500000',
+      return: '15',
+      duration: '12',
+      frequency: 'monthly',
+      inflation: '7'
+    };
+
+    const restored = service.applyQueryParams(mockParams, DEFAULT_CALCULATOR_STATE, 'savings-goal');
+    expect(restored.savingsGoalInput.targetAmount).toBe(10000000);
+    expect(restored.savingsGoalInput.currentSavings).toBe(500000);
+    expect(restored.savingsGoalInput.expectedAnnualReturn).toBe(15);
+    expect(restored.savingsGoalInput.durationYears).toBe(12);
+    expect(restored.savingsGoalInput.inflationRate).toBe(7);
+  });
 });

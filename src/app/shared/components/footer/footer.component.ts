@@ -60,6 +60,11 @@ import { DisclaimerComponent } from '../disclaimer/disclaimer.component';
                   Regular Investment
                 </a>
               </li>
+              <li>
+                <a routerLink="/swp-calculator" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                  SWP Calculator (Systematic Withdrawal)
+                </a>
+              </li>
             </ul>
           </div>
 

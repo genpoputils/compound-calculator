@@ -12,11 +12,13 @@ import {
   SavingsGoalInput,
   ScenarioComparison,
   SipGrowthInput,
-  StepUpInvestmentInput
+  StepUpInvestmentInput,
+  SwpInput
 } from './models/calculator.types';
 import { RetirementCalculatorService } from './retirement-calculator.service';
 import { SavingsGoalCalculatorService } from './savings-goal-calculator.service';
 import { StepUpCalculatorService } from './step-up-calculator.service';
+import { SwpCalculatorService } from './swp-calculator.service';
 
 export interface CalculatorState {
   mode: CalculationMode;
@@ -27,6 +29,7 @@ export interface CalculatorState {
   retirementInput: RetirementSavingsInput;
   inflationInput: InflationInput;
   savingsGoalInput: SavingsGoalInput;
+  swpInput: SwpInput;
 }
 
 export const DEFAULT_CALCULATOR_STATE: CalculatorState = {
@@ -86,6 +89,14 @@ export const DEFAULT_CALCULATOR_STATE: CalculatorState = {
     durationYears: 10,
     contributionFrequency: 'monthly',
     inflationRate: 6
+  },
+  swpInput: {
+    initialCorpus: 5000000,
+    monthlyWithdrawal: 35000,
+    expectedAnnualReturn: 8,
+    durationYears: 20,
+    annualWithdrawalIncreasePercent: 0,
+    inflationRate: 6
   }
 };
 
@@ -99,6 +110,7 @@ export class CalculationEngineService {
   private readonly retirementService = inject(RetirementCalculatorService);
   private readonly inflationService = inject(InflationCalculatorService);
   private readonly savingsGoalService = inject(SavingsGoalCalculatorService);
+  private readonly swpService = inject(SwpCalculatorService);
 
   /**
    * Unified calculation dispatch based on mode.
@@ -119,6 +131,8 @@ export class CalculationEngineService {
         return this.inflationService.calculate(state.inflationInput);
       case 'savings-goal':
         return this.savingsGoalService.calculate(state.savingsGoalInput);
+      case 'swp':
+        return this.swpService.calculate(state.swpInput);
       default:
         return this.stepUpService.calculateStepUp(state.stepUpInput);
     }

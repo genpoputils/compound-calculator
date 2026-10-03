@@ -28,6 +28,7 @@ import { StorageService } from '../../core/services/storage.service';
 import { SeoService } from '../../core/services/seo.service';
 import { SEO_PAGES_DATA, SeoPageContent } from '../../core/seo/seo-content.data';
 import { formatInrCompact, formatInrFull } from '../../core/utils/currency.util';
+import { CurrencyService } from '../../core/services/currency.service';
 import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
 import { SliderInputComponent } from '../../shared/components/slider-input/slider-input.component';
 import { MetricCardComponent } from '../../shared/components/metric-card/metric-card.component';
@@ -58,6 +59,7 @@ export class CalculatorViewComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly storageService = inject(StorageService);
   private readonly seoService = inject(SeoService);
+  readonly currencyService = inject(CurrencyService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
@@ -155,13 +157,48 @@ export class CalculatorViewComponent implements OnInit {
         ];
       case 'savings-goal':
         return [
-          { label: 'Target Corpus', value: formatInrCompact(s.savingsGoalInput.targetAmount) },
+          { label: 'Target Corpus', value: this.currencyService.formatCompact(s.savingsGoalInput.targetAmount) },
           { label: 'Expected Return', value: `${s.savingsGoalInput.expectedAnnualReturn}%` },
           { label: 'Target Timeline', value: `${s.savingsGoalInput.durationYears} Years` },
-          { label: 'Contribution', value: this.capitalize(s.savingsGoalInput.contributionFrequency) }
+          { label: 'Contribution', value: this.capitalize(s.savingsGoalInput.contributionFrequency) },
+          { label: 'Inflation', value: `${s.savingsGoalInput.inflationRate || 0}%` }
+        ];
+      case 'swp':
+        return [
+          { label: 'Initial Corpus', value: this.currencyService.formatCompact(s.swpInput.initialCorpus) },
+          { label: 'Monthly Withdrawal', value: this.currencyService.formatCompact(s.swpInput.monthlyWithdrawal) },
+          { label: 'Expected Return', value: `${s.swpInput.expectedAnnualReturn}%` },
+          { label: 'Duration', value: `${s.swpInput.durationYears} Years` },
+          { label: 'Annual Increase', value: `${s.swpInput.annualWithdrawalIncreasePercent || 0}%` },
+          { label: 'Inflation', value: `${s.swpInput.inflationRate || 0}%` }
         ];
       default:
         return [];
+    }
+  });
+
+  readonly activeInflationRate = computed<number>(() => {
+    const mode = this.activeMode();
+    const s = this.state();
+    switch (mode) {
+      case 'compound-interest':
+        return s.compoundInput.inflationRate ?? 0;
+      case 'regular-investment':
+        return s.regularInput.inflationRate ?? 0;
+      case 'sip':
+        return s.sipInput.inflationRate ?? 0;
+      case 'step-up':
+        return s.stepUpInput.inflationRate ?? 0;
+      case 'retirement':
+        return s.retirementInput.inflationRate ?? 0;
+      case 'inflation':
+        return s.inflationInput.inflationRate ?? 0;
+      case 'savings-goal':
+        return s.savingsGoalInput.inflationRate ?? 0;
+      case 'swp':
+        return s.swpInput.inflationRate ?? 0;
+      default:
+        return 0;
     }
   });
 
@@ -266,6 +303,14 @@ export class CalculatorViewComponent implements OnInit {
     this.afterInputUpdate();
   }
 
+  updateSwp(key: keyof CalculatorState['swpInput'], value: any): void {
+    this.state.update(s => ({
+      ...s,
+      swpInput: { ...s.swpInput, [key]: value }
+    }));
+    this.afterInputUpdate();
+  }
+
   private afterInputUpdate(): void {
     const currentPath = SEO_PAGES_DATA[this.activeMode()].path;
     this.urlStateService.syncUrl(this.activeMode(), this.state(), currentPath);
@@ -282,17 +327,38 @@ export class CalculatorViewComponent implements OnInit {
   copySummary(): void {
     const res = this.result();
     const mode = this.activeMode();
-    const formattedSummary = [
-      `📊 Compound Calculator Summary (${this.capitalize(mode)})`,
-      `---------------------------------------`,
-      `Final Value: ${formatInrFull(res.futureValue)} (${formatInrCompact(res.futureValue)})`,
-      `Total Invested: ${formatInrFull(res.totalInvested)}`,
-      `Total Growth: ${formatInrFull(res.totalGrowth)}`,
-      `Inflation-adjusted (Today's Value): ${formatInrFull(res.realFutureValue)}`,
-      `Duration: ${res.durationYears} Years`,
-      `---------------------------------------`,
-      `Calculated free at: https://compoundcalculator.org`
-    ].join('\n');
+    let formattedSummary = '';
+
+    if (mode === 'swp') {
+      const isDepleted = res.metadata?.isDepleted;
+      formattedSummary = [
+        `📊 SWP (Systematic Withdrawal Plan) Summary`,
+        `---------------------------------------`,
+        `Initial Corpus: ${this.currencyService.formatFull(res.metadata?.initialCorpus || 0)}`,
+        `Monthly Withdrawal: ${this.currencyService.formatFull(res.metadata?.monthlyWithdrawal || 0)}/mo`,
+        `Duration: ${res.durationYears} Years`,
+        `Total Payout Received: ${this.currencyService.formatFull(res.totalInvested)}`,
+        `Total Returns Generated: ${this.currencyService.formatFull(res.totalGrowth)}`,
+        isDepleted
+          ? `Status: Corpus Depleted in Year ${res.metadata?.depletionYear} (Month ${res.metadata?.depletionMonth})`
+          : `Remaining Balance: ${this.currencyService.formatFull(res.futureValue)} (${this.currencyService.formatCompact(res.futureValue)})`,
+        `Real Value (Today's Money): ${this.currencyService.formatFull(res.realFutureValue)}`,
+        `---------------------------------------`,
+        `Calculated free at: https://compoundcalculator.org/swp-calculator`
+      ].join('\n');
+    } else {
+      formattedSummary = [
+        `📊 Compound Calculator Summary (${this.capitalize(mode)})`,
+        `---------------------------------------`,
+        `Final Value: ${this.currencyService.formatFull(res.futureValue)} (${this.currencyService.formatCompact(res.futureValue)})`,
+        `Total Invested: ${this.currencyService.formatFull(res.totalInvested)}`,
+        `Total Growth: ${this.currencyService.formatFull(res.totalGrowth)}`,
+        `Inflation-adjusted (Today's Value): ${this.currencyService.formatFull(res.realFutureValue)}`,
+        `Duration: ${res.durationYears} Years`,
+        `---------------------------------------`,
+        `Calculated free at: https://compoundcalculator.org`
+      ].join('\n');
+    }
 
     if (this.isBrowser && navigator.clipboard) {
       navigator.clipboard.writeText(formattedSummary).then(() => {

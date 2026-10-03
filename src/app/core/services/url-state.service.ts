@@ -77,7 +77,17 @@ export class UrlStateService {
           savings: state.savingsGoalInput.currentSavings,
           return: state.savingsGoalInput.expectedAnnualReturn,
           duration: state.savingsGoalInput.durationYears,
-          frequency: state.savingsGoalInput.contributionFrequency
+          frequency: state.savingsGoalInput.contributionFrequency,
+          inflation: state.savingsGoalInput.inflationRate || 0
+        };
+      case 'swp':
+        return {
+          corpus: state.swpInput.initialCorpus,
+          withdrawal: state.swpInput.monthlyWithdrawal,
+          return: state.swpInput.expectedAnnualReturn,
+          duration: state.swpInput.durationYears,
+          stepup: state.swpInput.annualWithdrawalIncreasePercent || 0,
+          inflation: state.swpInput.inflationRate || 0
         };
       default:
         return {};
@@ -143,6 +153,15 @@ export class UrlStateService {
         if (params['return'] !== undefined) updated.savingsGoalInput.expectedAnnualReturn = Number(params['return']);
         if (params['duration'] !== undefined) updated.savingsGoalInput.durationYears = Number(params['duration']);
         if (params['frequency'] !== undefined) updated.savingsGoalInput.contributionFrequency = params['frequency'] as ContributionFrequency;
+        if (params['inflation'] !== undefined) updated.savingsGoalInput.inflationRate = Number(params['inflation']);
+        break;
+      case 'swp':
+        if (params['corpus'] !== undefined) updated.swpInput.initialCorpus = Number(params['corpus']);
+        if (params['withdrawal'] !== undefined) updated.swpInput.monthlyWithdrawal = Number(params['withdrawal']);
+        if (params['return'] !== undefined) updated.swpInput.expectedAnnualReturn = Number(params['return']);
+        if (params['duration'] !== undefined) updated.swpInput.durationYears = Number(params['duration']);
+        if (params['stepup'] !== undefined) updated.swpInput.annualWithdrawalIncreasePercent = Number(params['stepup']);
+        if (params['inflation'] !== undefined) updated.swpInput.inflationRate = Number(params['inflation']);
         break;
     }
 

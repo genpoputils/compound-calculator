@@ -1,10 +1,14 @@
 import { InrCurrencyPipe } from './inr-currency.pipe';
+import { CurrencyService } from '../../core/services/currency.service';
 
 describe('InrCurrencyPipe', () => {
   let pipe: InrCurrencyPipe;
+  let currencyService: CurrencyService;
 
   beforeEach(() => {
-    pipe = new InrCurrencyPipe();
+    currencyService = new CurrencyService();
+    currencyService.setCurrency('INR');
+    pipe = new InrCurrencyPipe(currencyService);
   });
 
   it('should format full rupees correctly in Indian numbering system', () => {
@@ -31,5 +35,10 @@ describe('InrCurrencyPipe', () => {
     const formatted = pipe.transform(12500000, 'both');
     expect(formatted).toContain('₹1.25 Cr');
     expect(formatted).toContain('₹1,25,00,000');
+  });
+
+  it('should dynamically adapt when currency is changed', () => {
+    currencyService.setCurrency('USD');
+    expect(pipe.transform(1500000, 'compact')).toBe('$1.5M');
   });
 });

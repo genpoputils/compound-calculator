@@ -6,6 +6,7 @@ import { InvestmentCalculatorService } from './investment-calculator.service';
 import { RetirementCalculatorService } from './retirement-calculator.service';
 import { SavingsGoalCalculatorService } from './savings-goal-calculator.service';
 import { StepUpCalculatorService } from './step-up-calculator.service';
+import { SwpCalculatorService } from './swp-calculator.service';
 
 describe('Financial Calculation Engine', () => {
   let engine: CalculationEngineService;
@@ -15,6 +16,7 @@ describe('Financial Calculation Engine', () => {
   let retirementService: RetirementCalculatorService;
   let inflationService: InflationCalculatorService;
   let savingsGoalService: SavingsGoalCalculatorService;
+  let swpService: SwpCalculatorService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
@@ -25,6 +27,7 @@ describe('Financial Calculation Engine', () => {
     retirementService = TestBed.inject(RetirementCalculatorService);
     inflationService = TestBed.inject(InflationCalculatorService);
     savingsGoalService = TestBed.inject(SavingsGoalCalculatorService);
+    swpService = TestBed.inject(SwpCalculatorService);
   });
 
   describe('Compound Interest Mode', () => {
@@ -273,6 +276,87 @@ describe('Financial Calculation Engine', () => {
       expect(comparison.deltaFutureValue).toBeGreaterThan(0);
       expect(comparison.deltaTotalInvested).toBeGreaterThan(0);
       expect(comparison.futureValuePercentageDifference).toBeGreaterThan(0);
+    });
+  });
+
+  describe('SWP (Systematic Withdrawal Plan) Mode', () => {
+    it('should simulate monthly withdrawals and remaining balance correctly', () => {
+      const res = swpService.calculate({
+        initialCorpus: 5000000,
+        monthlyWithdrawal: 25000,
+        expectedAnnualReturn: 8,
+        durationYears: 10,
+        annualWithdrawalIncreasePercent: 0,
+        inflationRate: 6
+      });
+
+      // 25,000 * 12 * 10 = 3,000,000 withdrawn
+      expect(res.totalInvested).toBe(3000000);
+      // Because return 8% on ~5M is ~400k/yr, and withdrawal is 300k/yr, corpus should grow!
+      expect(res.futureValue).toBeGreaterThan(5000000);
+      expect(res.totalGrowth).toBeGreaterThan(0);
+      expect(res.metadata?.isDepleted).toBe(false);
+      expect(res.breakdown.length).toBe(10);
+      expect(res.breakdown[0].portfolioValue).toBeGreaterThan(5000000);
+    });
+
+    it('should detect portfolio depletion when withdrawals exceed sustainable rate', () => {
+      const res = swpService.calculate({
+        initialCorpus: 1000000,
+        monthlyWithdrawal: 100000,
+        expectedAnnualReturn: 6,
+        durationYears: 10,
+        annualWithdrawalIncreasePercent: 0,
+        inflationRate: 5
+      });
+
+      expect(res.metadata?.isDepleted).toBe(true);
+      expect(res.metadata?.depletionYear).toBe(1);
+      expect(res.futureValue).toBe(0);
+      expect(res.realFutureValue).toBe(0);
+    });
+
+    it('should support annual withdrawal step-up (inflation adjusted)', () => {
+      const resWithoutStepUp = swpService.calculate({
+        initialCorpus: 10000000,
+        monthlyWithdrawal: 40000,
+        expectedAnnualReturn: 8,
+        durationYears: 5,
+        annualWithdrawalIncreasePercent: 0,
+        inflationRate: 6
+      });
+
+      const resWithStepUp = swpService.calculate({
+        initialCorpus: 10000000,
+        monthlyWithdrawal: 40000,
+        expectedAnnualReturn: 8,
+        durationYears: 5,
+        annualWithdrawalIncreasePercent: 5,
+        inflationRate: 6
+      });
+
+      expect(resWithStepUp.totalInvested).toBeGreaterThan(resWithoutStepUp.totalInvested);
+      expect(resWithStepUp.futureValue).toBeLessThan(resWithoutStepUp.futureValue);
+    });
+
+    it('should integrate into CalculationEngineService calculate call', () => {
+      const state = {
+        ...DEFAULT_CALCULATOR_STATE,
+        swpInput: {
+          initialCorpus: 2000000,
+          monthlyWithdrawal: 15000,
+          expectedAnnualReturn: 7,
+          durationYears: 5,
+          annualWithdrawalIncreasePercent: 0,
+          inflationRate: 5
+        }
+      };
+
+      const result = engine.calculate('swp', state);
+      expect(result.mode).toBe('swp');
+      expect(result.durationYears).toBe(5);
+      expect(result.totalInvested).toBe(15000 * 12 * 5);
+      expect(result.futureValue).toBeGreaterThan(0);
     });
   });
 });

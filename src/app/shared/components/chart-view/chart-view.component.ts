@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  effect,
   ElementRef,
   inject,
   input,
@@ -14,7 +15,7 @@ import {
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
 import { CalculationMode, YearlyBreakdownItem } from '../../../core/calculator/models/calculator.types';
-import { formatInrCompact } from '../../../core/utils/currency.util';
+import { CurrencyService } from '../../../core/services/currency.service';
 import { ThemeService } from '../../../core/services/theme.service';
 
 Chart.register(...registerables);
@@ -94,9 +95,21 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
   readonly themeService = inject(ThemeService);
+  readonly currencyService = inject(CurrencyService);
 
   readonly activeTab = signal<ChartTab>('growth');
   private chartInstance: Chart | null = null;
+
+  constructor() {
+    effect(() => {
+      // Re-render chart whenever theme or currency changes
+      this.themeService.isDark();
+      this.currencyService.selectedCurrency();
+      if (this.isBrowser && this.chartCanvas()) {
+        this.renderChart();
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
@@ -283,7 +296,7 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
               label: (context) => {
                 const label = context.dataset.label || '';
                 const val = Number(context.parsed.y);
-                return ` ${label}: ${formatInrCompact(val)}`;
+                return ` ${label}: ${this.currencyService.formatCompact(val)}`;
               }
             }
           }
@@ -310,7 +323,7 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             },
             ticks: {
               color: textColor,
-              callback: (val) => formatInrCompact(Number(val)),
+              callback: (val) => this.currencyService.formatCompact(Number(val)),
               font: {
                 family: 'Inter, sans-serif',
                 size: 11

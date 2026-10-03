@@ -2,6 +2,7 @@ import { Component, inject, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ThemeService } from '../../../core/services/theme.service';
+import { CurrencyService } from '../../../core/services/currency.service';
 
 @Component({
   selector: 'app-header',
@@ -74,14 +75,41 @@ import { ThemeService } from '../../../core/services/theme.service';
           <a
             routerLink="/savings-goal-calculator"
             routerLinkActive="bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400"
-            class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+            class="px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
             Goal
           </a>
+          <a
+            routerLink="/swp-calculator"
+            routerLinkActive="bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400"
+            class="px-2.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+          >
+            SWP
+          </a>
         </nav>
 
-        <!-- Right Side Actions: Theme, Share, Mobile Menu -->
+        <!-- Right Side Actions: Currency, Theme, Share, Mobile Menu -->
         <div class="flex items-center gap-2">
+          <!-- Currency Selector -->
+          <div class="relative">
+            <select
+              id="currency-select"
+              [value]="currencyService.code()"
+              (change)="onCurrencyChange($event)"
+              aria-label="Select Currency"
+              class="h-8 pl-2 pr-6 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+            >
+              @for (c of currencyService.currencies; track c.code) {
+                <option [value]="c.code">{{ c.code }} ({{ c.symbol.trim() }})</option>
+              }
+            </select>
+            <div class="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+
           <!-- Share button -->
           <button
             type="button"
@@ -211,6 +239,13 @@ import { ThemeService } from '../../../core/services/theme.service';
           >
             Savings Goal Calculator
           </a>
+          <a
+            routerLink="/swp-calculator"
+            (click)="mobileMenuOpen.set(false)"
+            class="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          >
+            SWP (Withdrawal) Calculator
+          </a>
           <button
             type="button"
             (click)="shareClicked.emit(); mobileMenuOpen.set(false)"
@@ -225,6 +260,14 @@ import { ThemeService } from '../../../core/services/theme.service';
 })
 export class HeaderComponent {
   readonly themeService = inject(ThemeService);
+  readonly currencyService = inject(CurrencyService);
   readonly shareClicked = output<void>();
   readonly mobileMenuOpen = signal<boolean>(false);
+
+  onCurrencyChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    if (select?.value) {
+      this.currencyService.setCurrency(select.value);
+    }
+  }
 }

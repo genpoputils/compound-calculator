@@ -13,7 +13,8 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
         'bg-gradient-to-br from-indigo-900/90 via-indigo-950 to-slate-950 text-white border border-indigo-500/30 shadow-xl shadow-indigo-950/30 glow-primary': variant() === 'primary',
         'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs': variant() === 'secondary',
         'bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 text-emerald-950 dark:text-emerald-100': variant() === 'success',
-        'bg-purple-500/5 dark:bg-purple-500/10 border border-purple-500/20 text-purple-950 dark:text-purple-100': variant() === 'purple'
+        'bg-purple-500/5 dark:bg-purple-500/10 border border-purple-500/20 text-purple-950 dark:text-purple-100': variant() === 'purple',
+        'bg-rose-500/5 dark:bg-rose-500/10 border border-rose-500/20 text-rose-950 dark:text-rose-100': variant() === 'danger'
       }"
     >
       @if (variant() === 'primary') {
@@ -28,7 +29,8 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
             'text-indigo-200': variant() === 'primary',
             'text-slate-500 dark:text-slate-400': variant() === 'secondary',
             'text-emerald-600 dark:text-emerald-400': variant() === 'success',
-            'text-purple-600 dark:text-purple-400': variant() === 'purple'
+            'text-purple-600 dark:text-purple-400': variant() === 'purple',
+            'text-rose-600 dark:text-rose-400': variant() === 'danger'
           }"
         >
           {{ label() }}
@@ -41,7 +43,8 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
               'bg-indigo-500/30 text-indigo-100 border border-indigo-400/30': variant() === 'primary',
               'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300': variant() === 'secondary',
               'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300': variant() === 'success',
-              'bg-purple-500/20 text-purple-700 dark:text-purple-300': variant() === 'purple'
+              'bg-purple-500/20 text-purple-700 dark:text-purple-300': variant() === 'purple',
+              'bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30': variant() === 'danger'
             }"
           >
             {{ badge() }}
@@ -57,7 +60,8 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
             'text-3xl sm:text-4xl text-white': variant() === 'primary',
             'text-2xl sm:text-3xl text-slate-900 dark:text-white': variant() === 'secondary',
             'text-2xl sm:text-3xl text-emerald-700 dark:text-emerald-300': variant() === 'success',
-            'text-2xl sm:text-3xl text-purple-700 dark:text-purple-300': variant() === 'purple'
+            'text-2xl sm:text-3xl text-purple-700 dark:text-purple-300': variant() === 'purple',
+            'text-2xl sm:text-3xl text-rose-700 dark:text-rose-300': variant() === 'danger'
           }"
         >
           {{ value() | inrCurrency:'compact' }}
@@ -92,7 +96,7 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
 export class MetricCardComponent {
   readonly label = input.required<string>();
   readonly value = input.required<number>();
-  readonly variant = input<'primary' | 'secondary' | 'success' | 'purple'>('secondary');
+  readonly variant = input<'primary' | 'secondary' | 'success' | 'purple' | 'danger'>('secondary');
   readonly badge = input<string>();
   readonly subtext = input<string>();
 }

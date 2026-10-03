@@ -5,7 +5,8 @@ export type CalculationMode =
   | 'step-up'
   | 'retirement'
   | 'inflation'
-  | 'savings-goal';
+  | 'savings-goal'
+  | 'swp';
 
 export type CompoundingFrequency = 'annually' | 'semi-annually' | 'quarterly' | 'monthly' | 'daily';
 
@@ -45,6 +46,16 @@ export interface CalculationResult {
     contributionFrequency?: ContributionFrequency;
     futureCostOfAmount?: number;
     todayPurchasingPowerOfFuture?: number;
+    initialCorpus?: number;
+    monthlyWithdrawal?: number;
+    annualWithdrawalIncreasePercent?: number;
+    totalWithdrawn?: number;
+    finalBalance?: number;
+    totalInterestEarned?: number;
+    isDepleted?: boolean;
+    depletionYear?: number | null;
+    depletionMonth?: number | null;
+    sustainableWithdrawalRate?: number;
   };
 }
 
@@ -108,6 +119,15 @@ export interface SavingsGoalInput {
   expectedAnnualReturn: number;
   durationYears: number;
   contributionFrequency: ContributionFrequency;
+  inflationRate?: number;
+}
+
+export interface SwpInput {
+  initialCorpus: number;
+  monthlyWithdrawal: number;
+  expectedAnnualReturn: number;
+  durationYears: number;
+  annualWithdrawalIncreasePercent?: number; // to adjust withdrawal for inflation
   inflationRate?: number;
 }
 

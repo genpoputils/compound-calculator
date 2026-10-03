@@ -1,8 +1,8 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { YearlyBreakdownItem } from '../../../core/calculator/models/calculator.types';
 import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
-import { ToastService } from '../../../core/services/toast.service';
+import { CurrencyService } from '../../../core/services/currency.service';
 
 @Component({
   selector: 'app-yearly-table',
@@ -20,7 +20,9 @@ import { ToastService } from '../../../core/services/toast.service';
             </span>
           </h3>
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Complete annual cashflow progression, growth accumulation, and purchasing power.
+            {{ mode() === 'swp' 
+              ? 'Complete annual withdrawal cashflow progression, returns generated, and remaining corpus longevity.'
+              : 'Complete annual cashflow progression, growth accumulation, and purchasing power.' }}
           </p>
         </div>
 
@@ -60,11 +62,11 @@ import { ToastService } from '../../../core/services/toast.service';
               @if (hasAge()) {
                 <th scope="col" class="py-3 px-4">Age</th>
               }
-              <th scope="col" class="py-3 px-4">Monthly Deposit</th>
-              <th scope="col" class="py-3 px-4">Annual Invested</th>
-              <th scope="col" class="py-3 px-4">Total Invested</th>
-              <th scope="col" class="py-3 px-4">Year Growth</th>
-              <th scope="col" class="py-3 px-4 font-bold text-slate-900 dark:text-white">Portfolio Value</th>
+              <th scope="col" class="py-3 px-4">{{ mode() === 'swp' ? 'Monthly Payout' : 'Monthly Deposit' }}</th>
+              <th scope="col" class="py-3 px-4">{{ mode() === 'swp' ? 'Annual Payout' : 'Annual Invested' }}</th>
+              <th scope="col" class="py-3 px-4">{{ mode() === 'swp' ? 'Total Payout' : 'Total Invested' }}</th>
+              <th scope="col" class="py-3 px-4">{{ mode() === 'swp' ? 'Year Returns' : 'Year Growth' }}</th>
+              <th scope="col" class="py-3 px-4 font-bold text-slate-900 dark:text-white">{{ mode() === 'swp' ? 'Remaining Balance' : 'Portfolio Value' }}</th>
               <th scope="col" class="py-3 px-4 text-purple-600 dark:text-purple-400">Purchasing Power</th>
             </tr>
           </thead>
@@ -118,18 +120,18 @@ import { ToastService } from '../../../core/services/toast.service';
 
             <div class="grid grid-cols-2 gap-2 text-xs">
               <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40">
-                <span class="text-slate-400 block">Monthly Deposit</span>
+                <span class="text-slate-400 block">{{ mode() === 'swp' ? 'Monthly Payout' : 'Monthly Deposit' }}</span>
                 <span class="font-semibold text-slate-700 dark:text-slate-300">{{ row.monthlyContribution | inrCurrency:'compact' }}</span>
               </div>
               <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40">
-                <span class="text-slate-400 block">Total Invested</span>
+                <span class="text-slate-400 block">{{ mode() === 'swp' ? 'Total Payout' : 'Total Invested' }}</span>
                 <span class="font-semibold text-slate-700 dark:text-slate-300">{{ row.totalInvested | inrCurrency:'compact' }}</span>
               </div>
               <div class="p-2 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20">
-                <span class="text-emerald-500 block">Year Growth</span>
+                <span class="text-emerald-500 block">{{ mode() === 'swp' ? 'Year Returns' : 'Year Growth' }}</span>
                 <span class="font-semibold text-emerald-700 dark:text-emerald-400">+{{ row.interestEarnedYear | inrCurrency:'compact' }}</span>
               </div>
-              <div class="p-2 rounded-lg bg-purple-50/50 dark:bg-purple-950/20">
+              <div class="p-2 rounded-lg bg-purple-50/50 dark:purple-950/20">
                 <span class="text-purple-500 block">Purchasing Power</span>
                 <span class="font-semibold text-purple-700 dark:text-purple-400">{{ row.realPortfolioValue | inrCurrency:'compact' }}</span>
               </div>
@@ -155,7 +157,9 @@ import { ToastService } from '../../../core/services/toast.service';
 })
 export class YearlyTableComponent {
   readonly items = input.required<YearlyBreakdownItem[]>();
+  readonly mode = input<string>('compound');
   readonly isExpanded = signal<boolean>(false);
+  private readonly currencyService = inject(CurrencyService);
 
   hasAge(): boolean {
     return this.items().some(i => i.age !== undefined);
@@ -172,16 +176,19 @@ export class YearlyTableComponent {
     const list = this.items();
     if (!list || list.length === 0) return;
 
+    const curr = this.currencyService.code();
+    const isSwp = this.mode() === 'swp';
+
     const headers = [
       'Year',
       'Age',
-      'Monthly Contribution (INR)',
-      'Annual Contribution (INR)',
-      'Total Invested (INR)',
-      'Year Growth (INR)',
-      'Total Growth (INR)',
-      'Portfolio Value (INR)',
-      'Purchasing Power (Real Value INR)'
+      isSwp ? `Monthly Payout (${curr})` : `Monthly Contribution (${curr})`,
+      isSwp ? `Annual Payout (${curr})` : `Annual Contribution (${curr})`,
+      isSwp ? `Total Payout (${curr})` : `Total Invested (${curr})`,
+      isSwp ? `Year Returns (${curr})` : `Year Growth (${curr})`,
+      isSwp ? `Total Returns (${curr})` : `Total Growth (${curr})`,
+      isSwp ? `Remaining Balance (${curr})` : `Portfolio Value (${curr})`,
+      `Purchasing Power (Real Value ${curr})`
     ];
 
     const rows = list.map(item => [
@@ -201,9 +208,10 @@ export class YearlyTableComponent {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `compound-calculator-yearly-breakdown.csv`);
+    link.setAttribute('download', `compound-calculator-${isSwp ? 'swp' : 'yearly'}-breakdown.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   }
 }
+

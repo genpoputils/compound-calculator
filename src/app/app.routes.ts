@@ -58,6 +58,13 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'swp-calculator',
+    loadComponent: () =>
+      import('./pages/calculator-view/calculator-view.component').then(
+        m => m.CalculatorViewComponent
+      )
+  },
+  {
     path: '**',
     redirectTo: ''
   }

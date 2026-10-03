@@ -136,6 +136,19 @@
         >
           Inflation
         </button>
+
+        <button
+          type="button"
+          (click)="setMode('swp')"
+          [attr.aria-selected]="activeMode() === 'swp'"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'swp',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'swp'
+          }"
+        >
+          SWP Calculator
+        </button>
       </div>
     </div>
 
@@ -169,7 +182,7 @@
                 [min]="500"
                 [max]="500000"
                 [step]="500"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 [quickSteps]="[
                   { label: '+5k', delta: 5000 },
                   { label: '+10k', delta: 10000 },
@@ -259,7 +272,7 @@
                 [min]="0"
                 [max]="5000000"
                 [step]="25000"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 (valueChange)="updateStepUp('initialInvestment', $event)"
               />
 
@@ -287,7 +300,7 @@
                 [min]="1000"
                 [max]="10000000"
                 [step]="10000"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 [quickSteps]="[
                   { label: '+50k', delta: 50000 },
                   { label: '+1L', delta: 100000 },
@@ -431,7 +444,7 @@
                 [min]="0"
                 [max]="10000000"
                 [step]="50000"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 (valueChange)="updateRetirement('currentCorpus', $event)"
               />
 
@@ -442,7 +455,7 @@
                 [min]="1000"
                 [max]="500000"
                 [step]="1000"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 [quickSteps]="[
                   { label: '+5k', delta: 5000 },
                   { label: '+10k', delta: 10000 },
@@ -509,7 +522,7 @@
                       [min]="10000"
                       [max]="500000"
                       [step]="5000"
-                      prefix="₹"
+                      [prefix]="currencyService.symbol()"
                       (valueChange)="updateRetirement('currentMonthlyExpense', $event)"
                     />
 
@@ -545,7 +558,7 @@
                 [min]="500"
                 [max]="500000"
                 [step]="500"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 [quickSteps]="[
                   { label: '+5k', delta: 5000 },
                   { label: '+10k', delta: 10000 },
@@ -583,7 +596,7 @@
                 [min]="0"
                 [max]="5000000"
                 [step]="25000"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 (valueChange)="updateSip('initialInvestment', $event)"
               />
 
@@ -610,7 +623,7 @@
                 [min]="0"
                 [max]="5000000"
                 [step]="25000"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 (valueChange)="updateRegular('initialInvestment', $event)"
               />
 
@@ -621,7 +634,7 @@
                 [min]="500"
                 [max]="500000"
                 [step]="500"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 (valueChange)="updateRegular('regularContribution', $event)"
               />
 
@@ -692,7 +705,7 @@
                 [min]="1000"
                 [max]="10000000"
                 [step]="10000"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 [quickSteps]="[
                   { label: '+50k', delta: 50000 },
                   { label: '+1L', delta: 100000 },
@@ -735,7 +748,7 @@
                 [min]="50000"
                 [max]="50000000"
                 [step]="100000"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 [quickSteps]="[
                   { label: '25 Lakh', delta: 2500000 - state().savingsGoalInput.targetAmount },
                   { label: '50 Lakh', delta: 5000000 - state().savingsGoalInput.targetAmount },
@@ -751,7 +764,7 @@
                 [min]="0"
                 [max]="10000000"
                 [step]="25000"
-                prefix="₹"
+                [prefix]="currencyService.symbol()"
                 (valueChange)="updateSavingsGoal('currentSavings', $event)"
               />
 
@@ -777,6 +790,22 @@
                 (valueChange)="updateSavingsGoal('durationYears', $event)"
               />
 
+              <app-slider-input
+                id="goal-inflation"
+                label="Expected Annual Inflation"
+                [value]="state().savingsGoalInput.inflationRate || 0"
+                [min]="0"
+                [max]="20"
+                [step]="0.5"
+                suffix="%"
+                [quickSteps]="[
+                  { label: '5%', delta: 5 - (state().savingsGoalInput.inflationRate || 0) },
+                  { label: '6%', delta: 6 - (state().savingsGoalInput.inflationRate || 0) },
+                  { label: '7%', delta: 7 - (state().savingsGoalInput.inflationRate || 0) }
+                ]"
+                (valueChange)="updateSavingsGoal('inflationRate', $event)"
+              />
+
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
                   Deposit Frequency
@@ -799,6 +828,107 @@
               </div>
             </div>
           }
+
+          <!-- 8. SWP (SYSTEMATIC WITHDRAWAL PLAN) INPUTS -->
+          @if (activeMode() === 'swp') {
+            <div class="space-y-5">
+              <app-slider-input
+                id="swp-corpus"
+                label="Total Initial Corpus"
+                [value]="state().swpInput.initialCorpus"
+                [min]="10000"
+                [max]="50000000"
+                [step]="50000"
+                [prefix]="currencyService.symbol()"
+                [quickSteps]="[
+                  { label: '+50k', delta: 50000 },
+                  { label: '+100k', delta: 100000 },
+                  { label: '+500k', delta: 500000 }
+                ]"
+                (valueChange)="updateSwp('initialCorpus', $event)"
+              />
+
+              <app-slider-input
+                id="swp-withdrawal"
+                label="Monthly Withdrawal Amount"
+                [value]="state().swpInput.monthlyWithdrawal"
+                [min]="500"
+                [max]="500000"
+                [step]="500"
+                [prefix]="currencyService.symbol()"
+                [quickSteps]="[
+                  { label: '+1k', delta: 1000 },
+                  { label: '+5k', delta: 5000 },
+                  { label: '+10k', delta: 10000 }
+                ]"
+                (valueChange)="updateSwp('monthlyWithdrawal', $event)"
+              />
+
+              <app-slider-input
+                id="swp-return"
+                label="Expected Annual Return (CAGR)"
+                [value]="state().swpInput.expectedAnnualReturn"
+                [min]="1"
+                [max]="25"
+                [step]="0.5"
+                suffix="%"
+                [quickSteps]="[
+                  { label: '6% (Debt)', delta: 6 - state().swpInput.expectedAnnualReturn },
+                  { label: '8% (Hybrid)', delta: 8 - state().swpInput.expectedAnnualReturn },
+                  { label: '12% (Equity)', delta: 12 - state().swpInput.expectedAnnualReturn }
+                ]"
+                (valueChange)="updateSwp('expectedAnnualReturn', $event)"
+              />
+
+              <app-slider-input
+                id="swp-duration"
+                label="Withdrawal Period (Years)"
+                [value]="state().swpInput.durationYears"
+                [min]="1"
+                [max]="40"
+                [step]="1"
+                suffix="Years"
+                [quickSteps]="[
+                  { label: '10 Yrs', delta: 10 - state().swpInput.durationYears },
+                  { label: '20 Yrs', delta: 20 - state().swpInput.durationYears },
+                  { label: '30 Yrs', delta: 30 - state().swpInput.durationYears }
+                ]"
+                (valueChange)="updateSwp('durationYears', $event)"
+              />
+
+              <app-slider-input
+                id="swp-stepup"
+                label="Annual Withdrawal Step-Up (Inflation Defense)"
+                [value]="state().swpInput.annualWithdrawalIncreasePercent || 0"
+                [min]="0"
+                [max]="15"
+                [step]="1"
+                suffix="%"
+                [quickSteps]="[
+                  { label: '0%', delta: 0 - (state().swpInput.annualWithdrawalIncreasePercent || 0) },
+                  { label: '5%', delta: 5 - (state().swpInput.annualWithdrawalIncreasePercent || 0) },
+                  { label: '8%', delta: 8 - (state().swpInput.annualWithdrawalIncreasePercent || 0) }
+                ]"
+                (valueChange)="updateSwp('annualWithdrawalIncreasePercent', $event)"
+              />
+
+              <app-slider-input
+                id="swp-inflation"
+                label="Expected Annual Inflation"
+                [value]="state().swpInput.inflationRate || 0"
+                [min]="0"
+                [max]="15"
+                [step]="0.5"
+                suffix="%"
+                [quickSteps]="[
+                  { label: '4%', delta: 4 - (state().swpInput.inflationRate || 0) },
+                  { label: '6%', delta: 6 - (state().swpInput.inflationRate || 0) },
+                  { label: '8%', delta: 8 - (state().swpInput.inflationRate || 0) }
+                ]"
+                (valueChange)="updateSwp('inflationRate', $event)"
+              />
+            </div>
+          }
         </div>
 
         <!-- RIGHT COLUMN: RESULTS UI -->
@@ -819,6 +949,16 @@
               variant="primary"
               badge="Nominal Price"
               [subtext]="'What costs ' + (state().inflationInput.currentAmount | inrCurrency:'compact') + ' today will cost ' + (result().futureValue | inrCurrency:'compact') + ' in ' + state().inflationInput.years + ' years at ' + state().inflationInput.inflationRate + '% inflation.'"
+            />
+          } @else if (activeMode() === 'swp') {
+            <app-metric-card
+              [label]="result().metadata?.isDepleted ? 'Corpus Depleted' : 'Remaining Portfolio Balance'"
+              [value]="result().futureValue"
+              [variant]="result().metadata?.isDepleted ? 'danger' : 'primary'"
+              [badge]="result().metadata?.isDepleted ? ('Depleted in Yr ' + result().metadata?.depletionYear) : 'Sustainable Balance'"
+              [subtext]="result().metadata?.isDepleted
+                ? ('Corpus completely exhausts after ' + result().metadata?.depletionYear + ' years and ' + result().metadata?.depletionMonth + ' months. Consider reducing monthly withdrawals or lowering step-up.')
+                : ('Remaining invested capital after ' + result().durationYears + ' years of regular monthly cashflow distributions.')"
             />
           } @else {
             <app-metric-card
@@ -847,6 +987,22 @@
                 variant="secondary"
                 subtext="Erosion caused by cumulative price inflation."
               />
+            } @else if (activeMode() === 'swp') {
+              <app-metric-card
+                label="Total Payout Received"
+                [value]="result().totalInvested"
+                variant="secondary"
+                badge="Cumulative Cashflow"
+                subtext="Total cashflow paid out across the entire duration."
+              />
+
+              <app-metric-card
+                label="Total Returns Generated"
+                [value]="result().totalGrowth"
+                variant="success"
+                badge="Growth While Withdrawing"
+                subtext="Compound returns earned on your invested portfolio while taking payouts."
+              />
             } @else {
               <app-metric-card
                 label="You Invested"
@@ -867,11 +1023,13 @@
           <!-- Inflation-Adjusted Purchasing Power Card -->
           @if (activeMode() !== 'inflation') {
             <app-metric-card
-              label="Today's Purchasing Power"
+              [label]="activeMode() === 'swp' ? 'Real Remaining Balance' : 'Today\'s Purchasing Power'"
               [value]="result().realFutureValue"
               variant="purple"
               badge="Inflation Adjusted"
-              [subtext]="'Equivalent purchasing power in today’s money at ' + (state().stepUpInput.inflationRate || 6) + '% annual inflation.'"
+              [subtext]="activeMode() === 'swp'
+                ? ('Equivalent purchasing power of the remaining balance in today’s money at ' + activeInflationRate() + '% annual inflation.')
+                : ('Equivalent purchasing power in today’s money at ' + activeInflationRate() + '% annual inflation.')"
             />
           }
 
@@ -962,7 +1120,7 @@
     <app-assumptions-panel [items]="assumptionsList()" />
 
     <!-- SECTION 19: YEAR-BY-YEAR BREAKDOWN TABLE -->
-    <app-yearly-table [items]="result().breakdown" />
+    <app-yearly-table [items]="result().breakdown" [mode]="activeMode()" />
 
     <!-- SECTION 26: RICH SEO EDUCATIONAL CONTENT -->
     <section class="mt-16 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-6 sm:p-10 space-y-8">

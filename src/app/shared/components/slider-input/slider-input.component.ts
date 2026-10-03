@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -19,7 +19,7 @@ export interface QuickStep {
         </label>
         <div class="relative flex items-center">
           @if (prefix()) {
-            <span class="absolute left-2.5 text-xs font-semibold text-slate-400 select-none">
+            <span class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 dark:text-slate-500 select-none">
               {{ prefix() }}
             </span>
           }
@@ -32,17 +32,13 @@ export interface QuickStep {
             [step]="step()"
             [value]="value()"
             (input)="onInputChange($event)"
+            (change)="onInputChange($event)"
             [attr.aria-label]="label()"
-            class="w-32 sm:w-36 py-1.5 text-right font-semibold text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all shadow-2xs"
-            [ngClass]="{
-              'pl-7 pr-3': prefix() && !suffix(),
-              'pl-3 pr-7': !prefix() && suffix(),
-              'pl-7 pr-7': prefix() && suffix(),
-              'px-3': !prefix() && !suffix()
-            }"
+            class="py-1.5 text-right font-semibold text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all shadow-2xs"
+            [ngClass]="inputClasses()"
           />
           @if (suffix()) {
-            <span class="absolute right-2.5 text-xs font-semibold text-slate-400 select-none">
+            <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 dark:text-slate-500 select-none">
               {{ suffix() }}
             </span>
           }
@@ -60,6 +56,7 @@ export interface QuickStep {
           [step]="step()"
           [value]="value()"
           (input)="onSliderChange($event)"
+          (change)="onSliderChange($event)"
           [attr.aria-label]="label() + ' slider'"
           class="w-full accent-indigo-600 dark:accent-indigo-500"
         />
@@ -94,6 +91,27 @@ export class SliderInputComponent {
   readonly quickSteps = input<QuickStep[]>([]);
 
   readonly valueChange = output<number>();
+
+  readonly inputClasses = computed(() => {
+    const hasPre = !!this.prefix();
+    const suf = this.suffix() || '';
+
+    const padLeft = hasPre ? 'pl-7' : 'pl-3';
+    let padRight = 'pr-3';
+    let width = 'w-32 sm:w-36';
+
+    if (suf === '%') {
+      padRight = 'pr-7';
+    } else if (suf.length > 3) { // e.g. "Years"
+      padRight = 'pr-14';
+      width = 'w-36 sm:w-40';
+    } else if (suf.length > 0) { // e.g. "Yrs"
+      padRight = 'pr-10';
+      width = 'w-32 sm:w-36';
+    }
+
+    return `${width} ${padLeft} ${padRight}`;
+  });
 
   onSliderChange(event: Event): void {
     const val = Number((event.target as HTMLInputElement).value);

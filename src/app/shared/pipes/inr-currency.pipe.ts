@@ -1,27 +1,39 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { formatInrCompact, formatInrFull } from '../../core/utils/currency.util';
+import { inject, Pipe, PipeTransform } from '@angular/core';
+import { CurrencyService } from '../../core/services/currency.service';
 
 @Pipe({
   name: 'inrCurrency',
-  standalone: true
+  standalone: true,
+  pure: false
 })
 export class InrCurrencyPipe implements PipeTransform {
+  private readonly currencyService: CurrencyService;
+
+  constructor(currencyService?: CurrencyService) {
+    if (currencyService) {
+      this.currencyService = currencyService;
+    } else {
+      try {
+        this.currencyService = inject(CurrencyService, { optional: true }) ?? new CurrencyService();
+      } catch {
+        this.currencyService = new CurrencyService();
+      }
+    }
+  }
+
   transform(value: number | null | undefined, format: 'full' | 'compact' | 'both' = 'full'): string {
     if (value === null || value === undefined || isNaN(value)) {
-      return '₹0';
+      return `${this.currencyService.symbol()}0`;
     }
 
     if (format === 'compact') {
-      return formatInrCompact(value);
+      return this.currencyService.formatCompact(value);
     }
 
     if (format === 'both') {
-      if (Math.abs(value) >= 100000) {
-        return `${formatInrCompact(value)} (${formatInrFull(value)})`;
-      }
-      return formatInrFull(value);
+      return this.currencyService.formatBoth(value);
     }
 
-    return formatInrFull(value);
+    return this.currencyService.formatFull(value);
   }
 }
