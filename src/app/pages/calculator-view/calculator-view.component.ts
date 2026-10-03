@@ -244,8 +244,21 @@ export class CalculatorViewComponent implements OnInit {
   }
 
   updateSeo(): void {
+    const rawUrl = this.router.url || '';
+    const path = rawUrl.split('?')[0];
+    const isRoot = !path || path === '/' || path === '/compound-calculator';
     const seoData = this.currentSeoData();
-    this.seoService.updateMeta(seoData.seo);
+
+    if (isRoot) {
+      this.seoService.updateMeta({
+        ...seoData.seo,
+        title: 'Compound Calculator – Compound Interest & Investment Calculator | GenPopUtils',
+        description: 'Calculate compound interest, investment growth, SIP returns and more.',
+        canonicalUrl: path === '/compound-calculator' ? 'https://compoundcalc.genpoputils.com/compound-calculator' : 'https://compoundcalc.genpoputils.com/'
+      });
+    } else {
+      this.seoService.updateMeta(seoData.seo);
+    }
   }
 
   // State Mutation Helpers for Inputs

@@ -26,8 +26,8 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     mode: 'compound-interest',
     path: '/compound-calculator',
     seo: {
-      title: 'Compound Interest Calculator - Calculate Future Investment Growth',
-      description: 'Accurately calculate compound interest growth on your investments. Explore annual, quarterly, monthly, and daily compounding frequencies with inflation adjustments.',
+      title: 'Compound Calculator – Compound Interest & Investment Calculator | GenPopUtils',
+      description: 'Calculate compound interest, investment growth, SIP returns and more.',
       canonicalUrl: 'https://compoundcalc.genpoputils.com/compound-calculator',
       keywords: 'compound interest calculator, investment growth, interest compounding, lump sum calculator, compound interest formula',
       schema: {

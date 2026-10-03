@@ -20,7 +20,7 @@ import { CurrencyService } from '../../../core/services/currency.service';
           </div>
           <div class="flex flex-col">
             <span class="font-extrabold text-base sm:text-lg tracking-tight text-slate-900 dark:text-white leading-tight">
-              Compound<span class="text-indigo-600 dark:text-indigo-400">Calc</span>
+              Compound <span class="text-indigo-600 dark:text-indigo-400">Calculator</span>
             </span>
             <span class="text-[10px] uppercase font-semibold tracking-wider text-slate-400 -mt-0.5">
               Financial Engine
