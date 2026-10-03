@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://genpoputils.github.io/compound-calculator/sitemap.xml
+Sitemap: https://compoundcalc.genpoputils.com/sitemap.xml

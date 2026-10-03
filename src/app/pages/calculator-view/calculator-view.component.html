@@ -41,6 +41,11 @@
     </div>
   </section>
 
+  <!-- TOP LEADERBOARD AD BANNER (High-RPM Above-the-Fold Placement) -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2 mb-6">
+    <app-ad-banner slotType="leaderboard" />
+  </section>
+
   <!-- SECTION 5: MAIN CALCULATOR CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8" id="main-calculator-card">
     <!-- MODE SELECTOR TABS -->
@@ -1116,11 +1121,21 @@
       [comparisonBreakdown]="comparisonResult()?.scenarioB?.breakdown"
     />
 
+    <!-- MID-CONTENT AD BANNER (High-Engagement Placement Between Charts & Detailed Schedule) -->
+    <div class="py-4">
+      <app-ad-banner slotType="in-content" />
+    </div>
+
     <!-- SECTION 16: ASSUMPTIONS PANEL -->
     <app-assumptions-panel [items]="assumptionsList()" />
 
     <!-- SECTION 19: YEAR-BY-YEAR BREAKDOWN TABLE -->
     <app-yearly-table [items]="result().breakdown" [mode]="activeMode()" />
+
+    <!-- PRE-ARTICLE / FOOTER AD BANNER (High-Dwell-Time Placement Above Educational Guide & FAQs) -->
+    <div class="pt-6">
+      <app-ad-banner slotType="bottom" />
+    </div>
 
     <!-- SECTION 26: RICH SEO EDUCATIONAL CONTENT -->
     <section class="mt-16 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-6 sm:p-10 space-y-8">

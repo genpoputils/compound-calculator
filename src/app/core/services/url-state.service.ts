@@ -188,7 +188,7 @@ export class UrlStateService {
     for (const [key, value] of Object.entries(queryParams)) {
       searchParams.set(key, String(value));
     }
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://genpoputils.github.io/compound-calculator';
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://compoundcalc.genpoputils.com';
     return `${origin}${routePath}?${searchParams.toString()}`;
   }
 }

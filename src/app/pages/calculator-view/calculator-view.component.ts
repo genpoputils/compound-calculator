@@ -36,6 +36,7 @@ import { AssumptionsPanelComponent, AssumptionItem } from '../../shared/componen
 import { YearlyTableComponent } from '../../shared/components/yearly-table/yearly-table.component';
 import { ChartViewComponent } from '../../shared/components/chart-view/chart-view.component';
 import { ScenarioCompareComponent, ScenarioBParams } from '../../shared/components/scenario-compare/scenario-compare.component';
+import { AdBannerComponent } from '../../shared/components/ad-banner/ad-banner.component';
 
 @Component({
   selector: 'app-calculator-view',
@@ -48,7 +49,8 @@ import { ScenarioCompareComponent, ScenarioBParams } from '../../shared/componen
     AssumptionsPanelComponent,
     YearlyTableComponent,
     ChartViewComponent,
-    ScenarioCompareComponent
+    ScenarioCompareComponent,
+    AdBannerComponent
   ],
   templateUrl: './calculator-view.component.html'
 })
@@ -344,7 +346,7 @@ export class CalculatorViewComponent implements OnInit {
           : `Remaining Balance: ${this.currencyService.formatFull(res.futureValue)} (${this.currencyService.formatCompact(res.futureValue)})`,
         `Real Value (Today's Money): ${this.currencyService.formatFull(res.realFutureValue)}`,
         `---------------------------------------`,
-        `Calculated free at: https://genpoputils.github.io/compound-calculator/swp-calculator`
+        `Calculated free at: https://compoundcalc.genpoputils.com/swp-calculator`
       ].join('\n');
     } else {
       formattedSummary = [
@@ -356,7 +358,7 @@ export class CalculatorViewComponent implements OnInit {
         `Inflation-adjusted (Today's Value): ${this.currencyService.formatFull(res.realFutureValue)}`,
         `Duration: ${res.durationYears} Years`,
         `---------------------------------------`,
-        `Calculated free at: https://genpoputils.github.io/compound-calculator`
+        `Calculated free at: https://compoundcalc.genpoputils.com`
       ].join('\n');
     }
 
