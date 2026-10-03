@@ -1,0 +1,1027 @@
+<div class="relative overflow-hidden">
+  <!-- Subtle ambient decorative glow -->
+  <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-r from-indigo-500/15 via-purple-500/10 to-emerald-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+  <!-- SECTION 4: HERO -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-8 sm:pb-12 text-center space-y-4">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-900/60 bg-indigo-50/70 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-xs font-semibold backdrop-blur-xs">
+      <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping"></span>
+      <span>Accurate Financial Planning Engine</span>
+    </div>
+
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-[1.15]">
+      Compound Calculator
+    </h1>
+
+    <p class="text-lg sm:text-xl font-medium text-slate-700 dark:text-slate-300 max-w-2xl mx-auto">
+      See how your money can grow over time.
+    </p>
+
+    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+      Model compound growth, regular investments, contribution increases, retirement savings, and inflation.
+    </p>
+
+    <!-- CTAs -->
+    <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+      <button
+        type="button"
+        (click)="scrollToCalculator()"
+        class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-md shadow-indigo-600/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+      >
+        Start Calculating
+      </button>
+
+      <button
+        type="button"
+        (click)="setMode('retirement'); scrollToCalculator()"
+        class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all shadow-2xs"
+      >
+        Retirement Calculator
+      </button>
+    </div>
+  </section>
+
+  <!-- SECTION 5: MAIN CALCULATOR CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8" id="main-calculator-card">
+    <!-- MODE SELECTOR TABS -->
+    <div class="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar py-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+      <div class="inline-flex items-center p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 shadow-xs backdrop-blur-md gap-1">
+        <button
+          type="button"
+          (click)="setMode('step-up')"
+          [attr.aria-selected]="activeMode() === 'step-up'"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'step-up',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'step-up'
+          }"
+        >
+          Step-Up SIP
+        </button>
+
+        <button
+          type="button"
+          (click)="setMode('compound-interest')"
+          [attr.aria-selected]="activeMode() === 'compound-interest'"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'compound-interest',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'compound-interest'
+          }"
+        >
+          Compound Interest
+        </button>
+
+        <button
+          type="button"
+          (click)="setMode('retirement')"
+          [attr.aria-selected]="activeMode() === 'retirement'"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'retirement',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'retirement'
+          }"
+        >
+          Retirement Savings
+        </button>
+
+        <button
+          type="button"
+          (click)="setMode('sip')"
+          [attr.aria-selected]="activeMode() === 'sip'"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'sip',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'sip'
+          }"
+        >
+          SIP Growth
+        </button>
+
+        <button
+          type="button"
+          (click)="setMode('regular-investment')"
+          [attr.aria-selected]="activeMode() === 'regular-investment'"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'regular-investment',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'regular-investment'
+          }"
+        >
+          Regular Investment
+        </button>
+
+        <button
+          type="button"
+          (click)="setMode('savings-goal')"
+          [attr.aria-selected]="activeMode() === 'savings-goal'"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'savings-goal',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'savings-goal'
+          }"
+        >
+          Savings Goal
+        </button>
+
+        <button
+          type="button"
+          (click)="setMode('inflation')"
+          [attr.aria-selected]="activeMode() === 'inflation'"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'inflation',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'inflation'
+          }"
+        >
+          Inflation
+        </button>
+      </div>
+    </div>
+
+    <!-- CALCULATOR CARD: 2-COLUMN GRID -->
+    <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 p-5 sm:p-8 backdrop-blur-xl shadow-lg space-y-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- LEFT COLUMN: INPUT CONTROLS -->
+        <div class="lg:col-span-6 space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+              {{ currentSeoData().heading }}
+            </h2>
+            <button
+              type="button"
+              (click)="resetToDefaults()"
+              class="text-xs font-semibold text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"
+            >
+              Reset
+            </button>
+          </div>
+
+          <!-- 1. STEP-UP INPUTS -->
+          @if (activeMode() === 'step-up') {
+            <div class="space-y-5">
+              <app-slider-input
+                id="su-monthly"
+                label="Starting Monthly Investment"
+                [value]="state().stepUpInput.startingMonthlyInvestment"
+                [min]="500"
+                [max]="500000"
+                [step]="500"
+                prefix="₹"
+                [quickSteps]="[
+                  { label: '+5k', delta: 5000 },
+                  { label: '+10k', delta: 10000 },
+                  { label: '+25k', delta: 25000 }
+                ]"
+                (valueChange)="updateStepUp('startingMonthlyInvestment', $event)"
+              />
+
+              <app-slider-input
+                id="su-stepup"
+                label="Annual Contribution Increase (Step-Up)"
+                [value]="state().stepUpInput.annualStepUpPercent"
+                [min]="0"
+                [max]="30"
+                [step]="1"
+                suffix="%"
+                [quickSteps]="[
+                  { label: '5%', delta: 5 - state().stepUpInput.annualStepUpPercent },
+                  { label: '10%', delta: 10 - state().stepUpInput.annualStepUpPercent },
+                  { label: '15%', delta: 15 - state().stepUpInput.annualStepUpPercent }
+                ]"
+                (valueChange)="updateStepUp('annualStepUpPercent', $event)"
+              />
+
+              <!-- Visual preview of Step-Up year 1-4 contributions per prompt -->
+              <div class="p-3.5 rounded-xl border border-indigo-100 dark:border-indigo-900/40 bg-indigo-50/40 dark:bg-indigo-950/20 text-xs">
+                <span class="font-bold text-indigo-900 dark:text-indigo-300 block mb-1.5">
+                  Contribution Growth Preview:
+                </span>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-700 dark:text-slate-300">
+                  <div>
+                    <span class="text-slate-400 block text-[10px]">Year 1</span>
+                    <span class="font-semibold">{{ state().stepUpInput.startingMonthlyInvestment | inrCurrency:'compact' }}/mo</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block text-[10px]">Year 2</span>
+                    <span class="font-semibold">{{ (state().stepUpInput.startingMonthlyInvestment * (1 + state().stepUpInput.annualStepUpPercent / 100)) | inrCurrency:'compact' }}/mo</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block text-[10px]">Year 3</span>
+                    <span class="font-semibold">{{ (state().stepUpInput.startingMonthlyInvestment * Math.pow(1 + state().stepUpInput.annualStepUpPercent / 100, 2)) | inrCurrency:'compact' }}/mo</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block text-[10px]">Year 4</span>
+                    <span class="font-semibold">{{ (state().stepUpInput.startingMonthlyInvestment * Math.pow(1 + state().stepUpInput.annualStepUpPercent / 100, 3)) | inrCurrency:'compact' }}/mo</span>
+                  </div>
+                </div>
+              </div>
+
+              <app-slider-input
+                id="su-return"
+                label="Expected Annual Return"
+                [value]="state().stepUpInput.expectedAnnualReturn"
+                [min]="1"
+                [max]="30"
+                [step]="0.5"
+                suffix="%"
+                [quickSteps]="[
+                  { label: '8% (Debt)', delta: 8 - state().stepUpInput.expectedAnnualReturn },
+                  { label: '12% (Index)', delta: 12 - state().stepUpInput.expectedAnnualReturn },
+                  { label: '15% (Equity)', delta: 15 - state().stepUpInput.expectedAnnualReturn }
+                ]"
+                (valueChange)="updateStepUp('expectedAnnualReturn', $event)"
+              />
+
+              <app-slider-input
+                id="su-duration"
+                label="Investment Duration"
+                [value]="state().stepUpInput.durationYears"
+                [min]="1"
+                [max]="40"
+                [step]="1"
+                suffix="Years"
+                [quickSteps]="[
+                  { label: '5 Yrs', delta: 5 - state().stepUpInput.durationYears },
+                  { label: '10 Yrs', delta: 10 - state().stepUpInput.durationYears },
+                  { label: '20 Yrs', delta: 20 - state().stepUpInput.durationYears }
+                ]"
+                (valueChange)="updateStepUp('durationYears', $event)"
+              />
+
+              <!-- Optional Initial Lump Sum -->
+              <app-slider-input
+                id="su-initial"
+                label="Optional Initial Lump Sum"
+                [value]="state().stepUpInput.initialInvestment || 0"
+                [min]="0"
+                [max]="5000000"
+                [step]="25000"
+                prefix="₹"
+                (valueChange)="updateStepUp('initialInvestment', $event)"
+              />
+
+              <!-- Inflation Rate -->
+              <app-slider-input
+                id="su-inflation"
+                label="Expected Inflation Rate"
+                [value]="state().stepUpInput.inflationRate || 0"
+                [min]="0"
+                [max]="15"
+                [step]="0.5"
+                suffix="%"
+                (valueChange)="updateStepUp('inflationRate', $event)"
+              />
+            </div>
+          }
+
+          <!-- 2. COMPOUND INTEREST INPUTS -->
+          @if (activeMode() === 'compound-interest') {
+            <div class="space-y-5">
+              <app-slider-input
+                id="ci-initial"
+                label="Initial Investment (Principal)"
+                [value]="state().compoundInput.initialInvestment"
+                [min]="1000"
+                [max]="10000000"
+                [step]="10000"
+                prefix="₹"
+                [quickSteps]="[
+                  { label: '+50k', delta: 50000 },
+                  { label: '+1L', delta: 100000 },
+                  { label: '+5L', delta: 500000 }
+                ]"
+                (valueChange)="updateCompound('initialInvestment', $event)"
+              />
+
+              <app-slider-input
+                id="ci-rate"
+                label="Annual Interest Rate"
+                [value]="state().compoundInput.annualInterestRate"
+                [min]="1"
+                [max]="30"
+                [step]="0.25"
+                suffix="%"
+                [quickSteps]="[
+                  { label: '7% (FD)', delta: 7 - state().compoundInput.annualInterestRate },
+                  { label: '10% (Hybrid)', delta: 10 - state().compoundInput.annualInterestRate },
+                  { label: '12% (Equity)', delta: 12 - state().compoundInput.annualInterestRate }
+                ]"
+                (valueChange)="updateCompound('annualInterestRate', $event)"
+              />
+
+              <!-- Compounding Frequency Selector -->
+              <div class="space-y-1.5">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Compounding Frequency
+                </label>
+                <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5 text-xs font-semibold">
+                  @for (freq of ['annually', 'semi-annually', 'quarterly', 'monthly', 'daily']; track freq) {
+                    <button
+                      type="button"
+                      (click)="updateCompound('compoundingFrequency', freq)"
+                      class="py-2 px-2 rounded-lg border text-center transition-all capitalize truncate"
+                      [ngClass]="{
+                        'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400': state().compoundInput.compoundingFrequency === freq,
+                        'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800': state().compoundInput.compoundingFrequency !== freq
+                      }"
+                    >
+                      {{ freq }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Duration and Duration Unit -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Duration Unit</span>
+                  <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-0.5 text-xs font-semibold">
+                    <button
+                      type="button"
+                      (click)="updateCompound('durationUnit', 'years')"
+                      class="px-2.5 py-1 rounded-md transition-colors"
+                      [ngClass]="{
+                        'bg-indigo-600 text-white': state().compoundInput.durationUnit === 'years',
+                        'text-slate-600 dark:text-slate-400': state().compoundInput.durationUnit !== 'years'
+                      }"
+                    >
+                      Years
+                    </button>
+                    <button
+                      type="button"
+                      (click)="updateCompound('durationUnit', 'months')"
+                      class="px-2.5 py-1 rounded-md transition-colors"
+                      [ngClass]="{
+                        'bg-indigo-600 text-white': state().compoundInput.durationUnit === 'months',
+                        'text-slate-600 dark:text-slate-400': state().compoundInput.durationUnit !== 'months'
+                      }"
+                    >
+                      Months
+                    </button>
+                  </div>
+                </div>
+
+                <app-slider-input
+                  id="ci-duration"
+                  [label]="'Duration (' + capitalize(state().compoundInput.durationUnit) + ')'"
+                  [value]="state().compoundInput.duration"
+                  [min]="1"
+                  [max]="state().compoundInput.durationUnit === 'years' ? 50 : 360"
+                  [step]="1"
+                  [suffix]="capitalize(state().compoundInput.durationUnit)"
+                  (valueChange)="updateCompound('duration', $event)"
+                />
+              </div>
+
+              <!-- Inflation -->
+              <app-slider-input
+                id="ci-inflation"
+                label="Annual Inflation Rate"
+                [value]="state().compoundInput.inflationRate || 0"
+                [min]="0"
+                [max]="15"
+                [step]="0.5"
+                suffix="%"
+                (valueChange)="updateCompound('inflationRate', $event)"
+              />
+            </div>
+          }
+
+          <!-- 3. RETIREMENT SAVINGS INPUTS -->
+          @if (activeMode() === 'retirement') {
+            <div class="space-y-5">
+              <div class="grid grid-cols-2 gap-4">
+                <app-slider-input
+                  id="ret-age"
+                  label="Current Age"
+                  [value]="state().retirementInput.currentAge"
+                  [min]="18"
+                  [max]="70"
+                  [step]="1"
+                  suffix="Yrs"
+                  (valueChange)="updateRetirement('currentAge', $event)"
+                />
+
+                <app-slider-input
+                  id="ret-retAge"
+                  label="Retirement Age"
+                  [value]="state().retirementInput.retirementAge"
+                  [min]="state().retirementInput.currentAge + 1"
+                  [max]="85"
+                  [step]="1"
+                  suffix="Yrs"
+                  (valueChange)="updateRetirement('retirementAge', $event)"
+                />
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 text-xs text-slate-600 dark:text-slate-400 flex items-center justify-between">
+                <span>Accumulation Horizon:</span>
+                <span class="font-bold text-indigo-600 dark:text-indigo-400">
+                  {{ state().retirementInput.retirementAge - state().retirementInput.currentAge }} Years to Retirement
+                </span>
+              </div>
+
+              <app-slider-input
+                id="ret-corpus"
+                label="Current Investment Corpus"
+                [value]="state().retirementInput.currentCorpus"
+                [min]="0"
+                [max]="10000000"
+                [step]="50000"
+                prefix="₹"
+                (valueChange)="updateRetirement('currentCorpus', $event)"
+              />
+
+              <app-slider-input
+                id="ret-monthly"
+                label="Starting Monthly Investment"
+                [value]="state().retirementInput.startingMonthlyInvestment"
+                [min]="1000"
+                [max]="500000"
+                [step]="1000"
+                prefix="₹"
+                [quickSteps]="[
+                  { label: '+5k', delta: 5000 },
+                  { label: '+10k', delta: 10000 },
+                  { label: '+25k', delta: 25000 }
+                ]"
+                (valueChange)="updateRetirement('startingMonthlyInvestment', $event)"
+              />
+
+              <app-slider-input
+                id="ret-stepup"
+                label="Annual Contribution Increase"
+                [value]="state().retirementInput.annualStepUpPercent"
+                [min]="0"
+                [max]="25"
+                [step]="1"
+                suffix="%"
+                (valueChange)="updateRetirement('annualStepUpPercent', $event)"
+              />
+
+              <app-slider-input
+                id="ret-return"
+                label="Expected Annual Return"
+                [value]="state().retirementInput.expectedAnnualReturn"
+                [min]="1"
+                [max]="25"
+                [step]="0.5"
+                suffix="%"
+                (valueChange)="updateRetirement('expectedAnnualReturn', $event)"
+              />
+
+              <app-slider-input
+                id="ret-inflation"
+                label="Annual Inflation Rate"
+                [value]="state().retirementInput.inflationRate"
+                [min]="1"
+                [max]="15"
+                [step]="0.5"
+                suffix="%"
+                (valueChange)="updateRetirement('inflationRate', $event)"
+              />
+
+              <!-- SECTION 11: RETIREMENT EXPENSE PROJECTION (OPTIONAL SECTION) -->
+              <div class="pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  (click)="showRetirementExpenseCalc.set(!showRetirementExpenseCalc())"
+                  class="flex items-center justify-between w-full p-3 rounded-xl border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50/30 dark:bg-indigo-950/20 text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
+                >
+                  <span class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    How much will my current expenses be at retirement?
+                  </span>
+                  <span>{{ showRetirementExpenseCalc() ? '− Hide' : '+ Expand' }}</span>
+                </button>
+
+                @if (showRetirementExpenseCalc()) {
+                  <div class="mt-3 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/30 space-y-4">
+                    <app-slider-input
+                      id="ret-expense"
+                      label="Current Monthly Expenses"
+                      [value]="state().retirementInput.currentMonthlyExpense || 40000"
+                      [min]="10000"
+                      [max]="500000"
+                      [step]="5000"
+                      prefix="₹"
+                      (valueChange)="updateRetirement('currentMonthlyExpense', $event)"
+                    />
+
+                    @if (result().metadata?.estimatedRetirementMonthlyExpense) {
+                      <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                        <div class="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                          <span class="text-slate-400 block">Monthly at Retirement</span>
+                          <span class="font-extrabold text-sm text-slate-900 dark:text-white">
+                            {{ result().metadata?.estimatedRetirementMonthlyExpense | inrCurrency:'compact' }}
+                          </span>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                          <span class="text-slate-400 block">Annual at Retirement</span>
+                          <span class="font-extrabold text-sm text-slate-900 dark:text-white">
+                            {{ result().metadata?.estimatedRetirementAnnualExpense | inrCurrency:'compact' }}
+                          </span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- 4. SIP GROWTH INPUTS -->
+          @if (activeMode() === 'sip') {
+            <div class="space-y-5">
+              <app-slider-input
+                id="sip-monthly"
+                label="Starting Monthly Investment"
+                [value]="state().sipInput.startingMonthlyInvestment"
+                [min]="500"
+                [max]="500000"
+                [step]="500"
+                prefix="₹"
+                [quickSteps]="[
+                  { label: '+5k', delta: 5000 },
+                  { label: '+10k', delta: 10000 },
+                  { label: '+25k', delta: 25000 }
+                ]"
+                (valueChange)="updateSip('startingMonthlyInvestment', $event)"
+              />
+
+              <app-slider-input
+                id="sip-return"
+                label="Expected Annual Return"
+                [value]="state().sipInput.expectedAnnualReturn"
+                [min]="1"
+                [max]="30"
+                [step]="0.5"
+                suffix="%"
+                (valueChange)="updateSip('expectedAnnualReturn', $event)"
+              />
+
+              <app-slider-input
+                id="sip-duration"
+                label="Investment Duration"
+                [value]="state().sipInput.durationYears"
+                [min]="1"
+                [max]="40"
+                [step]="1"
+                suffix="Years"
+                (valueChange)="updateSip('durationYears', $event)"
+              />
+
+              <app-slider-input
+                id="sip-initial"
+                label="Optional Initial Investment"
+                [value]="state().sipInput.initialInvestment || 0"
+                [min]="0"
+                [max]="5000000"
+                [step]="25000"
+                prefix="₹"
+                (valueChange)="updateSip('initialInvestment', $event)"
+              />
+
+              <app-slider-input
+                id="sip-inflation"
+                label="Expected Annual Inflation"
+                [value]="state().sipInput.inflationRate || 0"
+                [min]="0"
+                [max]="15"
+                [step]="0.5"
+                suffix="%"
+                (valueChange)="updateSip('inflationRate', $event)"
+              />
+            </div>
+          }
+
+          <!-- 5. REGULAR INVESTMENT INPUTS -->
+          @if (activeMode() === 'regular-investment') {
+            <div class="space-y-5">
+              <app-slider-input
+                id="reg-initial"
+                label="Initial Investment"
+                [value]="state().regularInput.initialInvestment"
+                [min]="0"
+                [max]="5000000"
+                [step]="25000"
+                prefix="₹"
+                (valueChange)="updateRegular('initialInvestment', $event)"
+              />
+
+              <app-slider-input
+                id="reg-contrib"
+                label="Regular Contribution"
+                [value]="state().regularInput.regularContribution"
+                [min]="500"
+                [max]="500000"
+                [step]="500"
+                prefix="₹"
+                (valueChange)="updateRegular('regularContribution', $event)"
+              />
+
+              <!-- Contribution Frequency Selector -->
+              <div class="space-y-1.5">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Contribution Frequency
+                </label>
+                <div class="grid grid-cols-3 gap-2 text-xs font-semibold">
+                  @for (freq of ['monthly', 'quarterly', 'yearly']; track freq) {
+                    <button
+                      type="button"
+                      (click)="updateRegular('contributionFrequency', freq)"
+                      class="py-2 px-3 rounded-lg border text-center transition-all capitalize"
+                      [ngClass]="{
+                        'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400': state().regularInput.contributionFrequency === freq,
+                        'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800': state().regularInput.contributionFrequency !== freq
+                      }"
+                    >
+                      {{ freq }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <app-slider-input
+                id="reg-return"
+                label="Expected Annual Return"
+                [value]="state().regularInput.expectedAnnualReturn"
+                [min]="1"
+                [max]="30"
+                [step]="0.5"
+                suffix="%"
+                (valueChange)="updateRegular('expectedAnnualReturn', $event)"
+              />
+
+              <app-slider-input
+                id="reg-duration"
+                label="Investment Duration"
+                [value]="state().regularInput.durationYears"
+                [min]="1"
+                [max]="40"
+                [step]="1"
+                suffix="Years"
+                (valueChange)="updateRegular('durationYears', $event)"
+              />
+
+              <app-slider-input
+                id="reg-inflation"
+                label="Annual Inflation"
+                [value]="state().regularInput.inflationRate || 0"
+                [min]="0"
+                [max]="15"
+                [step]="0.5"
+                suffix="%"
+                (valueChange)="updateRegular('inflationRate', $event)"
+              />
+            </div>
+          }
+
+          <!-- 6. INFLATION INPUTS -->
+          @if (activeMode() === 'inflation') {
+            <div class="space-y-5">
+              <app-slider-input
+                id="inf-amount"
+                label="Current Amount"
+                [value]="state().inflationInput.currentAmount"
+                [min]="1000"
+                [max]="10000000"
+                [step]="10000"
+                prefix="₹"
+                [quickSteps]="[
+                  { label: '+50k', delta: 50000 },
+                  { label: '+1L', delta: 100000 },
+                  { label: '+5L', delta: 500000 }
+                ]"
+                (valueChange)="updateInflation('currentAmount', $event)"
+              />
+
+              <app-slider-input
+                id="inf-rate"
+                label="Annual Inflation Rate"
+                [value]="state().inflationInput.inflationRate"
+                [min]="1"
+                [max]="20"
+                [step]="0.25"
+                suffix="%"
+                (valueChange)="updateInflation('inflationRate', $event)"
+              />
+
+              <app-slider-input
+                id="inf-years"
+                label="Time Horizon"
+                [value]="state().inflationInput.years"
+                [min]="1"
+                [max]="50"
+                [step]="1"
+                suffix="Years"
+                (valueChange)="updateInflation('years', $event)"
+              />
+            </div>
+          }
+
+          <!-- 7. SAVINGS GOAL INPUTS -->
+          @if (activeMode() === 'savings-goal') {
+            <div class="space-y-5">
+              <app-slider-input
+                id="goal-target"
+                label="Target Corpus Amount"
+                [value]="state().savingsGoalInput.targetAmount"
+                [min]="50000"
+                [max]="50000000"
+                [step]="100000"
+                prefix="₹"
+                [quickSteps]="[
+                  { label: '25 Lakh', delta: 2500000 - state().savingsGoalInput.targetAmount },
+                  { label: '50 Lakh', delta: 5000000 - state().savingsGoalInput.targetAmount },
+                  { label: '1 Crore', delta: 10000000 - state().savingsGoalInput.targetAmount }
+                ]"
+                (valueChange)="updateSavingsGoal('targetAmount', $event)"
+              />
+
+              <app-slider-input
+                id="goal-current"
+                label="Current Savings (Starting Capital)"
+                [value]="state().savingsGoalInput.currentSavings"
+                [min]="0"
+                [max]="10000000"
+                [step]="25000"
+                prefix="₹"
+                (valueChange)="updateSavingsGoal('currentSavings', $event)"
+              />
+
+              <app-slider-input
+                id="goal-return"
+                label="Expected Annual Return"
+                [value]="state().savingsGoalInput.expectedAnnualReturn"
+                [min]="1"
+                [max]="25"
+                [step]="0.5"
+                suffix="%"
+                (valueChange)="updateSavingsGoal('expectedAnnualReturn', $event)"
+              />
+
+              <app-slider-input
+                id="goal-duration"
+                label="Time to Reach Goal"
+                [value]="state().savingsGoalInput.durationYears"
+                [min]="1"
+                [max]="40"
+                [step]="1"
+                suffix="Years"
+                (valueChange)="updateSavingsGoal('durationYears', $event)"
+              />
+
+              <div class="space-y-1.5">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Deposit Frequency
+                </label>
+                <div class="grid grid-cols-3 gap-2 text-xs font-semibold">
+                  @for (freq of ['monthly', 'quarterly', 'yearly']; track freq) {
+                    <button
+                      type="button"
+                      (click)="updateSavingsGoal('contributionFrequency', freq)"
+                      class="py-2 px-3 rounded-lg border text-center transition-all capitalize"
+                      [ngClass]="{
+                        'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400': state().savingsGoalInput.contributionFrequency === freq,
+                        'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800': state().savingsGoalInput.contributionFrequency !== freq
+                      }"
+                    >
+                      {{ freq }}
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- RIGHT COLUMN: RESULTS UI -->
+        <div class="lg:col-span-6 space-y-5">
+          <!-- Main Prominent Metric Card (Hero Metric per Section 17) -->
+          @if (activeMode() === 'savings-goal') {
+            <app-metric-card
+              label="Required Monthly Deposit"
+              [value]="result().metadata?.requiredContribution || 0"
+              variant="primary"
+              badge="Goal Target"
+              [subtext]="'Save this amount ' + state().savingsGoalInput.contributionFrequency + ' to achieve ' + (state().savingsGoalInput.targetAmount | inrCurrency:'compact') + ' in ' + state().savingsGoalInput.durationYears + ' years.'"
+            />
+          } @else if (activeMode() === 'inflation') {
+            <app-metric-card
+              label="Future Equivalent Cost"
+              [value]="result().futureValue"
+              variant="primary"
+              badge="Nominal Price"
+              [subtext]="'What costs ' + (state().inflationInput.currentAmount | inrCurrency:'compact') + ' today will cost ' + (result().futureValue | inrCurrency:'compact') + ' in ' + state().inflationInput.years + ' years at ' + state().inflationInput.inflationRate + '% inflation.'"
+            />
+          } @else {
+            <app-metric-card
+              label="Estimated Future Value"
+              [value]="result().futureValue"
+              variant="primary"
+              badge="Final Corpus"
+              [subtext]="'Nominal accumulated wealth after ' + result().durationYears + ' years of disciplined compound growth.'"
+            />
+          }
+
+          <!-- Secondary Metric Breakdown Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            @if (activeMode() === 'inflation') {
+              <app-metric-card
+                label="Today's Purchasing Power"
+                [value]="result().realFutureValue"
+                variant="purple"
+                badge="Real Value"
+                subtext="What today's cash amount will actually buy in the future."
+              />
+
+              <app-metric-card
+                label="Purchasing Power Lost"
+                [value]="result().totalInvested - result().realFutureValue"
+                variant="secondary"
+                subtext="Erosion caused by cumulative price inflation."
+              />
+            } @else {
+              <app-metric-card
+                label="You Invested"
+                [value]="result().totalInvested"
+                variant="secondary"
+                subtext="Total principal capital contributed by you."
+              />
+
+              <app-metric-card
+                label="Estimated Growth"
+                [value]="result().totalGrowth"
+                variant="success"
+                subtext="Wealth created purely from compound returns."
+              />
+            }
+          </div>
+
+          <!-- Inflation-Adjusted Purchasing Power Card -->
+          @if (activeMode() !== 'inflation') {
+            <app-metric-card
+              label="Today's Purchasing Power"
+              [value]="result().realFutureValue"
+              variant="purple"
+              badge="Inflation Adjusted"
+              [subtext]="'Equivalent purchasing power in today’s money at ' + (state().stepUpInput.inflationRate || 6) + '% annual inflation.'"
+            />
+          }
+
+          <!-- Retirement Purchasing Power Benefit -->
+          @if (activeMode() === 'retirement' && result().metadata?.monthlyPurchasingPowerAtRetirement) {
+            <div class="p-4 rounded-xl border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50/50 dark:bg-indigo-950/20 text-xs text-indigo-900 dark:text-indigo-200">
+              <span class="font-bold block text-sm mb-1">Sustainable Monthly Purchasing Power:</span>
+              <p>
+                Based on the 4% safe withdrawal rule, your retirement corpus can generate approximately
+                <strong class="text-indigo-600 dark:text-indigo-400 font-extrabold text-sm">{{ result().metadata?.monthlyPurchasingPowerAtRetirement | inrCurrency:'compact' }}/month</strong>
+                in today's purchasing power throughout retirement.
+              </p>
+            </div>
+          }
+
+          <!-- Action Buttons Bar -->
+          <div class="flex flex-wrap items-center gap-2 pt-2">
+            <button
+              type="button"
+              (click)="copySummary()"
+              class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+            >
+              <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <span>Copy Result</span>
+            </button>
+
+            <button
+              type="button"
+              (click)="shareCalculation()"
+              class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+            >
+              <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              <span>Share Link</span>
+            </button>
+
+            <button
+              type="button"
+              (click)="printCalculation()"
+              class="inline-flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              title="Print Results"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              (click)="compareMode.set(!compareMode())"
+              class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-colors"
+              [ngClass]="{
+                'bg-indigo-600 text-white': compareMode(),
+                'border border-indigo-200 dark:border-indigo-900/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40': !compareMode()
+              }"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span>{{ compareMode() ? 'Hide Comparison' : 'Compare Scenarios' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 20: SCENARIO COMPARISON PANEL -->
+    @if (compareMode() && comparisonResult()) {
+      <app-scenario-compare
+        [comparison]="comparisonResult()!"
+        [paramsB]="scenarioBParams()"
+        (paramsBChange)="scenarioBParams.set($event)"
+        (close)="compareMode.set(false)"
+      />
+    }
+
+    <!-- SECTION 18: INTERACTIVE CHARTS -->
+    <app-chart-view
+      [breakdown]="result().breakdown"
+      [mode]="activeMode()"
+      [comparisonBreakdown]="comparisonResult()?.scenarioB?.breakdown"
+    />
+
+    <!-- SECTION 16: ASSUMPTIONS PANEL -->
+    <app-assumptions-panel [items]="assumptionsList()" />
+
+    <!-- SECTION 19: YEAR-BY-YEAR BREAKDOWN TABLE -->
+    <app-yearly-table [items]="result().breakdown" />
+
+    <!-- SECTION 26: RICH SEO EDUCATIONAL CONTENT -->
+    <section class="mt-16 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-6 sm:p-10 space-y-8">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+          {{ currentSeoData().explanationTitle }}
+        </h2>
+        <div class="mt-4 space-y-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+          @for (paragraph of currentSeoData().paragraphs; track $index) {
+            <p>{{ paragraph }}</p>
+          }
+        </div>
+      </div>
+
+      <!-- Highlights Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        @for (item of currentSeoData().keyHighlights; track item.title) {
+          <div class="p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 space-y-2">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+              {{ item.title }}
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              {{ item.description }}
+            </p>
+          </div>
+        }
+      </div>
+
+      <!-- Formula Code Block -->
+      <div class="p-5 sm:p-6 rounded-2xl border border-indigo-200/60 dark:border-indigo-900/40 bg-indigo-50/30 dark:bg-indigo-950/20 space-y-3">
+        <h3 class="text-sm sm:text-base font-bold text-indigo-950 dark:text-indigo-200">
+          {{ currentSeoData().formulaTitle }}
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+          {{ currentSeoData().formulaDescription }}
+        </p>
+        <pre class="p-4 rounded-xl bg-slate-900 text-slate-100 text-xs sm:text-sm font-mono overflow-x-auto leading-relaxed">{{ currentSeoData().formulaCode }}</pre>
+      </div>
+
+      <!-- Frequently Asked Questions Accordion -->
+      <div class="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white">
+          Frequently Asked Questions
+        </h3>
+        <div class="space-y-3">
+          @for (faq of currentSeoData().faqs; track faq.question) {
+            <details class="group rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-4 transition-colors">
+              <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer select-none list-none flex items-center justify-between gap-2">
+                <span>{{ faq.question }}</span>
+                <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <p class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                {{ faq.answer }}
+              </p>
+            </details>
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
