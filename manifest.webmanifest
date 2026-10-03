@@ -1,7 +1,7 @@
 {
   "name": "Compound Calculator",
-  "short_name": "CompoundCalc",
-  "description": "Premium compound interest, SIP growth, step-up investment, SWP, and retirement calculator.",
+  "short_name": "Compound Calculator",
+  "description": "Calculate compound interest, investment growth, SIP returns and more.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
