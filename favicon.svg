@@ -1,70 +1,61 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <!-- Background Gradient -->
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0f172a" />
-      <stop offset="50%" stop-color="#1e1b4b" />
-      <stop offset="100%" stop-color="#0a0f1d" />
+    <!-- Background Gradient: Deep Midnight Navy -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1120" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#060c18" />
     </linearGradient>
 
-    <!-- Outer Border Glow -->
-    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.8" />
-      <stop offset="50%" stop-color="#6366f1" stop-opacity="0.3" />
-      <stop offset="100%" stop-color="#10b981" stop-opacity="0.7" />
-    </linearGradient>
-
-    <!-- Exponential Growth Line Gradient -->
-    <linearGradient id="curveGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+    <!-- Emerald to Electric Cyan Gradient -->
+    <linearGradient id="emeraldCyan" x1="0%" y1="100%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#10b981" />
-      <stop offset="45%" stop-color="#06b6d4" />
-      <stop offset="80%" stop-color="#6366f1" />
-      <stop offset="100%" stop-color="#a855f7" />
+      <stop offset="40%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#38bdf8" />
     </linearGradient>
 
-    <!-- Area Glow Under Curve -->
-    <linearGradient id="areaGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.35" />
-      <stop offset="100%" stop-color="#10b981" stop-opacity="0.0" />
+    <!-- Neon Glow Gradient for Primary Arrow -->
+    <linearGradient id="neonGlow" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="35%" stop-color="#10b981" />
+      <stop offset="70%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#67e8f9" />
     </linearGradient>
 
-    <!-- Sparkle Glow Filter -->
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur" />
+    <!-- Shading & Depth Filter -->
+    <filter id="neonBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10" result="blur" />
       <feMerge>
         <feMergeNode in="blur" />
         <feMergeNode in="SourceGraphic" />
       </feMerge>
     </filter>
+
+    <!-- Squircle Border Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0.2" />
+    </linearGradient>
   </defs>
 
-  <!-- Background Squircle -->
-  <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="12" />
+  <!-- Premium App Squircle Frame -->
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#bg)" stroke="url(#borderGrad)" stroke-width="6" />
 
-  <!-- Subtle Grid Lines -->
-  <g opacity="0.12" stroke="#ffffff" stroke-width="2" stroke-dasharray="6 6">
-    <line x1="80" y1="380" x2="432" y2="380" />
-    <line x1="80" y1="280" x2="432" y2="280" />
-    <line x1="80" y1="180" x2="432" y2="180" />
+  <!-- Ambient Glow Behind Surging Curves -->
+  <circle cx="340" cy="220" r="160" fill="#06b6d4" opacity="0.12" filter="url(#neonBlur)" />
+
+  <!-- Left Arrow (Early Compounding Stage) -->
+  <g opacity="0.92">
+    <path d="M 92 384 C 132 380 200 340 236 268 L 220 262 L 286 186 L 280 286 L 254 276 C 220 338 152 384 92 384 Z" fill="url(#emeraldCyan)" />
   </g>
 
-  <!-- Area Fill Under Compound Curve -->
-  <path d="M 88 380 Q 240 376 330 260 T 416 112 L 416 380 Z" fill="url(#areaGlow)" />
+  <!-- Right Front Arrow (Growth Momentum Stage) -->
+  <g opacity="0.95">
+    <path d="M 190 412 C 240 408 300 376 338 316 L 322 308 L 380 232 L 382 334 L 354 322 C 318 376 256 414 190 412 Z" fill="url(#emeraldCyan)" />
+  </g>
 
-  <!-- Compound Growth Curve -->
-  <path d="M 88 380 Q 240 376 330 260 T 416 112" fill="none" stroke="url(#curveGrad)" stroke-width="36" stroke-linecap="round" />
-
-  <!-- Compounding Nodes along the curve -->
-  <circle cx="160" cy="372" r="14" fill="#10b981" />
-  <circle cx="270" cy="336" r="16" fill="#06b6d4" />
-  <circle cx="348" cy="232" r="18" fill="#6366f1" />
-
-  <!-- Apex Arrowhead -->
-  <polygon points="416,74 438,138 376,116" fill="#c084fc" filter="url(#glow)" />
-
-  <!-- Peak Glowing Star / Sparkle of Wealth -->
-  <g transform="translate(426, 92)" filter="url(#glow)">
-    <path d="M 0 -18 Q 0 0 18 0 Q 0 0 0 18 Q 0 0 -18 0 Q 0 0 0 -18 Z" fill="#ffffff" />
-    <circle cx="0" cy="0" r="4" fill="#facc15" />
+  <!-- Main Center / Peak Arrow (Exponential Zenith Stage) -->
+  <g filter="url(#neonBlur)">
+    <path d="M 96 364 C 172 360 284 290 354 186 L 332 174 L 404 98 L 406 216 L 374 200 C 310 292 200 366 96 364 Z" fill="url(#neonGlow)" />
   </g>
 </svg>
