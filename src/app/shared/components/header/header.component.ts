@@ -175,12 +175,15 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
           </a>
 
           <!-- Loans Dropdown Menu -->
-          <div class="relative" (mouseleave)="loansDropdownOpen.set(false)">
+          <div
+            class="relative dropdown-container"
+            (mouseenter)="onMenuMouseEnter('loans')"
+            (mouseleave)="onMenuMouseLeave()"
+          >
             <button
               type="button"
-              (click)="toggleLoansDropdown()"
-              (mouseenter)="loansDropdownOpen.set(true)"
-              class="px-2.5 py-1.5 rounded-lg text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1"
+              (click)="toggleLoansDropdown($event)"
+              class="px-2.5 py-1.5 rounded-lg text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1 cursor-pointer select-none"
               [attr.aria-expanded]="loansDropdownOpen()"
             >
               <span>Loans</span>
@@ -189,114 +192,120 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
               </svg>
             </button>
 
+            <!-- Zero-gap wrapper with top-full pt-1 to prevent mouseleave jitter -->
             @if (loansDropdownOpen()) {
-              <div class="absolute left-0 mt-1 w-80 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                <div class="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 border-b border-slate-100 dark:border-slate-800/80 mb-1">
-                  Loans & Debt Suite
+              <div class="absolute left-0 top-full pt-1.5 w-84 z-50">
+                <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-2 animate-in fade-in slide-in-from-top-1 duration-150">
+                  <div class="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 border-b border-slate-100 dark:border-slate-800/80 mb-1">
+                    Loans & Debt Suite
+                  </div>
+
+                  <a
+                    [routerLink]="'/loan-prepayment-calculator'"
+                    (click)="navigateTo('/loan-prepayment-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-emerald-50/70 dark:hover:bg-emerald-950/40 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      🔥
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 flex items-center gap-1.5">
+                        <span>Prepayment Simulator</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300">Flagship</span>
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        See how extra payments slash interest & cut loan years
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    [routerLink]="'/emi-calculator'"
+                    (click)="navigateTo('/emi-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      ₹
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 flex items-center gap-1.5">
+                        <span>Loan EMI Calculator</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Popular</span>
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Standard reducing-balance monthly installment calculator
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    [routerLink]="'/home-loan-calculator'"
+                    (click)="navigateTo('/home-loan-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      🏠
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        Home Loan Calculator
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Mortgage payments, down payment planning & interest
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    [routerLink]="'/car-loan-calculator'"
+                    (click)="navigateTo('/car-loan-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      🚗
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400">
+                        Car Loan Calculator
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Auto financing terms, EMIs & down payment trade-offs
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    [routerLink]="'/loan-amortization-calculator'"
+                    (click)="navigateTo('/loan-amortization-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      📊
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400">
+                        Amortization Schedule
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Full monthly & annual principal vs. interest schedule
+                      </div>
+                    </div>
+                  </a>
                 </div>
-
-                <a
-                  routerLink="/loan-prepayment-calculator"
-                  (click)="loansDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-emerald-50/60 dark:hover:bg-emerald-950/40 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    🔥
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 flex items-center gap-1.5">
-                      <span>Prepayment Simulator</span>
-                      <span class="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300">Flagship</span>
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      See how extra payments slash interest & cut loan years
-                    </div>
-                  </div>
-                </a>
-
-                <a
-                  routerLink="/emi-calculator"
-                  (click)="loansDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    ₹
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 flex items-center gap-1.5">
-                      <span>Loan EMI Calculator</span>
-                      <span class="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Popular</span>
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Standard reducing-balance monthly installment calculator
-                    </div>
-                  </div>
-                </a>
-
-                <a
-                  routerLink="/home-loan-calculator"
-                  (click)="loansDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    🏠
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                      Home Loan Calculator
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Mortgage payments, down payment planning & interest
-                    </div>
-                  </div>
-                </a>
-
-                <a
-                  routerLink="/car-loan-calculator"
-                  (click)="loansDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    🚗
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400">
-                      Car Loan Calculator
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Auto financing terms, EMIs & down payment trade-offs
-                    </div>
-                  </div>
-                </a>
-
-                <a
-                  routerLink="/loan-amortization-calculator"
-                  (click)="loansDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    📊
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400">
-                      Amortization Schedule
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Full monthly & annual principal vs. interest schedule
-                    </div>
-                  </div>
-                </a>
               </div>
             }
           </div>
 
           <!-- Investments Dropdown Menu -->
-          <div class="relative" (mouseleave)="investmentsDropdownOpen.set(false)">
+          <div
+            class="relative dropdown-container"
+            (mouseenter)="onMenuMouseEnter('investments')"
+            (mouseleave)="onMenuMouseLeave()"
+          >
             <button
               type="button"
-              (click)="toggleInvestmentsDropdown()"
-              (mouseenter)="investmentsDropdownOpen.set(true)"
-              class="px-2.5 py-1.5 rounded-lg text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1"
+              (click)="toggleInvestmentsDropdown($event)"
+              class="px-2.5 py-1.5 rounded-lg text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1 cursor-pointer select-none"
               [attr.aria-expanded]="investmentsDropdownOpen()"
             >
               <span>Investments</span>
@@ -305,140 +314,143 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
               </svg>
             </button>
 
+            <!-- Zero-gap wrapper with top-full pt-1.5 to prevent mouseleave jitter -->
             @if (investmentsDropdownOpen()) {
-              <div class="absolute left-0 mt-1 w-88 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                <div class="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 border-b border-slate-100 dark:border-slate-800/80 mb-1">
-                  Investment & Wealth Suite
+              <div class="absolute left-0 top-full pt-1.5 w-88 z-50">
+                <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-2 animate-in fade-in slide-in-from-top-1 duration-150">
+                  <div class="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 border-b border-slate-100 dark:border-slate-800/80 mb-1">
+                    Investment & Wealth Suite
+                  </div>
+
+                  <a
+                    [routerLink]="'/step-up-investment-calculator'"
+                    (click)="navigateTo('/step-up-investment-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-purple-50/70 dark:hover:bg-purple-950/40 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      🚀
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 flex items-center gap-1.5">
+                        <span>Step-Up SIP Calculator</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300">Top Pick</span>
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Boost wealth by increasing investments with annual salary hikes
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    [routerLink]="'/compound-calculator'"
+                    (click)="navigateTo('/compound-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      📈
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 flex items-center gap-1.5">
+                        <span>Compound Interest Calculator</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Core</span>
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Lump-sum compounding over daily, monthly & annual intervals
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    [routerLink]="'/retirement-calculator'"
+                    (click)="navigateTo('/retirement-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      🎯
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 flex items-center gap-1.5">
+                        <span>Retirement & FIRE Planner</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300">FIRE</span>
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Calculate required retirement corpus & monthly savings needed
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    [routerLink]="'/sip-calculator'"
+                    (click)="navigateTo('/sip-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-teal-100 dark:bg-teal-950/80 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      💰
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400">
+                        SIP Growth Calculator
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Standard systematic investment wealth accumulation
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    [routerLink]="'/swp-calculator'"
+                    (click)="navigateTo('/swp-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      🏧
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400">
+                        SWP Calculator
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Systematic withdrawal cash flows & capital longevity
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    [routerLink]="'/inflation-calculator'"
+                    (click)="navigateTo('/inflation-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-red-100 dark:bg-red-950/80 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      📉
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400">
+                        Inflation & Purchasing Power
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Future living cost escalation & real value erosion
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    [routerLink]="'/savings-goal-calculator'"
+                    (click)="navigateTo('/savings-goal-calculator', $event)"
+                    class="cursor-pointer flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                      🏆
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                        Savings Goal Calculator
+                      </div>
+                      <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                        Target corpus reverse-engineering & required monthly saving
+                      </div>
+                    </div>
+                  </a>
                 </div>
-
-                <a
-                  routerLink="/step-up-investment-calculator"
-                  (click)="investmentsDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-purple-50/60 dark:hover:bg-purple-950/40 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    🚀
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 flex items-center gap-1.5">
-                      <span>Step-Up SIP Calculator</span>
-                      <span class="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300">Top Pick</span>
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Boost wealth by increasing investments with annual salary hikes
-                    </div>
-                  </div>
-                </a>
-
-                <a
-                  routerLink="/compound-calculator"
-                  (click)="investmentsDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    📈
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 flex items-center gap-1.5">
-                      <span>Compound Interest Calculator</span>
-                      <span class="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Core</span>
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Lump-sum compounding over daily, monthly & annual intervals
-                    </div>
-                  </div>
-                </a>
-
-                <a
-                  routerLink="/retirement-calculator"
-                  (click)="investmentsDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    🎯
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 flex items-center gap-1.5">
-                      <span>Retirement & FIRE Planner</span>
-                      <span class="text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300">FIRE</span>
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Calculate required retirement corpus & monthly savings needed
-                    </div>
-                  </div>
-                </a>
-
-                <a
-                  routerLink="/sip-calculator"
-                  (click)="investmentsDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-teal-100 dark:bg-teal-950/80 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    💰
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400">
-                      SIP Growth Calculator
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Standard systematic investment wealth accumulation
-                    </div>
-                  </div>
-                </a>
-
-                <a
-                  routerLink="/swp-calculator"
-                  (click)="investmentsDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    🏧
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400">
-                      SWP Calculator
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Systematic withdrawal cash flows & capital longevity
-                    </div>
-                  </div>
-                </a>
-
-                <a
-                  routerLink="/inflation-calculator"
-                  (click)="investmentsDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-red-100 dark:bg-red-950/80 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    📉
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400">
-                      Inflation & Purchasing Power
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Future living cost escalation & real value erosion
-                    </div>
-                  </div>
-                </a>
-
-                <a
-                  routerLink="/savings-goal-calculator"
-                  (click)="investmentsDropdownOpen.set(false)"
-                  class="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                >
-                  <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    🏆
-                  </div>
-                  <div>
-                    <div class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
-                      Savings Goal Calculator
-                    </div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
-                      Target corpus reverse-engineering & required monthly saving
-                    </div>
-                  </div>
-                </a>
               </div>
             }
           </div>
@@ -447,7 +459,7 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
           <a
             routerLink="/loan-prepayment-calculator"
             routerLinkActive="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
-            class="px-2.5 py-1.5 rounded-lg border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/40 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/40 transition-all"
+            class="px-2.5 py-1.5 rounded-lg border border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/40 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/40 transition-all cursor-pointer"
           >
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span>Prepayment Simulator</span>
@@ -497,7 +509,7 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
           <button
             type="button"
             (click)="shareClicked.emit()"
-            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs cursor-pointer"
             aria-label="Share this calculation"
           >
             <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -542,7 +554,7 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
           <button
             type="button"
             (click)="mobileMenuOpen.set(!mobileMenuOpen())"
-            class="lg:hidden p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300"
+            class="lg:hidden p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -577,7 +589,7 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
               <button
                 type="button"
                 (click)="mobileSearchQuery.set('')"
-                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1"
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 cursor-pointer"
                 aria-label="Clear mobile search"
               >
                 ✕
@@ -594,8 +606,8 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
               @for (calc of filteredMobileCalculators(); track calc.id) {
                 <a
                   [routerLink]="calc.route"
-                  (click)="mobileMenuOpen.set(false)"
-                  class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  (click)="navigateTo(calc.route, $event)"
+                  class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 >
                   <div>
                     <div class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
@@ -619,9 +631,9 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
           } @else {
             <!-- Standard Categorized Mobile Links -->
             <a
-              routerLink="/"
-              (click)="mobileMenuOpen.set(false)"
-              class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              [routerLink]="'/'"
+              (click)="navigateTo('/', $event)"
+              class="cursor-pointer flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             >
               <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -635,37 +647,37 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
                 Loans & Debt Suite
               </div>
               <a
-                routerLink="/loan-prepayment-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-2 rounded-lg text-sm font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/30 hover:bg-emerald-100"
+                [routerLink]="'/loan-prepayment-calculator'"
+                (click)="navigateTo('/loan-prepayment-calculator', $event)"
+                class="cursor-pointer block px-3 py-2 rounded-lg text-sm font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/30 hover:bg-emerald-100"
               >
                 🔥 Loan Prepayment Simulator (Flagship)
               </a>
               <a
-                routerLink="/emi-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/emi-calculator'"
+                (click)="navigateTo('/emi-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 Loan EMI Calculator
               </a>
               <a
-                routerLink="/home-loan-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/home-loan-calculator'"
+                (click)="navigateTo('/home-loan-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 Home Loan Calculator
               </a>
               <a
-                routerLink="/car-loan-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/car-loan-calculator'"
+                (click)="navigateTo('/car-loan-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 Car Loan Calculator
               </a>
               <a
-                routerLink="/loan-amortization-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/loan-amortization-calculator'"
+                (click)="navigateTo('/loan-amortization-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 Loan Amortization Schedule
               </a>
@@ -677,51 +689,51 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
                 Investment & Wealth Suite
               </div>
               <a
-                routerLink="/step-up-investment-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/step-up-investment-calculator'"
+                (click)="navigateTo('/step-up-investment-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 🚀 Step-Up SIP Calculator
               </a>
               <a
-                routerLink="/compound-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/compound-calculator'"
+                (click)="navigateTo('/compound-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 📈 Compound Interest Calculator
               </a>
               <a
-                routerLink="/retirement-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/retirement-calculator'"
+                (click)="navigateTo('/retirement-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 🎯 Retirement & FIRE Planner
               </a>
               <a
-                routerLink="/sip-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/sip-calculator'"
+                (click)="navigateTo('/sip-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 💰 SIP Calculator
               </a>
               <a
-                routerLink="/swp-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/swp-calculator'"
+                (click)="navigateTo('/swp-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 🏧 SWP Calculator
               </a>
               <a
-                routerLink="/inflation-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/inflation-calculator'"
+                (click)="navigateTo('/inflation-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 📉 Inflation Calculator
               </a>
               <a
-                routerLink="/savings-goal-calculator"
-                (click)="mobileMenuOpen.set(false)"
-                class="block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                [routerLink]="'/savings-goal-calculator'"
+                (click)="navigateTo('/savings-goal-calculator', $event)"
+                class="cursor-pointer block px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 🏆 Savings Goal Calculator
               </a>
@@ -731,7 +743,7 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
               <button
                 type="button"
                 (click)="shareClicked.emit(); mobileMenuOpen.set(false)"
-                class="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
+                class="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 cursor-pointer"
               >
                 🔗 Share Current Calculation
               </button>
@@ -767,7 +779,7 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
             <button
               type="button"
               (click)="closeSearchModal()"
-              class="px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              class="px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             >
               <kbd class="text-[10px] font-mono">ESC</kbd>
             </button>
@@ -779,7 +791,7 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
             <button
               type="button"
               (click)="searchCategoryFilter.set('all')"
-              class="px-2.5 py-0.5 rounded-full font-semibold transition-colors"
+              class="px-2.5 py-0.5 rounded-full font-semibold transition-colors cursor-pointer"
               [ngClass]="{
                 'bg-indigo-600 text-white shadow-2xs': searchCategoryFilter() === 'all',
                 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700': searchCategoryFilter() !== 'all'
@@ -790,7 +802,7 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
             <button
               type="button"
               (click)="searchCategoryFilter.set('loan')"
-              class="px-2.5 py-0.5 rounded-full font-semibold transition-colors"
+              class="px-2.5 py-0.5 rounded-full font-semibold transition-colors cursor-pointer"
               [ngClass]="{
                 'bg-emerald-600 text-white shadow-2xs': searchCategoryFilter() === 'loan',
                 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700': searchCategoryFilter() !== 'loan'
@@ -801,7 +813,7 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
             <button
               type="button"
               (click)="searchCategoryFilter.set('investment')"
-              class="px-2.5 py-0.5 rounded-full font-semibold transition-colors"
+              class="px-2.5 py-0.5 rounded-full font-semibold transition-colors cursor-pointer"
               [ngClass]="{
                 'bg-purple-600 text-white shadow-2xs': searchCategoryFilter() === 'investment',
                 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700': searchCategoryFilter() !== 'investment'
@@ -816,7 +828,7 @@ export const CALCULATOR_ITEMS: CalculatorItem[] = [
             @for (item of filteredCalculators(); track item.id) {
               <a
                 [routerLink]="item.route"
-                (click)="closeSearchModal()"
+                (click)="navigateTo(item.route, $event)"
                 class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group cursor-pointer"
               >
                 <div class="flex items-center gap-3">
@@ -892,6 +904,8 @@ export class HeaderComponent {
 
   readonly searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
 
+  private closeMenuTimeout: any = null;
+
   // Reactive Filter for Command Palette Search Modal
   readonly filteredCalculators = computed(() => {
     const q = this.searchQuery().trim().toLowerCase();
@@ -940,18 +954,77 @@ export class HeaderComponent {
     }
   }
 
-  toggleLoansDropdown(): void {
-    this.loansDropdownOpen.set(!this.loansDropdownOpen());
-    if (this.loansDropdownOpen()) {
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.dropdown-container')) {
+      this.loansDropdownOpen.set(false);
       this.investmentsDropdownOpen.set(false);
     }
   }
 
-  toggleInvestmentsDropdown(): void {
-    this.investmentsDropdownOpen.set(!this.investmentsDropdownOpen());
-    if (this.investmentsDropdownOpen()) {
+  onMenuMouseEnter(menu: 'loans' | 'investments'): void {
+    if (this.closeMenuTimeout) {
+      clearTimeout(this.closeMenuTimeout);
+      this.closeMenuTimeout = null;
+    }
+    if (menu === 'loans') {
+      this.loansDropdownOpen.set(true);
+      this.investmentsDropdownOpen.set(false);
+    } else {
+      this.investmentsDropdownOpen.set(true);
       this.loansDropdownOpen.set(false);
     }
+  }
+
+  onMenuMouseLeave(): void {
+    this.closeMenuTimeout = setTimeout(() => {
+      this.loansDropdownOpen.set(false);
+      this.investmentsDropdownOpen.set(false);
+    }, 250);
+  }
+
+  toggleLoansDropdown(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (this.closeMenuTimeout) {
+      clearTimeout(this.closeMenuTimeout);
+    }
+    const current = this.loansDropdownOpen();
+    this.loansDropdownOpen.set(!current);
+    if (!current) {
+      this.investmentsDropdownOpen.set(false);
+    }
+  }
+
+  toggleInvestmentsDropdown(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (this.closeMenuTimeout) {
+      clearTimeout(this.closeMenuTimeout);
+    }
+    const current = this.investmentsDropdownOpen();
+    this.investmentsDropdownOpen.set(!current);
+    if (!current) {
+      this.loansDropdownOpen.set(false);
+    }
+  }
+
+  navigateTo(route: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (this.closeMenuTimeout) {
+      clearTimeout(this.closeMenuTimeout);
+    }
+    this.loansDropdownOpen.set(false);
+    this.investmentsDropdownOpen.set(false);
+    this.searchModalOpen.set(false);
+    this.mobileMenuOpen.set(false);
+    this.router.navigateByUrl(route);
   }
 
   openSearchModal(): void {
