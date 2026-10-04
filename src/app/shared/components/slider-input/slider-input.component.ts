@@ -31,8 +31,10 @@ export interface QuickStep {
             [max]="max()"
             [step]="step()"
             [value]="value()"
-            (input)="onInputChange($event)"
-            (change)="onInputChange($event)"
+            (input)="onTextInput($event)"
+            (change)="onTextCommit($event)"
+            (blur)="onTextCommit($event)"
+            (keydown.enter)="$any($event.target).blur()"
             [attr.aria-label]="label()"
             class="py-1.5 text-right font-semibold text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all shadow-2xs"
             [ngClass]="inputClasses()"
@@ -54,11 +56,11 @@ export interface QuickStep {
           [min]="min()"
           [max]="max()"
           [step]="step()"
-          [value]="value()"
+          [value]="sliderValue()"
           (input)="onSliderChange($event)"
           (change)="onSliderChange($event)"
           [attr.aria-label]="label() + ' slider'"
-          class="w-full accent-indigo-600 dark:accent-indigo-500"
+          class="w-full accent-indigo-600 dark:accent-indigo-500 cursor-pointer"
         />
       </div>
 
@@ -92,6 +94,12 @@ export class SliderInputComponent {
 
   readonly valueChange = output<number>();
 
+  readonly sliderValue = computed(() => {
+    const v = this.value();
+    if (isNaN(v)) return this.min();
+    return Math.min(this.max(), Math.max(this.min(), v));
+  });
+
   readonly inputClasses = computed(() => {
     const hasPre = !!this.prefix();
     const suf = this.suffix() || '';
@@ -115,14 +123,37 @@ export class SliderInputComponent {
 
   onSliderChange(event: Event): void {
     const val = Number((event.target as HTMLInputElement).value);
-    this.valueChange.emit(val);
+    if (!isNaN(val)) {
+      this.valueChange.emit(val);
+    }
   }
 
-  onInputChange(event: Event): void {
-    const val = Number((event.target as HTMLInputElement).value);
-    if (!isNaN(val)) {
-      this.valueChange.emit(Math.min(this.max(), Math.max(this.min(), val)));
+  onTextInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    if (raw === '') {
+      // User is clearing the input to backspace or type a new number.
+      // Do not clamp to min() or force numbers while actively typing.
+      return;
     }
+    const val = Number(raw);
+    if (!isNaN(val)) {
+      // Allow fluid typing without premature lower-bound snapping (e.g. typing 2500 when min is 500)
+      this.valueChange.emit(val);
+    }
+  }
+
+  onTextCommit(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    let val = Number(raw);
+    if (raw === '' || isNaN(val)) {
+      val = this.min();
+    } else {
+      val = Math.min(this.max(), Math.max(this.min(), val));
+    }
+    input.value = String(val);
+    this.valueChange.emit(val);
   }
 
   applyDelta(delta: number): void {

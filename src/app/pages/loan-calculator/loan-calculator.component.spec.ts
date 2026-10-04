@@ -125,4 +125,57 @@ describe('LoanCalculatorComponent', () => {
     expect(comp.simulation().monthsSaved).toBe(0);
     expect(comp.simulation().prepaidLoan.tenureMonths).toBe(comp.simulation().originalLoan.tenureMonths);
   });
+
+  it('should allow fluid backspace clearing and typing without premature clamping to 10k', () => {
+    const fixture = TestBed.createComponent(LoanCalculatorComponent);
+    const comp = fixture.componentInstance;
+
+    // Simulate clearing loan amount input (empty string)
+    const emptyEvent = { target: { value: '' } } as any;
+    comp.onLoanAmountInput(emptyEvent);
+    // Value remains unchanged while input is empty so DOM doesn't get stomped
+    expect(comp.state().loanAmount).toBe(5000000);
+
+    // Simulate typing 5000 (which is less than min 10000, e.g. while typing 500000)
+    const partialEvent = { target: { value: '5000' } } as any;
+    comp.onLoanAmountInput(partialEvent);
+    expect(comp.state().loanAmount).toBe(5000); // Does NOT snap to 10000!
+
+    // On blur, if below min (10000), it clamps to 10000
+    const blurEvent = { target: { value: '5000' } } as any;
+    comp.onLoanAmountBlur(blurEvent);
+    expect(comp.state().loanAmount).toBe(10000);
+    expect(blurEvent.target.value).toBe('10000');
+
+    // On blur if empty, it restores default for preset (5000000 for home)
+    const blurEmptyEvent = { target: { value: '' } } as any;
+    comp.onLoanAmountBlur(blurEmptyEvent);
+    expect(comp.state().loanAmount).toBe(5000000);
+    expect(blurEmptyEvent.target.value).toBe('5000000');
+  });
+
+  it('should validate and clamp interest rate and tenure on blur', () => {
+    const fixture = TestBed.createComponent(LoanCalculatorComponent);
+    const comp = fixture.componentInstance;
+
+    // Interest rate blur with empty input restores default 8.5
+    const rateEmptyEvent = { target: { value: '' } } as any;
+    comp.onRateBlur(rateEmptyEvent);
+    expect(comp.state().annualInterestRate).toBe(8.5);
+
+    // Interest rate > 30 clamps to 30
+    const rateHighEvent = { target: { value: '45' } } as any;
+    comp.onRateBlur(rateHighEvent);
+    expect(comp.state().annualInterestRate).toBe(30);
+
+    // Tenure blur with empty input restores default 20
+    const tenureEmptyEvent = { target: { value: '' } } as any;
+    comp.onTenureBlur(tenureEmptyEvent);
+    expect(comp.state().tenureYears).toBe(20);
+
+    // Tenure > 40 clamps to 40
+    const tenureHighEvent = { target: { value: '60' } } as any;
+    comp.onTenureBlur(tenureHighEvent);
+    expect(comp.state().tenureYears).toBe(40);
+  });
 });

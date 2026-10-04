@@ -250,6 +250,9 @@ export class CalculatorViewComponent implements OnInit {
 
     // 2. Read query params if present to restore state
     this.route.queryParams.subscribe(params => {
+      if (this.urlStateService.isSyncing) {
+        return;
+      }
       if (params && Object.keys(params).length > 0) {
         const restored = this.urlStateService.applyQueryParams(params, this.state(), this.activeMode());
         this.state.set(restored);
@@ -268,8 +271,8 @@ export class CalculatorViewComponent implements OnInit {
     this.activeMode.set(mode);
     const targetPath = SEO_PAGES_DATA[mode].path;
 
-    // Navigate to dedicated SEO route and sync params
-    this.urlStateService.syncUrl(mode, this.state(), targetPath);
+    // Navigate to dedicated SEO route and sync params immediately
+    this.urlStateService.syncUrl(mode, this.state(), targetPath, true);
     this.updateSeo();
     this.saveStateLocally();
   }

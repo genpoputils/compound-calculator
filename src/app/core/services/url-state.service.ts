@@ -94,74 +94,89 @@ export class UrlStateService {
     }
   }
 
+  private isInternalSync = false;
+  private syncTimeout: any = null;
+
+  get isSyncing(): boolean {
+    return this.isInternalSync;
+  }
+
+  private safeNumber(val: any, fallback?: number): number | undefined {
+    if (val === undefined || val === null || val === '') return fallback;
+    const num = Number(val);
+    return isNaN(num) ? fallback : num;
+  }
+
   /**
    * Applies query params from URL into calculator state.
    */
   applyQueryParams(params: Record<string, string>, state: CalculatorState, mode: CalculationMode): CalculatorState {
     const updated = { ...state };
 
+    const getNum = (key: string): number | undefined => this.safeNumber(params[key]);
+
     switch (mode) {
       case 'compound-interest':
-        if (params['p'] !== undefined) updated.compoundInput.initialInvestment = Number(params['p']);
-        if (params['r'] !== undefined) updated.compoundInput.annualInterestRate = Number(params['r']);
+        if (getNum('p') !== undefined) updated.compoundInput.initialInvestment = getNum('p')!;
+        if (getNum('r') !== undefined) updated.compoundInput.annualInterestRate = getNum('r')!;
         if (params['f'] !== undefined) updated.compoundInput.compoundingFrequency = params['f'] as CompoundingFrequency;
-        if (params['d'] !== undefined) updated.compoundInput.duration = Number(params['d']);
+        if (getNum('d') !== undefined) updated.compoundInput.duration = getNum('d')!;
         if (params['u'] !== undefined) updated.compoundInput.durationUnit = params['u'] as DurationUnit;
-        if (params['i'] !== undefined) updated.compoundInput.inflationRate = Number(params['i']);
+        if (getNum('i') !== undefined) updated.compoundInput.inflationRate = getNum('i')!;
         break;
       case 'regular-investment':
-        if (params['p'] !== undefined) updated.regularInput.initialInvestment = Number(params['p']);
-        if (params['m'] !== undefined) updated.regularInput.regularContribution = Number(params['m']);
+        if (getNum('p') !== undefined) updated.regularInput.initialInvestment = getNum('p')!;
+        if (getNum('m') !== undefined) updated.regularInput.regularContribution = getNum('m')!;
         if (params['cf'] !== undefined) updated.regularInput.contributionFrequency = params['cf'] as ContributionFrequency;
-        if (params['r'] !== undefined) updated.regularInput.expectedAnnualReturn = Number(params['r']);
-        if (params['d'] !== undefined) updated.regularInput.durationYears = Number(params['d']);
-        if (params['i'] !== undefined) updated.regularInput.inflationRate = Number(params['i']);
+        if (getNum('r') !== undefined) updated.regularInput.expectedAnnualReturn = getNum('r')!;
+        if (getNum('d') !== undefined) updated.regularInput.durationYears = getNum('d')!;
+        if (getNum('i') !== undefined) updated.regularInput.inflationRate = getNum('i')!;
         break;
       case 'sip':
-        if (params['m'] !== undefined) updated.sipInput.startingMonthlyInvestment = Number(params['m']);
-        if (params['p'] !== undefined) updated.sipInput.initialInvestment = Number(params['p']);
-        if (params['r'] !== undefined) updated.sipInput.expectedAnnualReturn = Number(params['r']);
-        if (params['d'] !== undefined) updated.sipInput.durationYears = Number(params['d']);
-        if (params['i'] !== undefined) updated.sipInput.inflationRate = Number(params['i']);
+        if (getNum('m') !== undefined) updated.sipInput.startingMonthlyInvestment = getNum('m')!;
+        if (getNum('p') !== undefined) updated.sipInput.initialInvestment = getNum('p')!;
+        if (getNum('r') !== undefined) updated.sipInput.expectedAnnualReturn = getNum('r')!;
+        if (getNum('d') !== undefined) updated.sipInput.durationYears = getNum('d')!;
+        if (getNum('i') !== undefined) updated.sipInput.inflationRate = getNum('i')!;
         break;
       case 'step-up':
-        if (params['m'] !== undefined) updated.stepUpInput.startingMonthlyInvestment = Number(params['m']);
-        if (params['stepup'] !== undefined) updated.stepUpInput.annualStepUpPercent = Number(params['stepup']);
-        if (params['r'] !== undefined) updated.stepUpInput.expectedAnnualReturn = Number(params['r']);
-        if (params['d'] !== undefined) updated.stepUpInput.durationYears = Number(params['d']);
-        if (params['p'] !== undefined) updated.stepUpInput.initialInvestment = Number(params['p']);
-        if (params['i'] !== undefined) updated.stepUpInput.inflationRate = Number(params['i']);
+        if (getNum('m') !== undefined) updated.stepUpInput.startingMonthlyInvestment = getNum('m')!;
+        if (getNum('stepup') !== undefined) updated.stepUpInput.annualStepUpPercent = getNum('stepup')!;
+        if (getNum('r') !== undefined) updated.stepUpInput.expectedAnnualReturn = getNum('r')!;
+        if (getNum('d') !== undefined) updated.stepUpInput.durationYears = getNum('d')!;
+        if (getNum('p') !== undefined) updated.stepUpInput.initialInvestment = getNum('p')!;
+        if (getNum('i') !== undefined) updated.stepUpInput.inflationRate = getNum('i')!;
         break;
       case 'retirement':
-        if (params['age'] !== undefined) updated.retirementInput.currentAge = Number(params['age']);
-        if (params['retirement'] !== undefined) updated.retirementInput.retirementAge = Number(params['retirement']);
-        if (params['corpus'] !== undefined) updated.retirementInput.currentCorpus = Number(params['corpus']);
-        if (params['monthly'] !== undefined) updated.retirementInput.startingMonthlyInvestment = Number(params['monthly']);
-        if (params['stepup'] !== undefined) updated.retirementInput.annualStepUpPercent = Number(params['stepup']);
-        if (params['return'] !== undefined) updated.retirementInput.expectedAnnualReturn = Number(params['return']);
-        if (params['inflation'] !== undefined) updated.retirementInput.inflationRate = Number(params['inflation']);
-        if (params['expense'] !== undefined) updated.retirementInput.currentMonthlyExpense = Number(params['expense']);
+        if (getNum('age') !== undefined) updated.retirementInput.currentAge = getNum('age')!;
+        if (getNum('retirement') !== undefined) updated.retirementInput.retirementAge = getNum('retirement')!;
+        if (getNum('corpus') !== undefined) updated.retirementInput.currentCorpus = getNum('corpus')!;
+        if (getNum('monthly') !== undefined) updated.retirementInput.startingMonthlyInvestment = getNum('monthly')!;
+        if (getNum('stepup') !== undefined) updated.retirementInput.annualStepUpPercent = getNum('stepup')!;
+        if (getNum('return') !== undefined) updated.retirementInput.expectedAnnualReturn = getNum('return')!;
+        if (getNum('inflation') !== undefined) updated.retirementInput.inflationRate = getNum('inflation')!;
+        if (getNum('expense') !== undefined) updated.retirementInput.currentMonthlyExpense = getNum('expense')!;
         break;
       case 'inflation':
-        if (params['amount'] !== undefined) updated.inflationInput.currentAmount = Number(params['amount']);
-        if (params['rate'] !== undefined) updated.inflationInput.inflationRate = Number(params['rate']);
-        if (params['years'] !== undefined) updated.inflationInput.years = Number(params['years']);
+        if (getNum('amount') !== undefined) updated.inflationInput.currentAmount = getNum('amount')!;
+        if (getNum('rate') !== undefined) updated.inflationInput.inflationRate = getNum('rate')!;
+        if (getNum('years') !== undefined) updated.inflationInput.years = getNum('years')!;
         break;
       case 'savings-goal':
-        if (params['target'] !== undefined) updated.savingsGoalInput.targetAmount = Number(params['target']);
-        if (params['savings'] !== undefined) updated.savingsGoalInput.currentSavings = Number(params['savings']);
-        if (params['return'] !== undefined) updated.savingsGoalInput.expectedAnnualReturn = Number(params['return']);
-        if (params['duration'] !== undefined) updated.savingsGoalInput.durationYears = Number(params['duration']);
+        if (getNum('target') !== undefined) updated.savingsGoalInput.targetAmount = getNum('target')!;
+        if (getNum('savings') !== undefined) updated.savingsGoalInput.currentSavings = getNum('savings')!;
+        if (getNum('return') !== undefined) updated.savingsGoalInput.expectedAnnualReturn = getNum('return')!;
+        if (getNum('duration') !== undefined) updated.savingsGoalInput.durationYears = getNum('duration')!;
         if (params['frequency'] !== undefined) updated.savingsGoalInput.contributionFrequency = params['frequency'] as ContributionFrequency;
-        if (params['inflation'] !== undefined) updated.savingsGoalInput.inflationRate = Number(params['inflation']);
+        if (getNum('inflation') !== undefined) updated.savingsGoalInput.inflationRate = getNum('inflation')!;
         break;
       case 'swp':
-        if (params['corpus'] !== undefined) updated.swpInput.initialCorpus = Number(params['corpus']);
-        if (params['withdrawal'] !== undefined) updated.swpInput.monthlyWithdrawal = Number(params['withdrawal']);
-        if (params['return'] !== undefined) updated.swpInput.expectedAnnualReturn = Number(params['return']);
-        if (params['duration'] !== undefined) updated.swpInput.durationYears = Number(params['duration']);
-        if (params['stepup'] !== undefined) updated.swpInput.annualWithdrawalIncreasePercent = Number(params['stepup']);
-        if (params['inflation'] !== undefined) updated.swpInput.inflationRate = Number(params['inflation']);
+        if (getNum('corpus') !== undefined) updated.swpInput.initialCorpus = getNum('corpus')!;
+        if (getNum('withdrawal') !== undefined) updated.swpInput.monthlyWithdrawal = getNum('withdrawal')!;
+        if (getNum('return') !== undefined) updated.swpInput.expectedAnnualReturn = getNum('return')!;
+        if (getNum('duration') !== undefined) updated.swpInput.durationYears = getNum('duration')!;
+        if (getNum('stepup') !== undefined) updated.swpInput.annualWithdrawalIncreasePercent = getNum('stepup')!;
+        if (getNum('inflation') !== undefined) updated.swpInput.inflationRate = getNum('inflation')!;
         break;
     }
 
@@ -170,13 +185,32 @@ export class UrlStateService {
 
   /**
    * Syncs the URL query parameters without reloading the page.
+   * Debounces by default to prevent navigation floods while typing.
    */
-  syncUrl(mode: CalculationMode, state: CalculatorState, pathname: string): void {
-    const queryParams = this.getQueryParams(mode, state);
-    this.router.navigate([pathname], {
-      queryParams,
-      replaceUrl: true
-    });
+  syncUrl(mode: CalculationMode, state: CalculatorState, pathname: string, immediate = false): void {
+    if (this.syncTimeout) {
+      clearTimeout(this.syncTimeout);
+      this.syncTimeout = null;
+    }
+
+    const performSync = () => {
+      const queryParams = this.getQueryParams(mode, state);
+      this.isInternalSync = true;
+      this.router.navigate([pathname], {
+        queryParams,
+        replaceUrl: true
+      }).finally(() => {
+        setTimeout(() => {
+          this.isInternalSync = false;
+        }, 150);
+      });
+    };
+
+    if (immediate) {
+      performSync();
+    } else {
+      this.syncTimeout = setTimeout(performSync, 400);
+    }
   }
 
   /**

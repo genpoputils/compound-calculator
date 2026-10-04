@@ -111,6 +111,9 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
   // Active Chart Tab
   readonly activeChartTab = signal<LoanChartTab>('balance');
 
+  private isInternalUrlSync = false;
+  private urlSyncTimeout: any = null;
+
   constructor() {
     effect(() => {
       // Re-render chart automatically whenever active currency or theme changes
@@ -181,6 +184,9 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
 
     // 2. Read query params if present
     this.route.queryParams.subscribe(params => {
+      if (this.isInternalUrlSync) {
+        return;
+      }
       if (params && Object.keys(params).length > 0) {
         this.applyUrlParams(params);
       } else if (this.isBrowser) {
@@ -202,10 +208,147 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnDestroy(): void {
+    if (this.urlSyncTimeout) {
+      clearTimeout(this.urlSyncTimeout);
+      this.urlSyncTimeout = null;
+    }
     if (this.chartInstance) {
       this.chartInstance.destroy();
       this.chartInstance = null;
     }
+  }
+
+  // --- Dynamic Input Handlers (Prevent premature clamping while backspacing/typing) ---
+
+  onLoanAmountInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    if (raw === '') return;
+    const val = Number(raw);
+    if (!isNaN(val)) {
+      this.updateField('loanAmount', val);
+    }
+  }
+
+  onLoanAmountBlur(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    let val = Number(raw);
+    const preset = this.state().activePreset;
+    const defaultAmount = preset === 'car' ? 1200000 : preset === 'personal' ? 500000 : 5000000;
+
+    if (raw === '' || isNaN(val)) {
+      val = defaultAmount;
+    } else if (val < 10000) {
+      val = 10000;
+    } else if (val > 500000000) {
+      val = 500000000;
+    }
+    input.value = String(val);
+    this.updateField('loanAmount', val);
+  }
+
+  onRateInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    if (raw === '') return;
+    const val = Number(raw);
+    if (!isNaN(val)) {
+      this.updateField('annualInterestRate', val);
+    }
+  }
+
+  onRateBlur(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    let val = Number(raw);
+    const preset = this.state().activePreset;
+    const defaultRate = preset === 'car' ? 9.0 : preset === 'personal' ? 12.0 : 8.5;
+
+    if (raw === '' || isNaN(val) || val <= 0) {
+      val = defaultRate;
+    } else if (val > 30) {
+      val = 30;
+    } else if (val < 0.1) {
+      val = 0.1;
+    }
+    input.value = String(val);
+    this.updateField('annualInterestRate', val);
+  }
+
+  onTenureInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    if (raw === '') return;
+    const val = Number(raw);
+    if (!isNaN(val)) {
+      this.updateField('tenureYears', val);
+    }
+  }
+
+  onTenureBlur(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    let val = Number(raw);
+    const isYears = this.state().tenureUnit === 'years';
+    const preset = this.state().activePreset;
+    const defaultTenure = preset === 'car' ? (isYears ? 5 : 60) : preset === 'personal' ? (isYears ? 3 : 36) : (isYears ? 20 : 240);
+    const minVal = isYears ? 1 : 12;
+    const maxVal = isYears ? 40 : 480;
+
+    if (raw === '' || isNaN(val) || val < minVal) {
+      val = defaultTenure;
+    } else if (val > maxVal) {
+      val = maxVal;
+    }
+    input.value = String(val);
+    this.updateField('tenureYears', val);
+  }
+
+  onPrepaymentInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    if (raw === '') return;
+    const val = Number(raw);
+    if (!isNaN(val)) {
+      this.updateField('oneTimePrepaymentAmount', Math.max(0, val));
+    }
+  }
+
+  onPrepaymentBlur(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    let val = Number(raw);
+    if (raw === '' || isNaN(val) || val < 0) {
+      val = 0;
+    } else if (val > 100000000) {
+      val = 100000000;
+    }
+    input.value = String(val);
+    this.updateField('oneTimePrepaymentAmount', val);
+  }
+
+  onRecurringInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    if (raw === '') return;
+    const val = Number(raw);
+    if (!isNaN(val)) {
+      this.updateField('recurringPrepaymentAmount', Math.max(0, val));
+    }
+  }
+
+  onRecurringBlur(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    let val = Number(raw);
+    if (raw === '' || isNaN(val) || val < 0) {
+      val = 0;
+    } else if (val > 50000000) {
+      val = 50000000;
+    }
+    input.value = String(val);
+    this.updateField('recurringPrepaymentAmount', val);
   }
 
   // --- State Updates & Mutations ---
@@ -336,7 +479,7 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
 
   private onStateChanged(): void {
     this.saveStateLocally();
-    this.syncUrlParams();
+    this.debouncedSyncUrlParams();
     this.renderOrUpdateChart();
   }
 
@@ -346,11 +489,26 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
+  private debouncedSyncUrlParams(): void {
+    if (this.urlSyncTimeout) {
+      clearTimeout(this.urlSyncTimeout);
+      this.urlSyncTimeout = null;
+    }
+    this.urlSyncTimeout = setTimeout(() => {
+      this.syncUrlParams();
+    }, 400);
+  }
+
   private syncUrlParams(): void {
     const targetPath = SEO_PAGES_DATA[this.activeMode()]?.path || '/loan-prepayment-calculator';
+    this.isInternalUrlSync = true;
     this.router.navigate([targetPath], {
       queryParams: this.getQueryParams(),
       replaceUrl: true
+    }).finally(() => {
+      setTimeout(() => {
+        this.isInternalUrlSync = false;
+      }, 150);
     });
   }
 
@@ -386,18 +544,37 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
   private applyUrlParams(params: Record<string, string>): void {
     this.state.update(s => {
       const next = { ...s };
-      if (params['amount']) next.loanAmount = Math.max(10000, Number(params['amount']) || 5000000);
-      if (params['rate']) next.annualInterestRate = Math.max(0.1, Number(params['rate']) || 8.5);
-      if (params['tenure']) next.tenureYears = Math.max(1, Number(params['tenure']) || 20);
+      if (params['amount'] !== undefined && !isNaN(Number(params['amount']))) {
+        const amt = Number(params['amount']);
+        if (amt > 0) next.loanAmount = amt;
+      }
+      if (params['rate'] !== undefined && !isNaN(Number(params['rate']))) {
+        const r = Number(params['rate']);
+        if (r > 0) next.annualInterestRate = r;
+      }
+      if (params['tenure'] !== undefined && !isNaN(Number(params['tenure']))) {
+        const t = Number(params['tenure']);
+        if (t > 0) next.tenureYears = t;
+      }
       if (params['unit']) next.tenureUnit = params['unit'] === 'months' ? 'months' : 'years';
       if (params['mode']) next.prepaymentMode = params['mode'] === 'reduce-emi' ? 'reduce-emi' : 'reduce-tenure';
       if (params['prepaymentEnabled'] !== undefined) next.enablePrepayment = params['prepaymentEnabled'] === 'true';
-      if (params['prepayment']) next.oneTimePrepaymentAmount = Math.max(0, Number(params['prepayment']) || 0);
-      if (params['prepaymentMonth']) next.oneTimePrepaymentMonth = Math.max(0, Number(params['prepaymentMonth']) || 36);
-      if (params['recurringAmount']) next.recurringPrepaymentAmount = Math.max(0, Number(params['recurringAmount']) || 0);
+      if (params['prepayment'] !== undefined && !isNaN(Number(params['prepayment']))) {
+        next.oneTimePrepaymentAmount = Math.max(0, Number(params['prepayment']));
+      }
+      if (params['prepaymentMonth'] !== undefined && !isNaN(Number(params['prepaymentMonth']))) {
+        next.oneTimePrepaymentMonth = Math.max(1, Number(params['prepaymentMonth']));
+      }
+      if (params['recurringAmount'] !== undefined && !isNaN(Number(params['recurringAmount']))) {
+        next.recurringPrepaymentAmount = Math.max(0, Number(params['recurringAmount']));
+      }
       if (params['frequency']) next.prepaymentFrequency = params['frequency'] as PrepaymentFrequency;
-      if (params['stepUp']) next.annualEmiIncreasePercent = Math.max(0, Number(params['stepUp']) || 0);
-      if (params['emiStep']) next.annualEmiIncreaseAmount = Math.max(0, Number(params['emiStep']) || 0);
+      if (params['stepUp'] !== undefined && !isNaN(Number(params['stepUp']))) {
+        next.annualEmiIncreasePercent = Math.max(0, Number(params['stepUp']));
+      }
+      if (params['emiStep'] !== undefined && !isNaN(Number(params['emiStep']))) {
+        next.annualEmiIncreaseAmount = Math.max(0, Number(params['emiStep']));
+      }
       return next;
     });
   }
