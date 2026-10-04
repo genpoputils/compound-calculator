@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
             Important Financial Disclosure
           </p>
           <p class="leading-relaxed">
-            <strong>Disclaimer:</strong> This calculator provides mathematical estimates based on the assumptions you enter. Actual investment returns, market fluctuations, inflation, taxes, and future economic conditions will differ. This tool is for educational and personal financial planning purposes only and does not constitute financial advice. Consult a licensed financial advisor before making actual investment decisions.
+            <strong>Disclaimer:</strong> Calculations and simulations provided on CompoundCalc are mathematical estimates for educational and planning purposes only and may differ from actual lender, bank, or investment results. Interest rates, compounding frequencies, processing fees, taxation, and individual lender policies affect final outcomes. This platform does not provide certified financial advice. Always consult a licensed financial professional before making financial commitments.
           </p>
         </div>
       </div>

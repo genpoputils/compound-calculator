@@ -35,13 +35,55 @@ import { DisclaimerComponent } from '../disclaimer/disclaimer.component';
 
         <!-- Links Grid -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
+          <!-- Loan Calculators Column -->
           <div class="space-y-3">
-            <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-              Investment Calculators
+            <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>Loan & Debt</span>
             </h5>
             <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
               <li>
-                <a routerLink="/step-up-investment-calculator" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                <a routerLink="/loan-prepayment-calculator" class="text-emerald-600 dark:text-emerald-400 font-bold hover:underline">
+                  🔥 Loan Prepayment Simulator
+                </a>
+              </li>
+              <li>
+                <a routerLink="/emi-calculator" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                  Loan EMI Calculator
+                </a>
+              </li>
+              <li>
+                <a routerLink="/loan-amortization-calculator" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                  Amortization Schedule
+                </a>
+              </li>
+              <li>
+                <a routerLink="/home-loan-calculator" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                  Home Loan Calculator
+                </a>
+              </li>
+              <li>
+                <a routerLink="/car-loan-calculator" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                  Car Loan Calculator
+                </a>
+              </li>
+              <li>
+                <a routerLink="/loan-calculator" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                  Comprehensive Loan
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Investment Calculators Column -->
+          <div class="space-y-3">
+            <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+              <span>Investment & Growth</span>
+            </h5>
+            <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+              <li>
+                <a routerLink="/step-up-investment-calculator" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">
                   Step-Up SIP Calculator
                 </a>
               </li>
@@ -62,20 +104,22 @@ import { DisclaimerComponent } from '../disclaimer/disclaimer.component';
               </li>
               <li>
                 <a routerLink="/swp-calculator" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                  SWP Calculator (Systematic Withdrawal)
+                  SWP (Systematic Withdrawal)
                 </a>
               </li>
             </ul>
           </div>
 
+          <!-- Planning & Goals Column -->
           <div class="space-y-3">
-            <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-              Planning & Goals
+            <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+              <span>Planning & Goals</span>
             </h5>
             <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
               <li>
                 <a routerLink="/retirement-calculator" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                  Retirement Savings Calculator
+                  Retirement Planning
                 </a>
               </li>
               <li>
@@ -88,39 +132,27 @@ import { DisclaimerComponent } from '../disclaimer/disclaimer.component';
                   Inflation & Purchasing Power
                 </a>
               </li>
-            </ul>
-          </div>
-
-          <div class="space-y-3">
-            <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-              Resources & Methodology
-            </h5>
-            <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
               <li>
-                <span class="text-slate-500">Nominal vs Real Returns</span>
+                <span class="text-slate-400">Reduce Tenure vs EMI Guide</span>
               </li>
               <li>
-                <span class="text-slate-500">The Power of Step-Up SIP</span>
-              </li>
-              <li>
-                <span class="text-slate-500">4% Safe Withdrawal Rule</span>
-              </li>
-              <li>
-                <span class="text-slate-500">Compounding Frequency Guide</span>
+                <span class="text-slate-400">Safe Withdrawal 4% Rule</span>
               </li>
             </ul>
           </div>
 
+          <!-- Platform & Open Source Column -->
           <div class="space-y-3">
-            <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-              Engineering & Open Source
+            <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+              <span>Privacy & Architecture</span>
             </h5>
             <p class="text-xs text-slate-500 leading-relaxed">
-              Built with Angular 20+, Standalone Components, Signals, and Tailwind CSS. All mathematical calculations run strictly in client memory.
+              100% Client-Side. Calculations execute in browser memory with zero tracking. Pure mathematical algorithms.
             </p>
             <div class="pt-1">
               <span class="text-[11px] text-slate-400 font-mono">
-                genpoputils/compound-calculator
+                CompoundCalc Financial Engine
               </span>
             </div>
           </div>

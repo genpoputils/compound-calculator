@@ -44,6 +44,18 @@
 
   <!-- SECTION 5: MAIN CALCULATOR CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8" id="main-calculator-card">
+    <!-- BREADCRUMB / RETURN TO HOMEPAGE -->
+    <nav class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400" aria-label="Breadcrumb">
+      <a routerLink="/" class="hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 font-semibold transition-colors">
+        <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span>Home</span>
+      </a>
+      <span class="text-slate-300 dark:text-slate-700">/</span>
+      <span class="text-slate-700 dark:text-slate-300 font-medium">{{ currentSeoData().heading }}</span>
+    </nav>
+
     <!-- MODE SELECTOR TABS -->
     <div class="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar py-2 -mx-4 px-4 sm:mx-0 sm:px-0">
       <div class="inline-flex items-center p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 shadow-xs backdrop-blur-md gap-1">
@@ -708,9 +720,9 @@
                 [step]="10000"
                 [prefix]="currencyService.symbol()"
                 [quickSteps]="[
-                  { label: '+50k', delta: 50000 },
-                  { label: '+1L', delta: 100000 },
-                  { label: '+5L', delta: 500000 }
+                  { label: '+' + currencyService.formatCompact(50000), delta: 50000 },
+                  { label: '+' + currencyService.formatCompact(100000), delta: 100000 },
+                  { label: '+' + currencyService.formatCompact(500000), delta: 500000 }
                 ]"
                 (valueChange)="updateInflation('currentAmount', $event)"
               />
@@ -751,9 +763,9 @@
                 [step]="100000"
                 [prefix]="currencyService.symbol()"
                 [quickSteps]="[
-                  { label: '25 Lakh', delta: 2500000 - state().savingsGoalInput.targetAmount },
-                  { label: '50 Lakh', delta: 5000000 - state().savingsGoalInput.targetAmount },
-                  { label: '1 Crore', delta: 10000000 - state().savingsGoalInput.targetAmount }
+                  { label: currencyService.formatCompact(2500000), delta: 2500000 - state().savingsGoalInput.targetAmount },
+                  { label: currencyService.formatCompact(5000000), delta: 5000000 - state().savingsGoalInput.targetAmount },
+                  { label: currencyService.formatCompact(10000000), delta: 10000000 - state().savingsGoalInput.targetAmount }
                 ]"
                 (valueChange)="updateSavingsGoal('targetAmount', $event)"
               />
@@ -1032,6 +1044,87 @@
                 ? ('Equivalent purchasing power of the remaining balance in today’s money at ' + activeInflationRate() + '% annual inflation.')
                 : ('Equivalent purchasing power in today’s money at ' + activeInflationRate() + '% annual inflation.')"
             />
+          }
+
+          <!-- Flat SIP vs Step-Up SIP Comparison (Section 11) -->
+          @if (activeMode() === 'step-up' && flatVsStepUp()) {
+            <div class="p-4 sm:p-5 rounded-2xl border border-indigo-200 dark:border-indigo-900/60 bg-gradient-to-br from-indigo-50/80 via-purple-50/40 to-slate-50/20 dark:from-indigo-950/40 dark:via-purple-950/20 dark:to-slate-900/30 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
+                  Flat SIP vs Step-Up SIP Comparison
+                </span>
+                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md">
+                  +{{ flatVsStepUp()?.percentageCorpusIncrease }}% More Corpus
+                </span>
+              </div>
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+                  <div class="text-slate-500">Regular Flat SIP:</div>
+                  <div class="text-sm font-bold text-slate-800 dark:text-slate-200">
+                    {{ flatVsStepUp()?.flatSip?.futureValue | inrCurrency:'compact' }}
+                  </div>
+                  <div class="text-[10px] text-slate-400">Total Invested: {{ flatVsStepUp()?.flatSip?.totalInvested | inrCurrency:'compact' }}</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-indigo-200 dark:border-indigo-800">
+                  <div class="text-indigo-600 dark:text-indigo-400 font-semibold">With Annual Step-Up:</div>
+                  <div class="text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
+                    {{ flatVsStepUp()?.stepUpSip?.futureValue | inrCurrency:'compact' }}
+                  </div>
+                  <div class="text-[10px] text-slate-400">Total Invested: {{ flatVsStepUp()?.stepUpSip?.totalInvested | inrCurrency:'compact' }}</div>
+                </div>
+              </div>
+              <div class="text-xs text-slate-600 dark:text-slate-300">
+                By stepping up your investment by <strong>{{ state().stepUpInput.annualStepUpPercent }}% each year</strong>, you build an extra <strong class="text-emerald-600 dark:text-emerald-400">{{ flatVsStepUp()?.extraWealthCreated | inrCurrency:'compact' }}</strong> in final wealth!
+              </div>
+            </div>
+          }
+
+          <!-- Retirement Status & Gap Analysis (Section 12) -->
+          @if (activeMode() === 'retirement' && retirementAnalysis()) {
+            <div class="p-4 sm:p-5 rounded-2xl border space-y-3"
+              [ngClass]="{
+                'border-emerald-500/50 bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-900 dark:text-emerald-200': retirementAnalysis()?.status === 'surplus',
+                'border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20 text-amber-900 dark:text-amber-200': retirementAnalysis()?.status === 'on-track',
+                'border-rose-500/50 bg-rose-50/50 dark:bg-rose-950/20 text-rose-900 dark:text-rose-200': retirementAnalysis()?.status === 'shortfall'
+              }"
+            >
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold uppercase tracking-wider">
+                  Retirement Readiness Status
+                </span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded-md uppercase"
+                  [ngClass]="{
+                    'bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200': retirementAnalysis()?.status === 'surplus',
+                    'bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-200': retirementAnalysis()?.status === 'on-track',
+                    'bg-rose-200 dark:bg-rose-900 text-rose-900 dark:text-rose-200': retirementAnalysis()?.status === 'shortfall'
+                  }"
+                >
+                  {{ retirementAnalysis()?.status === 'surplus' ? 'Surplus' : retirementAnalysis()?.status === 'shortfall' ? 'Shortfall' : 'On Track' }}
+                </span>
+              </div>
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+                  <div class="text-slate-500">Required Corpus:</div>
+                  <div class="text-sm font-bold text-slate-900 dark:text-white">
+                    {{ retirementAnalysis()?.requiredCorpus | inrCurrency:'compact' }}
+                  </div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
+                  <div class="text-slate-500">Projected Corpus:</div>
+                  <div class="text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
+                    {{ retirementAnalysis()?.projectedCorpus | inrCurrency:'compact' }}
+                  </div>
+                </div>
+              </div>
+              <p class="text-xs leading-relaxed">
+                {{ retirementAnalysis()?.statusReason }}
+              </p>
+              @if (retirementAnalysis()?.status === 'shortfall') {
+                <div class="text-xs font-semibold text-rose-600 dark:text-rose-400">
+                  Recommended Monthly SIP: {{ retirementAnalysis()?.requiredMonthlySip | inrCurrency:'compact' }}/month
+                </div>
+              }
+            </div>
           }
 
           <!-- Retirement Purchasing Power Benefit -->

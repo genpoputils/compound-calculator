@@ -6,7 +6,13 @@ export type CalculationMode =
   | 'retirement'
   | 'inflation'
   | 'savings-goal'
-  | 'swp';
+  | 'swp'
+  | 'loan-prepayment'
+  | 'emi'
+  | 'loan-amortization'
+  | 'home-loan'
+  | 'car-loan'
+  | 'loan';
 
 export type CompoundingFrequency = 'annually' | 'semi-annually' | 'quarterly' | 'monthly' | 'daily';
 

@@ -1,0 +1,767 @@
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+  signal,
+  viewChild
+} from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Chart, registerables } from 'chart.js';
+import {
+  AmortizationEntry,
+  AnnualAmortizationSummary,
+  PrepaymentFrequency,
+  PrepaymentMode,
+  PrepaymentSimulationResult,
+  simulatePrepayment
+} from '../../core/finance';
+import { CurrencyService } from '../../core/services/currency.service';
+import { ToastService } from '../../core/services/toast.service';
+import { StorageService } from '../../core/services/storage.service';
+import { SeoService } from '../../core/services/seo.service';
+import { SEO_PAGES_DATA, SeoPageContent } from '../../core/seo/seo-content.data';
+import { CalculationMode } from '../../core/calculator/models/calculator.types';
+import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
+import { AdBannerComponent } from '../../shared/components/ad-banner/ad-banner.component';
+
+Chart.register(...registerables);
+
+export type LoanPresetType = 'home' | 'car' | 'personal' | 'custom';
+export type LoanChartTab = 'balance' | 'breakdown' | 'cumulative-interest' | 'annual-bar';
+
+export interface LoanCalculatorState {
+  loanAmount: number;
+  annualInterestRate: number;
+  tenureYears: number;
+  tenureUnit: 'years' | 'months';
+  startDate: string; // YYYY-MM
+  enablePrepayment: boolean; // Prepayment simulation toggle (opt-in / opt-out)
+  prepaymentMode: PrepaymentMode;
+  oneTimePrepaymentAmount: number;
+  oneTimePrepaymentMonth: number;
+  prepaymentFrequency: PrepaymentFrequency;
+  recurringPrepaymentAmount: number;
+  recurringStartMonth: number;
+  annualEmiIncreasePercent: number;
+  annualEmiIncreaseAmount: number;
+  showAdvanced: boolean;
+  activePreset: LoanPresetType;
+}
+
+const DEFAULT_LOAN_STATE: LoanCalculatorState = {
+  loanAmount: 5000000, // ₹50 Lakh default
+  annualInterestRate: 8.5,
+  tenureYears: 20,
+  tenureUnit: 'years',
+  startDate: new Date().toISOString().substring(0, 7), // "YYYY-MM"
+  enablePrepayment: true,
+  prepaymentMode: 'reduce-tenure',
+  oneTimePrepaymentAmount: 500000, // ₹5 Lakh after 3 years benchmark
+  oneTimePrepaymentMonth: 36,
+  prepaymentFrequency: 'one-time',
+  recurringPrepaymentAmount: 0,
+  recurringStartMonth: 12,
+  annualEmiIncreasePercent: 0,
+  annualEmiIncreaseAmount: 0,
+  showAdvanced: false,
+  activePreset: 'home'
+};
+
+@Component({
+  selector: 'app-loan-calculator',
+  standalone: true,
+  imports: [CommonModule, RouterLink, InrCurrencyPipe, AdBannerComponent],
+  templateUrl: './loan-calculator.component.html'
+})
+export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy {
+  protected readonly Math = Math;
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  readonly currencyService = inject(CurrencyService);
+  private readonly toastService = inject(ToastService);
+  private readonly storageService = inject(StorageService);
+  private readonly seoService = inject(SeoService);
+
+  // View Child for Chart Canvas
+  readonly chartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('chartCanvas');
+  private chartInstance: Chart | null = null;
+
+  // Active Mode for SEO and Navigation (e.g. 'loan-prepayment', 'emi', 'loan-amortization', 'home-loan', 'car-loan', 'loan')
+  readonly activeMode = signal<CalculationMode>('loan-prepayment');
+
+  // Master State
+  readonly state = signal<LoanCalculatorState>({ ...DEFAULT_LOAN_STATE });
+
+  // Amortization Table View controls
+  readonly scheduleViewMode = signal<'monthly' | 'annual'>('monthly');
+  readonly scheduleRowsPerPage = signal<number>(24);
+  readonly scheduleCurrentPage = signal<number>(1);
+
+  // Active Chart Tab
+  readonly activeChartTab = signal<LoanChartTab>('balance');
+
+  constructor() {
+    effect(() => {
+      // Re-render chart automatically whenever active currency changes
+      this.currencyService.selectedCurrency();
+      if (this.isBrowser) {
+        this.renderOrUpdateChart();
+      }
+    });
+  }
+
+  // Prepayment active status flag
+  readonly hasPrepayment = computed<boolean>(() => {
+    const s = this.state();
+    return s.enablePrepayment && (
+      (s.oneTimePrepaymentAmount > 0) ||
+      (s.recurringPrepaymentAmount > 0) ||
+      (s.annualEmiIncreasePercent > 0) ||
+      (s.annualEmiIncreaseAmount > 0)
+    );
+  });
+
+  // Reactive Simulation Result
+  readonly simulation = computed<PrepaymentSimulationResult>(() => {
+    const s = this.state();
+    const tenureMonths = s.tenureUnit === 'years' ? s.tenureYears * 12 : s.tenureYears;
+
+    return simulatePrepayment({
+      loanAmount: s.loanAmount,
+      annualInterestRate: s.annualInterestRate,
+      tenureMonths,
+      startDate: s.startDate ? `${s.startDate}-01` : undefined,
+      mode: s.prepaymentMode,
+      oneTimePrepaymentAmount: s.enablePrepayment ? s.oneTimePrepaymentAmount : 0,
+      oneTimePrepaymentMonth: s.oneTimePrepaymentMonth,
+      prepaymentFrequency: s.prepaymentFrequency,
+      recurringPrepaymentAmount: s.enablePrepayment ? s.recurringPrepaymentAmount : 0,
+      recurringStartMonth: s.recurringStartMonth,
+      annualEmiIncreasePercent: s.enablePrepayment ? s.annualEmiIncreasePercent : 0,
+      annualEmiIncreaseAmount: s.enablePrepayment ? s.annualEmiIncreaseAmount : 0
+    });
+  });
+
+  // Table pagination items
+  readonly visibleMonthlyEntries = computed<AmortizationEntry[]>(() => {
+    const list = this.simulation().monthlySchedule;
+    const pageSize = this.scheduleRowsPerPage();
+    if (pageSize >= list.length) return list;
+    const start = (this.scheduleCurrentPage() - 1) * pageSize;
+    return list.slice(start, start + pageSize);
+  });
+
+  readonly totalMonthlyPages = computed<number>(() => {
+    const list = this.simulation().monthlySchedule;
+    const pageSize = this.scheduleRowsPerPage();
+    return Math.max(1, Math.ceil(list.length / pageSize));
+  });
+
+  // Current Mode SEO
+  readonly currentSeoData = computed<SeoPageContent>(() => {
+    return SEO_PAGES_DATA[this.activeMode()] || SEO_PAGES_DATA['loan-prepayment'];
+  });
+
+  ngOnInit(): void {
+    // 1. Detect route to set preset and activeMode
+    const path = this.router.url.split('?')[0];
+    this.configureModeFromPath(path);
+
+    // 2. Read query params if present
+    this.route.queryParams.subscribe(params => {
+      if (params && Object.keys(params).length > 0) {
+        this.applyUrlParams(params);
+      } else if (this.isBrowser) {
+        // Load saved state from local storage if available
+        const saved = this.storageService.getItem<LoanCalculatorState | null>('cc_loan_state', null);
+        if (saved) {
+          this.state.set({ ...DEFAULT_LOAN_STATE, ...saved });
+        }
+      }
+      this.updateSeo();
+      this.renderOrUpdateChart();
+    });
+  }
+
+  ngAfterViewInit(): void {
+    if (this.isBrowser) {
+      setTimeout(() => this.renderOrUpdateChart(), 100);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+      this.chartInstance = null;
+    }
+  }
+
+  // --- State Updates & Mutations ---
+
+  updateField<K extends keyof LoanCalculatorState>(key: K, value: LoanCalculatorState[K]): void {
+    this.state.update(s => {
+      const next = { ...s, [key]: value };
+      const maxMonths = next.tenureUnit === 'years' ? next.tenureYears * 12 : next.tenureYears;
+      if (next.oneTimePrepaymentMonth > maxMonths) {
+        next.oneTimePrepaymentMonth = Math.max(1, maxMonths);
+      }
+      return next;
+    });
+    this.scheduleCurrentPage.set(1);
+    this.onStateChanged();
+  }
+
+  setPreset(preset: LoanPresetType): void {
+    this.state.update(s => {
+      const next = { ...s, activePreset: preset };
+      switch (preset) {
+        case 'home':
+          next.loanAmount = 5000000;
+          next.annualInterestRate = 8.5;
+          next.tenureYears = 20;
+          next.tenureUnit = 'years';
+          next.oneTimePrepaymentAmount = 500000;
+          next.oneTimePrepaymentMonth = 36;
+          break;
+        case 'car':
+          next.loanAmount = 1200000;
+          next.annualInterestRate = 9.0;
+          next.tenureYears = 5;
+          next.tenureUnit = 'years';
+          next.oneTimePrepaymentAmount = 150000;
+          next.oneTimePrepaymentMonth = 24;
+          break;
+        case 'personal':
+          next.loanAmount = 500000;
+          next.annualInterestRate = 12.0;
+          next.tenureYears = 3;
+          next.tenureUnit = 'years';
+          next.oneTimePrepaymentAmount = 50000;
+          next.oneTimePrepaymentMonth = 12;
+          break;
+        case 'custom':
+        default:
+          break;
+      }
+      return next;
+    });
+    this.onStateChanged();
+  }
+
+  setPrepaymentMode(mode: PrepaymentMode): void {
+    this.updateField('prepaymentMode', mode);
+  }
+
+  setScheduleView(view: 'monthly' | 'annual'): void {
+    this.scheduleViewMode.set(view);
+    this.scheduleCurrentPage.set(1);
+  }
+
+  setChartTab(tab: LoanChartTab): void {
+    this.activeChartTab.set(tab);
+    this.renderOrUpdateChart();
+  }
+
+  toggleRowsPerPage(): void {
+    this.scheduleCurrentPage.set(1);
+    this.scheduleRowsPerPage.update(r => (r === 24 ? 9999 : 24));
+  }
+
+  // Quick "What If?" Scenario Presets
+  applyWhatIfScenario(type: 'prepay-5l-3yr' | 'extra-5k-emi' | 'prepay-1l-yearly' | '1-extra-emi-yearly'): void {
+    this.state.update(s => {
+      const next = { ...s, enablePrepayment: true };
+      const currentEmi = this.simulation().originalLoan.monthlyEmi;
+
+      switch (type) {
+        case 'prepay-5l-3yr':
+          next.oneTimePrepaymentAmount = 500000;
+          next.oneTimePrepaymentMonth = 36;
+          next.prepaymentMode = 'reduce-tenure';
+          break;
+        case 'extra-5k-emi':
+          next.annualEmiIncreaseAmount = 5000;
+          next.prepaymentMode = 'reduce-tenure';
+          break;
+        case 'prepay-1l-yearly':
+          next.recurringPrepaymentAmount = 100000;
+          next.prepaymentFrequency = 'annually';
+          next.recurringStartMonth = 12;
+          next.prepaymentMode = 'reduce-tenure';
+          break;
+        case '1-extra-emi-yearly':
+          next.recurringPrepaymentAmount = Math.round(currentEmi);
+          next.prepaymentFrequency = 'annually';
+          next.recurringStartMonth = 12;
+          next.prepaymentMode = 'reduce-tenure';
+          break;
+      }
+      return next;
+    });
+    this.onStateChanged();
+    this.toastService.show('Applied "What If" simulation scenario.', 'success');
+  }
+
+  // Quick Amount Buttons
+  setQuickAmount(amount: number): void {
+    this.updateField('loanAmount', amount);
+  }
+
+  setQuickPrepayment(amount: number): void {
+    this.updateField('oneTimePrepaymentAmount', amount);
+  }
+
+  // Navigation / Mode Switcher
+  switchRouteMode(mode: CalculationMode): void {
+    this.activeMode.set(mode);
+    const targetPath = SEO_PAGES_DATA[mode]?.path || '/loan-prepayment-calculator';
+    this.router.navigate([targetPath], {
+      queryParams: this.getQueryParams(),
+      queryParamsHandling: 'merge'
+    });
+    this.updateSeo();
+  }
+
+  private onStateChanged(): void {
+    this.saveStateLocally();
+    this.syncUrlParams();
+    this.renderOrUpdateChart();
+  }
+
+  private saveStateLocally(): void {
+    if (this.isBrowser) {
+      this.storageService.setItem('cc_loan_state', this.state());
+    }
+  }
+
+  private syncUrlParams(): void {
+    const targetPath = SEO_PAGES_DATA[this.activeMode()]?.path || '/loan-prepayment-calculator';
+    this.router.navigate([targetPath], {
+      queryParams: this.getQueryParams(),
+      replaceUrl: true
+    });
+  }
+
+  private getQueryParams(): Record<string, string | number> {
+    const s = this.state();
+    const params: Record<string, string | number> = {
+      amount: s.loanAmount,
+      rate: s.annualInterestRate,
+      tenure: s.tenureYears,
+      unit: s.tenureUnit,
+      mode: s.prepaymentMode,
+      prepaymentEnabled: s.enablePrepayment ? 'true' : 'false'
+    };
+    if (s.enablePrepayment) {
+      if (s.oneTimePrepaymentAmount > 0) {
+        params['prepayment'] = s.oneTimePrepaymentAmount;
+        params['prepaymentMonth'] = s.oneTimePrepaymentMonth;
+      }
+      if (s.recurringPrepaymentAmount > 0) {
+        params['recurringAmount'] = s.recurringPrepaymentAmount;
+        params['frequency'] = s.prepaymentFrequency;
+      }
+      if (s.annualEmiIncreasePercent > 0) {
+        params['stepUp'] = s.annualEmiIncreasePercent;
+      }
+      if (s.annualEmiIncreaseAmount > 0) {
+        params['emiStep'] = s.annualEmiIncreaseAmount;
+      }
+    }
+    return params;
+  }
+
+  private applyUrlParams(params: Record<string, string>): void {
+    this.state.update(s => {
+      const next = { ...s };
+      if (params['amount']) next.loanAmount = Math.max(10000, Number(params['amount']) || 5000000);
+      if (params['rate']) next.annualInterestRate = Math.max(0.1, Number(params['rate']) || 8.5);
+      if (params['tenure']) next.tenureYears = Math.max(1, Number(params['tenure']) || 20);
+      if (params['unit']) next.tenureUnit = params['unit'] === 'months' ? 'months' : 'years';
+      if (params['mode']) next.prepaymentMode = params['mode'] === 'reduce-emi' ? 'reduce-emi' : 'reduce-tenure';
+      if (params['prepaymentEnabled'] !== undefined) next.enablePrepayment = params['prepaymentEnabled'] === 'true';
+      if (params['prepayment']) next.oneTimePrepaymentAmount = Math.max(0, Number(params['prepayment']) || 0);
+      if (params['prepaymentMonth']) next.oneTimePrepaymentMonth = Math.max(0, Number(params['prepaymentMonth']) || 36);
+      if (params['recurringAmount']) next.recurringPrepaymentAmount = Math.max(0, Number(params['recurringAmount']) || 0);
+      if (params['frequency']) next.prepaymentFrequency = params['frequency'] as PrepaymentFrequency;
+      if (params['stepUp']) next.annualEmiIncreasePercent = Math.max(0, Number(params['stepUp']) || 0);
+      if (params['emiStep']) next.annualEmiIncreaseAmount = Math.max(0, Number(params['emiStep']) || 0);
+      return next;
+    });
+  }
+
+  private configureModeFromPath(path: string): void {
+    if (path.includes('home-loan')) {
+      this.activeMode.set('home-loan');
+      this.setPreset('home');
+      this.state.update(s => ({ ...s, enablePrepayment: false }));
+    } else if (path.includes('car-loan')) {
+      this.activeMode.set('car-loan');
+      this.setPreset('car');
+      this.state.update(s => ({ ...s, enablePrepayment: false }));
+    } else if (path.includes('emi-calculator')) {
+      this.activeMode.set('emi');
+      this.state.update(s => ({ ...s, enablePrepayment: false }));
+    } else if (path.includes('loan-amortization')) {
+      this.activeMode.set('loan-amortization');
+      this.state.update(s => ({ ...s, enablePrepayment: false }));
+    } else if (path.includes('loan-calculator')) {
+      this.activeMode.set('loan');
+      this.state.update(s => ({ ...s, enablePrepayment: false }));
+    } else {
+      this.activeMode.set('loan-prepayment');
+      this.state.update(s => ({ ...s, enablePrepayment: true }));
+    }
+  }
+
+  private updateSeo(): void {
+    const seoData = this.currentSeoData();
+    if (seoData) {
+      this.seoService.updateMeta(seoData.seo);
+    }
+  }
+
+  // --- Share, Reset, CSV Export ---
+
+  copyShareUrl(): void {
+    if (this.isBrowser && navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        this.toastService.show('Scenario share link copied to clipboard!', 'success');
+      });
+    }
+  }
+
+  resetCalculator(): void {
+    this.state.set({ ...DEFAULT_LOAN_STATE });
+    if (this.isBrowser) {
+      this.storageService.removeItem('cc_loan_state');
+    }
+    this.onStateChanged();
+    this.toastService.show('Loan parameters reset to default.', 'info');
+  }
+
+  exportScheduleCsv(): void {
+    if (!this.isBrowser) return;
+    const sim = this.simulation();
+    const rows = sim.monthlySchedule;
+
+    const headers = [
+      'Payment #',
+      'Date',
+      'Opening Balance',
+      'EMI',
+      'Principal',
+      'Interest',
+      'Prepayment',
+      'Closing Balance',
+      'Cumulative Interest',
+      'Loan Progress %'
+    ];
+
+    const csvLines = [headers.join(',')];
+
+    for (const r of rows) {
+      csvLines.push(
+        [
+          r.paymentNumber,
+          `"${r.dateStr}"`,
+          r.openingBalance,
+          r.emi,
+          r.principal,
+          r.interest,
+          r.prepayment,
+          r.closingBalance,
+          r.cumulativeInterest,
+          `${r.loanProgressPercent}%`
+        ].join(',')
+      );
+    }
+
+    const blob = new Blob([csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `compoundcalc-loan-schedule-${new Date().toISOString().substring(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    this.toastService.show('Amortization schedule exported to CSV.', 'success');
+  }
+
+  // --- Chart.js Rendering ---
+
+  private renderOrUpdateChart(): void {
+    if (!this.isBrowser) return;
+    const canvasRef = this.chartCanvas();
+    if (!canvasRef) return;
+
+    const ctx = canvasRef.nativeElement.getContext('2d');
+    if (!ctx) return;
+
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+      this.chartInstance = null;
+    }
+
+    const tab = this.activeChartTab();
+    const sim = this.simulation();
+
+    if (tab === 'balance') {
+      this.renderBalanceTrajectoryChart(ctx, sim);
+    } else if (tab === 'breakdown') {
+      this.renderBreakdownDoughnutChart(ctx, sim);
+    } else if (tab === 'cumulative-interest') {
+      this.renderCumulativeInterestChart(ctx, sim);
+    } else if (tab === 'annual-bar') {
+      this.renderAnnualStackedBarChart(ctx, sim);
+    }
+  }
+
+  private renderBalanceTrajectoryChart(ctx: CanvasRenderingContext2D, sim: PrepaymentSimulationResult): void {
+    // Collect labels and points every 6 or 12 months for clean visualization
+    const originalTenure = sim.originalLoan.tenureMonths;
+    const step = originalTenure > 120 ? 12 : originalTenure > 60 ? 6 : 1;
+
+    const labels: string[] = [];
+    const prepaidPoints: (number | null)[] = [];
+    const originalPoints: number[] = [];
+
+    // Map monthly entries for fast lookup
+    const prepaidMap = new Map<number, number>();
+    for (const r of sim.monthlySchedule) {
+      prepaidMap.set(r.paymentNumber, r.closingBalance);
+    }
+
+    // Baseline amortization schedule
+    const baselineMonthlyRate = this.state().annualInterestRate / 12 / 100;
+    const baselineEmi = sim.originalLoan.monthlyEmi;
+    let bBalance = sim.originalLoan.totalPrincipal;
+
+    for (let m = 1; m <= originalTenure; m++) {
+      const interest = baselineMonthlyRate === 0 ? 0 : bBalance * baselineMonthlyRate;
+      const principal = Math.min(bBalance, baselineEmi - interest);
+      bBalance = Math.max(0, bBalance - principal);
+
+      if (m % step === 0 || m === originalTenure || m === 1) {
+        labels.push(`Month ${m}`);
+        originalPoints.push(Math.round(bBalance));
+
+        const pBalance = prepaidMap.get(m);
+        if (pBalance !== undefined) {
+          prepaidPoints.push(Math.round(pBalance));
+        } else {
+          prepaidPoints.push(0); // Loan already closed!
+        }
+      }
+    }
+
+    const datasets: any[] = [];
+
+    if (this.hasPrepayment()) {
+      datasets.push(
+        {
+          label: 'With Prepayment',
+          data: prepaidPoints,
+          borderColor: '#10b981', // Emerald green
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          fill: true,
+          tension: 0.3,
+          borderWidth: 3,
+          pointRadius: 2
+        },
+        {
+          label: 'Original Without Prepayment',
+          data: originalPoints,
+          borderColor: '#6366f1', // Indigo
+          backgroundColor: 'transparent',
+          borderDash: [5, 5],
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 0
+        }
+      );
+    } else {
+      datasets.push({
+        label: 'Scheduled Loan Balance',
+        data: originalPoints,
+        borderColor: '#6366f1', // Indigo
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        fill: true,
+        tension: 0.3,
+        borderWidth: 3,
+        pointRadius: 2
+      });
+    }
+
+    this.chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'top', labels: { boxWidth: 12, font: { size: 12, weight: 600 } } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` ${ctx.dataset.label}: ${this.currencyService.formatCompact(Number(ctx.raw) || 0)}`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            ticks: {
+              callback: (val) => this.currencyService.formatCompact(Number(val))
+            }
+          }
+        }
+      }
+    });
+  }
+
+  private renderBreakdownDoughnutChart(ctx: CanvasRenderingContext2D, sim: PrepaymentSimulationResult): void {
+    const principal = sim.prepaidLoan.totalPrincipal;
+    const interest = sim.prepaidLoan.totalInterest;
+
+    this.chartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Principal Repaid', 'Total Interest'],
+        datasets: [
+          {
+            data: [principal, interest],
+            backgroundColor: ['#6366f1', '#f59e0b'], // Indigo, Amber
+            borderWidth: 0,
+            hoverOffset: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 14, font: { size: 13, weight: 600 } } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` ${ctx.label}: ${this.currencyService.formatFull(Number(ctx.raw) || 0)} (${this.currencyService.formatCompact(Number(ctx.raw) || 0)})`
+            }
+          }
+        }
+      }
+    });
+  }
+
+  private renderCumulativeInterestChart(ctx: CanvasRenderingContext2D, sim: PrepaymentSimulationResult): void {
+    const rows = sim.monthlySchedule;
+    const step = rows.length > 120 ? 12 : rows.length > 60 ? 6 : 1;
+
+    const labels: string[] = [];
+    const interestPoints: number[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      if (r.paymentNumber % step === 0 || i === rows.length - 1) {
+        labels.push(r.dateStr);
+        interestPoints.push(Math.round(r.cumulativeInterest));
+      }
+    }
+
+    this.chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Cumulative Interest Paid',
+            data: interestPoints,
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245, 158, 11, 0.12)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 3,
+            pointRadius: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` Cumulative Interest: ${this.currencyService.formatCompact(Number(ctx.raw) || 0)}`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            ticks: {
+              callback: (val) => this.currencyService.formatCompact(Number(val))
+            }
+          }
+        }
+      }
+    });
+  }
+
+  private renderAnnualStackedBarChart(ctx: CanvasRenderingContext2D, sim: PrepaymentSimulationResult): void {
+    const annual = sim.annualSchedule;
+    const labels = annual.map(a => `Year ${a.yearNumber}`);
+    const principalData = annual.map(a => a.totalPrincipal + a.totalPrepayment);
+    const interestData = annual.map(a => a.totalInterest);
+
+    this.chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Principal + Prepayment',
+            data: principalData,
+            backgroundColor: '#6366f1'
+          },
+          {
+            label: 'Interest Paid',
+            data: interestData,
+            backgroundColor: '#f59e0b'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { stacked: true, grid: { display: false } },
+          y: {
+            stacked: true,
+            ticks: {
+              callback: (val) => this.currencyService.formatCompact(Number(val))
+            }
+          }
+        },
+        plugins: {
+          legend: { position: 'top', labels: { boxWidth: 12, font: { size: 12, weight: 600 } } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` ${ctx.dataset.label}: ${this.currencyService.formatCompact(Number(ctx.raw) || 0)}`
+            }
+          }
+        }
+      }
+    });
+  }
+}

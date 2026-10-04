@@ -1,0 +1,1205 @@
+<div class="relative overflow-hidden">
+  <!-- Subtle ambient decorative glow -->
+  <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-r from-emerald-500/15 via-indigo-500/10 to-teal-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+  <!-- HERO SECTION -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-14 pb-6 sm:pb-10 text-center space-y-4">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-semibold backdrop-blur-xs">
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span>Flagship Decision Simulator</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-tight">
+      {{ currentSeoData().heading }}
+    </h1>
+
+    <p class="text-base sm:text-lg font-medium text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+      {{ currentSeoData().subheading }}
+    </p>
+
+    <!-- Quick Preset Buttons -->
+    <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
+      <button
+        type="button"
+        (click)="setPreset('home')"
+        class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all border"
+        [ngClass]="{
+          'bg-indigo-600 text-white border-indigo-600 shadow-sm': state().activePreset === 'home',
+          'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800': state().activePreset !== 'home'
+        }"
+      >
+        🏡 Home Loan ({{ currencyService.formatCompact(5000000) }} @ 8.5%)
+      </button>
+
+      <button
+        type="button"
+        (click)="setPreset('car')"
+        class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all border"
+        [ngClass]="{
+          'bg-indigo-600 text-white border-indigo-600 shadow-sm': state().activePreset === 'car',
+          'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800': state().activePreset !== 'car'
+        }"
+      >
+        🚗 Car Loan ({{ currencyService.formatCompact(1200000) }} @ 9.0%)
+      </button>
+
+      <button
+        type="button"
+        (click)="setPreset('personal')"
+        class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all border"
+        [ngClass]="{
+          'bg-indigo-600 text-white border-indigo-600 shadow-sm': state().activePreset === 'personal',
+          'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800': state().activePreset !== 'personal'
+        }"
+      >
+        💼 Personal Loan ({{ currencyService.formatCompact(500000) }} @ 12%)
+      </button>
+    </div>
+  </section>
+
+  <!-- TOP AD BANNER -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+    <app-ad-banner slotType="leaderboard" />
+  </section>
+
+  <!-- MAIN CALCULATOR CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8" id="loan-calculator-main">
+
+    <!-- BREADCRUMB / RETURN TO HOMEPAGE -->
+    <nav class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400" aria-label="Breadcrumb">
+      <a routerLink="/" class="hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 font-semibold transition-colors">
+        <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span>Home</span>
+      </a>
+      <span class="text-slate-300 dark:text-slate-700">/</span>
+      <span class="text-slate-700 dark:text-slate-300 font-medium">{{ currentSeoData().heading }}</span>
+    </nav>
+
+    <!-- SUB-NAV / CALCULATOR TYPE SWITCHER -->
+    <div class="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar py-1">
+      <div class="inline-flex items-center p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 shadow-xs backdrop-blur-md gap-1">
+        <button
+          type="button"
+          (click)="switchRouteMode('loan-prepayment')"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-emerald-600 text-white shadow-xs': activeMode() === 'loan-prepayment',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'loan-prepayment'
+          }"
+        >
+          ✨ Prepayment Simulator
+        </button>
+
+        <button
+          type="button"
+          (click)="switchRouteMode('emi')"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'emi',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'emi'
+          }"
+        >
+          EMI Calculator
+        </button>
+
+        <button
+          type="button"
+          (click)="switchRouteMode('loan-amortization')"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'loan-amortization',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'loan-amortization'
+          }"
+        >
+          Amortization Schedule
+        </button>
+
+        <button
+          type="button"
+          (click)="switchRouteMode('home-loan')"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'home-loan',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'home-loan'
+          }"
+        >
+          Home Loan
+        </button>
+
+        <button
+          type="button"
+          (click)="switchRouteMode('car-loan')"
+          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow-xs': activeMode() === 'car-loan',
+            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'car-loan'
+          }"
+        >
+          Car Loan
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN WORKBENCH -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- LEFT COLUMN: INPUT CONTROLS (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 sm:p-7 shadow-sm space-y-6 backdrop-blur-md">
+
+          <!-- Card Header & Actions -->
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <span>Loan Parameters</span>
+            </h2>
+
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                (click)="copyShareUrl()"
+                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Share this calculation scenario"
+              >
+                <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                <span>Share</span>
+              </button>
+
+              <button
+                type="button"
+                (click)="resetCalculator()"
+                class="text-xs font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                title="Reset to default values"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- INPUT 1: Loan Amount -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label for="loan-amount-input" class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Loan Amount
+              </label>
+              <span class="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                {{ currencyService.formatCompact(state().loanAmount) }}
+              </span>
+            </div>
+
+            <div class="relative">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
+                {{ currencyService.symbol() }}
+              </span>
+              <input
+                id="loan-amount-input"
+                type="number"
+                [value]="state().loanAmount"
+                (input)="updateField('loanAmount', +$any($event.target).value)"
+                min="10000"
+                max="50000000"
+                step="50000"
+                class="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 text-base font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+              />
+            </div>
+
+            <!-- Range slider -->
+            <input
+              type="range"
+              [value]="state().loanAmount"
+              (input)="updateField('loanAmount', +$any($event.target).value)"
+              min="100000"
+              [max]="Math.max(50000000, state().loanAmount)"
+              step="50000"
+              class="w-full h-2 rounded-lg cursor-pointer"
+            />
+
+            <!-- Quick preset buttons for Loan Amount -->
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button
+                type="button"
+                (click)="setQuickAmount(2500000)"
+                class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              >
+                {{ currencyService.formatCompact(2500000) }}
+              </button>
+              <button
+                type="button"
+                (click)="setQuickAmount(5000000)"
+                class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              >
+                {{ currencyService.formatCompact(5000000) }}
+              </button>
+              <button
+                type="button"
+                (click)="setQuickAmount(7500000)"
+                class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              >
+                {{ currencyService.formatCompact(7500000) }}
+              </button>
+              <button
+                type="button"
+                (click)="setQuickAmount(10000000)"
+                class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              >
+                {{ currencyService.formatCompact(10000000) }}
+              </button>
+            </div>
+          </div>
+
+          <!-- INPUT 2: Interest Rate -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label for="interest-rate-input" class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Interest Rate (p.a.)
+              </label>
+              <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">
+                {{ state().annualInterestRate }}%
+              </span>
+            </div>
+
+            <div class="relative">
+              <input
+                id="interest-rate-input"
+                type="number"
+                [value]="state().annualInterestRate"
+                (input)="updateField('annualInterestRate', +$any($event.target).value)"
+                min="0.1"
+                max="25"
+                step="0.1"
+                class="w-full pl-4 pr-8 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 text-base font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+              />
+              <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
+                %
+              </span>
+            </div>
+
+            <input
+              type="range"
+              [value]="state().annualInterestRate"
+              (input)="updateField('annualInterestRate', +$any($event.target).value)"
+              min="4"
+              max="18"
+              step="0.1"
+              class="w-full h-2 rounded-lg cursor-pointer"
+            />
+          </div>
+
+          <!-- INPUT 3: Loan Tenure -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label for="loan-tenure-input" class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Loan Tenure
+              </label>
+              <div class="flex items-center p-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-semibold">
+                <button
+                  type="button"
+                  (click)="updateField('tenureUnit', 'years')"
+                  class="px-2 py-0.5 rounded-md transition-all"
+                  [ngClass]="{ 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-2xs': state().tenureUnit === 'years' }"
+                >
+                  Years
+                </button>
+                <button
+                  type="button"
+                  (click)="updateField('tenureUnit', 'months')"
+                  class="px-2 py-0.5 rounded-md transition-all"
+                  [ngClass]="{ 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-2xs': state().tenureUnit === 'months' }"
+                >
+                  Months
+                </button>
+              </div>
+            </div>
+
+            <div class="relative">
+              <input
+                id="loan-tenure-input"
+                type="number"
+                [value]="state().tenureYears"
+                (input)="updateField('tenureYears', +$any($event.target).value)"
+                [min]="state().tenureUnit === 'years' ? 1 : 12"
+                [max]="state().tenureUnit === 'years' ? 40 : 480"
+                step="1"
+                class="w-full pl-4 pr-16 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 text-base font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+              />
+              <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">
+                {{ state().tenureUnit }}
+              </span>
+            </div>
+
+            <input
+              type="range"
+              [value]="state().tenureYears"
+              (input)="updateField('tenureYears', +$any($event.target).value)"
+              [min]="state().tenureUnit === 'years' ? 1 : 12"
+              [max]="state().tenureUnit === 'years' ? 30 : 360"
+              step="1"
+              class="w-full h-2 rounded-lg cursor-pointer"
+            />
+          </div>
+
+          <!-- PREPAYMENT SIMULATION SECTION -->
+          <div class="pt-4 border-t border-slate-200/80 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 text-[10px] font-extrabold uppercase tracking-wider">
+                  Simulator
+                </span>
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white">
+                  Prepayment Analysis
+                </h3>
+              </div>
+
+              <!-- Prepayment Opt-in / Opt-out Toggle Switch -->
+              <label class="relative inline-flex items-center cursor-pointer" title="Toggle prepayment simulation on or off">
+                <input
+                  type="checkbox"
+                  [checked]="state().enablePrepayment"
+                  (change)="updateField('enablePrepayment', $any($event.target).checked)"
+                  class="sr-only peer"
+                />
+                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-600"></div>
+                <span class="ml-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                  {{ state().enablePrepayment ? 'Enabled' : 'Opted Out' }}
+                </span>
+              </label>
+            </div>
+
+            @if (state().enablePrepayment) {
+
+            <!-- Prepayment Mode Toggle: Mode A vs Mode B -->
+            <div class="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                (click)="setPrepaymentMode('reduce-tenure')"
+                class="p-2.5 rounded-xl border text-left transition-all"
+                [ngClass]="{
+                  'border-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200 shadow-2xs': state().prepaymentMode === 'reduce-tenure',
+                  'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300': state().prepaymentMode !== 'reduce-tenure'
+                }"
+              >
+                <div class="text-xs font-extrabold flex items-center justify-between">
+                  <span>Reduce Tenure</span>
+                  @if (state().prepaymentMode === 'reduce-tenure') {
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  }
+                </div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  Keep EMI same. Save max interest & close loan earlier.
+                </div>
+              </button>
+
+              <button
+                type="button"
+                (click)="setPrepaymentMode('reduce-emi')"
+                class="p-2.5 rounded-xl border text-left transition-all"
+                [ngClass]="{
+                  'border-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200 shadow-2xs': state().prepaymentMode === 'reduce-emi',
+                  'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300': state().prepaymentMode !== 'reduce-emi'
+                }"
+              >
+                <div class="text-xs font-extrabold flex items-center justify-between">
+                  <span>Reduce EMI</span>
+                  @if (state().prepaymentMode === 'reduce-emi') {
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  }
+                </div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  Keep tenure same. Lower your monthly installment.
+                </div>
+              </button>
+            </div>
+
+            <!-- One-Time Prepayment Amount -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <label for="prepayment-amount-input" class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Lump Sum Prepayment
+                </label>
+                <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  {{ currencyService.formatCompact(state().oneTimePrepaymentAmount) }}
+                </span>
+              </div>
+
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
+                  {{ currencyService.symbol() }}
+                </span>
+                <input
+                  id="prepayment-amount-input"
+                  type="number"
+                  [value]="state().oneTimePrepaymentAmount"
+                  (input)="updateField('oneTimePrepaymentAmount', +$any($event.target).value)"
+                  min="0"
+                  max="10000000"
+                  step="25000"
+                  class="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 text-base font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                />
+              </div>
+
+              <input
+                type="range"
+                [value]="state().oneTimePrepaymentAmount"
+                (input)="updateField('oneTimePrepaymentAmount', +$any($event.target).value)"
+                min="0"
+                [max]="Math.max(10000000, state().loanAmount)"
+                step="25000"
+                class="w-full h-2 rounded-lg cursor-pointer"
+              />
+
+              <!-- Prepayment Month -->
+              @if (state().oneTimePrepaymentAmount > 0) {
+                <div class="pt-2 flex items-center justify-between text-xs">
+                  <span class="text-slate-500 dark:text-slate-400">Prepayment Timing:</span>
+                  <span class="font-bold text-slate-900 dark:text-white">
+                    Month {{ state().oneTimePrepaymentMonth }} (Year {{ Math.ceil(state().oneTimePrepaymentMonth / 12) }})
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  [value]="state().oneTimePrepaymentMonth"
+                  (input)="updateField('oneTimePrepaymentMonth', +$any($event.target).value)"
+                  min="1"
+                  [max]="state().tenureUnit === 'years' ? state().tenureYears * 12 : state().tenureYears"
+                  step="1"
+                  class="w-full h-2 rounded-lg cursor-pointer"
+                />
+              }
+            </div>
+
+            <!-- Advanced Prepayment Options Toggle -->
+            <div class="pt-2">
+              <button
+                type="button"
+                (click)="updateField('showAdvanced', !state().showAdvanced)"
+                class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+              >
+                <span>{{ state().showAdvanced ? 'Hide Advanced Options' : '+ Show Recurring Prepayment & EMI Increase' }}</span>
+              </button>
+
+              @if (state().showAdvanced) {
+                <div class="mt-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 space-y-4">
+                  <!-- Recurring Prepayment -->
+                  <div class="space-y-1.5">
+                    <div class="flex items-center justify-between text-xs font-semibold">
+                      <span class="text-slate-600 dark:text-slate-300">Recurring Prepayment</span>
+                      <span class="text-emerald-600 dark:text-emerald-400">
+                        {{ currencyService.formatCompact(state().recurringPrepaymentAmount) }}
+                      </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                      <input
+                        type="number"
+                        [value]="state().recurringPrepaymentAmount"
+                        (input)="updateField('recurringPrepaymentAmount', +$any($event.target).value)"
+                        placeholder="Amount (e.g. 100000)"
+                        class="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-semibold bg-white dark:bg-slate-900"
+                      />
+
+                      <select
+                        [value]="state().prepaymentFrequency"
+                        (change)="updateField('prepaymentFrequency', $any($event.target).value)"
+                        class="w-full px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-semibold bg-white dark:bg-slate-900"
+                      >
+                        <option value="annually">Every Year</option>
+                        <option value="semi-annually">Every 6 Months</option>
+                        <option value="monthly">Every Month</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Annual EMI Step-Up -->
+                  <div class="space-y-1.5">
+                    <div class="flex items-center justify-between text-xs font-semibold">
+                      <span class="text-slate-600 dark:text-slate-300">Annual EMI Step-Up (% increase/yr)</span>
+                      <span class="text-indigo-600 dark:text-indigo-400">{{ state().annualEmiIncreasePercent }}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      [value]="state().annualEmiIncreasePercent"
+                      (input)="updateField('annualEmiIncreasePercent', +$any($event.target).value)"
+                      min="0"
+                      max="15"
+                      step="1"
+                      class="w-full h-1.5 rounded cursor-pointer"
+                    />
+                  </div>
+                </div>
+              }
+            </div>
+            } @else {
+              <!-- Prepayment Disabled Notice -->
+              <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-500 space-y-2">
+                <p>Prepayment analysis is currently opted out. Toggle the switch above to calculate interest savings and tenure reduction.</p>
+                <button
+                  type="button"
+                  (click)="updateField('enablePrepayment', true)"
+                  class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow-2xs"
+                >
+                  + Turn On Prepayment
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- QUICK "WHAT IF?" EXPERIMENTATION BUTTONS -->
+        <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-5 shadow-xs space-y-3">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Interactive "What If?" Scenarios
+          </h3>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <button
+              type="button"
+              (click)="applyWhatIfScenario('prepay-5l-3yr')"
+              class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-left transition-colors font-medium text-slate-800 dark:text-slate-200"
+            >
+              💡 Prepay {{ currencyService.formatCompact(500000) }} after 3 yrs
+            </button>
+            <button
+              type="button"
+              (click)="applyWhatIfScenario('prepay-1l-yearly')"
+              class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-left transition-colors font-medium text-slate-800 dark:text-slate-200"
+            >
+              💡 Prepay {{ currencyService.formatCompact(100000) }} yearly
+            </button>
+            <button
+              type="button"
+              (click)="applyWhatIfScenario('1-extra-emi-yearly')"
+              class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-left transition-colors font-medium text-slate-800 dark:text-slate-200"
+            >
+              💡 1 Extra EMI yearly
+            </button>
+            <button
+              type="button"
+              (click)="applyWhatIfScenario('extra-5k-emi')"
+              class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-left transition-colors font-medium text-slate-800 dark:text-slate-200"
+            >
+              💡 +{{ currencyService.formatCompact(5000) }}/mo EMI step-up
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: SHOWCASE COMPARISON & VISUALISATIONS (7 Cols) -->
+      <div class="lg:col-span-7 space-y-6">
+
+        @if (hasPrepayment()) {
+          <!-- 1. FLAGSHIP SAVINGS HERO CALLOUT BANNER -->
+          @if (simulation().interestSaved > 0 || simulation().monthsSaved > 0) {
+            <div class="rounded-3xl border border-emerald-500/40 bg-gradient-to-br from-emerald-500/15 via-teal-500/10 to-indigo-500/10 p-5 sm:p-6 shadow-md backdrop-blur-md space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="text-xs uppercase font-extrabold tracking-wider text-emerald-700 dark:text-emerald-300">
+                  Prepayment Impact Unlocked
+                </span>
+              </div>
+
+              <div class="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                You save <span class="text-emerald-600 dark:text-emerald-400">{{ currencyService.formatFull(simulation().interestSaved) }}</span> ({{ currencyService.formatCompact(simulation().interestSaved) }}) in interest!
+              </div>
+
+              <p class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200">
+                @if (state().prepaymentMode === 'reduce-tenure') {
+                  Your loan will close <span class="text-emerald-600 dark:text-emerald-400 font-extrabold">{{ simulation().yearsSavedFormatted }} earlier</span> in <span class="underline decoration-emerald-500 font-extrabold">{{ simulation().prepaidLoan.payoffDateStr }}</span> instead of {{ simulation().originalLoan.payoffDateStr }}.
+                } @else {
+                  Your monthly EMI reduces from {{ currencyService.formatFull(simulation().originalLoan.monthlyEmi) }} down to <span class="text-emerald-600 dark:text-emerald-400 font-extrabold">{{ currencyService.formatFull(simulation().prepaidLoan.finalMonthlyEmi) }}/month</span>, freeing up immediate monthly cashflow!
+                }
+              </p>
+            </div>
+          }
+
+          <!-- 2. SIDE-BY-SIDE COMPARISON CARDS (Requirement 5) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- CARD A: ORIGINAL LOAN -->
+            <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 p-5 shadow-xs space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Without Prepayment
+                </span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                  Baseline
+                </span>
+              </div>
+
+              <div class="space-y-2">
+                <div>
+                  <div class="text-xs text-slate-500">Monthly EMI</div>
+                  <div class="text-xl font-extrabold text-slate-900 dark:text-white">
+                    {{ currencyService.formatFull(simulation().originalLoan.monthlyEmi) }}
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                  <div>
+                    <div class="text-slate-500">Total Interest</div>
+                    <div class="font-bold text-amber-600 dark:text-amber-400">
+                      {{ currencyService.formatCompact(simulation().originalLoan.totalInterest) }}
+                    </div>
+                  </div>
+                  <div>
+                    <div class="text-slate-500">Tenure</div>
+                    <div class="font-bold text-slate-800 dark:text-slate-200">
+                      {{ Math.round(simulation().originalLoan.tenureMonths / 12) }} Years
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between text-xs">
+                  <span class="text-slate-500">Total Payment:</span>
+                  <span class="font-extrabold text-slate-900 dark:text-white">
+                    {{ currencyService.formatCompact(simulation().originalLoan.totalPayment) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD B: WITH PREPAYMENT -->
+            <div class="rounded-3xl border border-emerald-500/50 bg-white/95 dark:bg-slate-900/95 p-5 shadow-xs space-y-3 relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
+
+              <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                  With Prepayment
+                </span>
+                <span class="text-xs font-extrabold px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300">
+                  Optimized
+                </span>
+              </div>
+
+              <div class="space-y-2">
+                <div>
+                  <div class="text-xs text-slate-500">
+                    {{ state().prepaymentMode === 'reduce-emi' ? 'New Monthly EMI' : 'Monthly EMI' }}
+                  </div>
+                  <div class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">
+                    {{ currencyService.formatFull(simulation().prepaidLoan.finalMonthlyEmi) }}
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                  <div>
+                    <div class="text-slate-500">Total Interest</div>
+                    <div class="font-bold text-emerald-600 dark:text-emerald-400">
+                      {{ currencyService.formatCompact(simulation().prepaidLoan.totalInterest) }}
+                    </div>
+                  </div>
+                  <div>
+                    <div class="text-slate-500">New Tenure</div>
+                    <div class="font-bold text-slate-800 dark:text-slate-200">
+                      {{ (simulation().prepaidLoan.tenureMonths / 12).toFixed(1) }} Years
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between text-xs">
+                  <span class="text-slate-500">Total Savings:</span>
+                  <span class="font-extrabold text-emerald-600 dark:text-emerald-400">
+                    +{{ currencyService.formatCompact(simulation().interestSaved) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. "BEST STRATEGY" DECISION INSIGHT (Requirement 38) -->
+          @if (simulation().strategyComparison.reduceTenureInterestSaved > 0 || simulation().strategyComparison.reduceEmiInterestSaved > 0) {
+            <div class="rounded-3xl border border-indigo-200/80 dark:border-indigo-900/50 bg-indigo-50/50 dark:bg-indigo-950/20 p-5 shadow-xs space-y-2.5">
+              <div class="flex items-center gap-2">
+                <span class="text-base">💡</span>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
+                  Mathematical Decision Insight
+                </h3>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-indigo-100 dark:border-indigo-900/40">
+                  <div class="text-slate-500">Reduce Tenure Strategy:</div>
+                  <div class="font-extrabold text-indigo-600 dark:text-indigo-400 text-sm mt-0.5">
+                    {{ currencyService.formatCompact(simulation().strategyComparison.reduceTenureInterestSaved) }} saved
+                  </div>
+                  <div class="text-[11px] text-slate-500">
+                    + {{ simulation().strategyComparison.reduceTenureMonthsSaved }} months earlier
+                  </div>
+                </div>
+
+                <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-indigo-100 dark:border-indigo-900/40">
+                  <div class="text-slate-500">Reduce EMI Strategy:</div>
+                  <div class="font-extrabold text-amber-600 dark:text-amber-400 text-sm mt-0.5">
+                    {{ currencyService.formatCompact(simulation().strategyComparison.reduceEmiInterestSaved) }} saved
+                  </div>
+                  <div class="text-[11px] text-slate-500">
+                    EMI drops to {{ currencyService.formatCompact(simulation().strategyComparison.reduceEmiNewMonthlyEmi) }}/mo
+                  </div>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                @if (simulation().strategyComparison.diffInterest > 0) {
+                  Reducing tenure saves <strong class="text-indigo-600 dark:text-indigo-400 font-extrabold">{{ currencyService.formatCompact(simulation().strategyComparison.diffInterest) }}</strong> more in total interest than reducing EMI, and makes you debt-free {{ simulation().strategyComparison.reduceTenureMonthsSaved }} months earlier.
+                } @else {
+                  {{ simulation().strategyComparison.recommendationReason }}
+                }
+              </p>
+            </div>
+          }
+        } @else {
+          <!-- CLEAN STANDARD LOAN SUMMARY (When Prepayment is 0 or Opted Out) -->
+          <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 sm:p-6 shadow-xs space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div>
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                  <span>Standard Loan Overview</span>
+                </h3>
+                <p class="text-xs text-slate-500">Baseline scheduled payment details</p>
+              </div>
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900">
+                Tenure: {{ Math.round(simulation().originalLoan.tenureMonths / 12) }} Years ({{ simulation().originalLoan.tenureMonths }} mos)
+              </span>
+            </div>
+
+            <!-- 4 Grid Metric Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="p-3.5 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/50 space-y-1">
+                <div class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase">Monthly EMI</div>
+                <div class="text-lg sm:text-xl font-black text-indigo-950 dark:text-indigo-100">
+                  {{ currencyService.formatFull(simulation().originalLoan.monthlyEmi) }}
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-1">
+                <div class="text-[11px] font-bold text-slate-500 uppercase">Principal Loan</div>
+                <div class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                  {{ currencyService.formatCompact(state().loanAmount) }}
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-1">
+                <div class="text-[11px] font-bold text-slate-500 uppercase">Total Interest</div>
+                <div class="text-lg sm:text-xl font-bold text-amber-600 dark:text-amber-400">
+                  {{ currencyService.formatCompact(simulation().originalLoan.totalInterest) }}
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-1">
+                <div class="text-[11px] font-bold text-slate-500 uppercase">Total Payment</div>
+                <div class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                  {{ currencyService.formatCompact(simulation().originalLoan.totalPayment) }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Prepayment Helper / Prompt Banner -->
+            @if (!state().enablePrepayment) {
+              <div class="rounded-2xl border border-emerald-200/80 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-950/20 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="space-y-0.5">
+                  <div class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                    <span>✨</span>
+                    <span>Want to see how prepaying saves interest and closes your loan earlier?</span>
+                  </div>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">
+                    Simulate lump-sum or recurring prepayments to calculate exact savings and payoff dates.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  (click)="updateField('enablePrepayment', true)"
+                  class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shrink-0 transition-colors shadow-xs"
+                >
+                  + Enable Prepayment
+                </button>
+              </div>
+            } @else {
+              <div class="rounded-2xl border border-amber-200/80 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 p-4 space-y-1 text-xs">
+                <div class="font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+                  <span>💡</span>
+                  <span>Prepayment is enabled, but amount is {{ currencyService.symbol() }}0</span>
+                </div>
+                <p class="text-amber-700 dark:text-amber-300/90 leading-relaxed">
+                  Enter a lump-sum amount or choose a "What If?" preset on the left to see interest savings, tenure reduction, and side-by-side comparisons.
+                </p>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- 4. VISUAL CHARTS DASHBOARD (Requirement 6) -->
+        <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-5 sm:p-6 shadow-xs space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-900 dark:text-white">
+                Loan Visualisation Dashboard
+              </h3>
+              <p class="text-xs text-slate-500">
+                Explore principal, interest, and payoff curves under your prepayment plan.
+              </p>
+            </div>
+
+            <!-- Chart Segmented Controls -->
+            <div class="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold">
+              <button
+                type="button"
+                (click)="setChartTab('balance')"
+                class="px-2.5 py-1 rounded-lg transition-all"
+                [ngClass]="{
+                  'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-300 shadow-2xs': activeChartTab() === 'balance',
+                  'text-slate-600 dark:text-slate-400': activeChartTab() !== 'balance'
+                }"
+              >
+                Balance Curve
+              </button>
+              <button
+                type="button"
+                (click)="setChartTab('breakdown')"
+                class="px-2.5 py-1 rounded-lg transition-all"
+                [ngClass]="{
+                  'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-300 shadow-2xs': activeChartTab() === 'breakdown',
+                  'text-slate-600 dark:text-slate-400': activeChartTab() !== 'breakdown'
+                }"
+              >
+                Breakdown
+              </button>
+              <button
+                type="button"
+                (click)="setChartTab('cumulative-interest')"
+                class="px-2.5 py-1 rounded-lg transition-all"
+                [ngClass]="{
+                  'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-300 shadow-2xs': activeChartTab() === 'cumulative-interest',
+                  'text-slate-600 dark:text-slate-400': activeChartTab() !== 'cumulative-interest'
+                }"
+              >
+                Interest Paid
+              </button>
+              <button
+                type="button"
+                (click)="setChartTab('annual-bar')"
+                class="px-2.5 py-1 rounded-lg transition-all"
+                [ngClass]="{
+                  'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-300 shadow-2xs': activeChartTab() === 'annual-bar',
+                  'text-slate-600 dark:text-slate-400': activeChartTab() !== 'annual-bar'
+                }"
+              >
+                Annual Stack
+              </button>
+            </div>
+          </div>
+
+          <!-- Canvas Container -->
+          <div class="relative w-full h-[280px] sm:h-[340px]">
+            <canvas #chartCanvas></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 5. DETAILED AMORTIZATION SCHEDULE TABLE (Requirement 7) -->
+    <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 shadow-sm overflow-hidden">
+      <!-- Table Header & Controls -->
+      <div class="p-5 sm:p-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <span>Amortization Schedule</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-200 dark:border-emerald-800">
+              {{ simulation().prepaidLoan.tenureMonths }} Payments
+            </span>
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Detailed tracking of opening balance, monthly EMI, principal, interest, and prepayments.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- View Toggle: Monthly vs Annual -->
+          <div class="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold">
+            <button
+              type="button"
+              (click)="setScheduleView('monthly')"
+              class="px-2.5 py-1 rounded-lg transition-all"
+              [ngClass]="{
+                'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-2xs': scheduleViewMode() === 'monthly',
+                'text-slate-600 dark:text-slate-400': scheduleViewMode() !== 'monthly'
+              }"
+            >
+              Monthly
+            </button>
+            <button
+              type="button"
+              (click)="setScheduleView('annual')"
+              class="px-2.5 py-1 rounded-lg transition-all"
+              [ngClass]="{
+                'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-2xs': scheduleViewMode() === 'annual',
+                'text-slate-600 dark:text-slate-400': scheduleViewMode() !== 'annual'
+              }"
+            >
+              Annual Summary
+            </button>
+          </div>
+
+          <!-- Export CSV -->
+          <button
+            type="button"
+            (click)="exportScheduleCsv()"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-2xs"
+          >
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Export CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- MONTHLY SCHEDULE TABLE -->
+      @if (scheduleViewMode() === 'monthly') {
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100/60 dark:bg-slate-800/40 text-slate-600 dark:text-slate-300 font-semibold uppercase text-[11px] tracking-wider">
+                <th scope="col" class="py-3 px-4">#</th>
+                <th scope="col" class="py-3 px-4">Date</th>
+                <th scope="col" class="py-3 px-4">Opening Balance</th>
+                <th scope="col" class="py-3 px-4">EMI</th>
+                <th scope="col" class="py-3 px-4">Principal</th>
+                <th scope="col" class="py-3 px-4">Interest</th>
+                <th scope="col" class="py-3 px-4 text-emerald-600 dark:text-emerald-400">Prepayment</th>
+                <th scope="col" class="py-3 px-4 font-bold text-slate-900 dark:text-white">Closing Balance</th>
+                <th scope="col" class="py-3 px-4 text-right">Loan Repaid</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+              @for (row of visibleMonthlyEntries(); track row.paymentNumber) {
+                <tr
+                  class="transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/30"
+                  [ngClass]="{ 'bg-emerald-50/50 dark:bg-emerald-950/20 font-semibold': row.prepayment > 0 }"
+                >
+                  <td class="py-3 px-4 text-slate-500 font-medium">
+                    {{ row.paymentNumber }}
+                  </td>
+                  <td class="py-3 px-4 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
+                    {{ row.dateStr }}
+                  </td>
+                  <td class="py-3 px-4 text-slate-600 dark:text-slate-400">
+                    {{ row.openingBalance | inrCurrency:'compact' }}
+                  </td>
+                  <td class="py-3 px-4 font-medium text-slate-800 dark:text-slate-200">
+                    {{ row.emi | inrCurrency:'compact' }}
+                  </td>
+                  <td class="py-3 px-4 font-semibold text-indigo-600 dark:text-indigo-400">
+                    {{ row.principal | inrCurrency:'compact' }}
+                  </td>
+                  <td class="py-3 px-4 text-amber-600 dark:text-amber-400">
+                    {{ row.interest | inrCurrency:'compact' }}
+                  </td>
+                  <td class="py-3 px-4 font-extrabold text-emerald-600 dark:text-emerald-400">
+                    @if (row.prepayment > 0) {
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs">
+                        +{{ row.prepayment | inrCurrency:'compact' }}
+                      </span>
+                    } @else {
+                      -
+                    }
+                  </td>
+                  <td class="py-3 px-4 font-extrabold text-slate-900 dark:text-white">
+                    {{ row.closingBalance | inrCurrency:'compact' }}
+                  </td>
+                  <td class="py-3 px-4 text-right font-medium text-slate-500">
+                    {{ row.loanProgressPercent }}%
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Bar -->
+        <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="text-slate-500">
+            Showing Page {{ scheduleCurrentPage() }} of {{ totalMonthlyPages() }} ({{ simulation().monthlySchedule.length }} total rows)
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              [disabled]="scheduleCurrentPage() <= 1"
+              (click)="scheduleCurrentPage.set(scheduleCurrentPage() - 1)"
+              class="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-800 disabled:opacity-40 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              Previous
+            </button>
+
+            <button
+              type="button"
+              [disabled]="scheduleCurrentPage() >= totalMonthlyPages()"
+              (click)="scheduleCurrentPage.set(scheduleCurrentPage() + 1)"
+              class="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-800 disabled:opacity-40 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              Next
+            </button>
+
+            <button
+              type="button"
+              (click)="toggleRowsPerPage()"
+              class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold"
+            >
+              {{ scheduleRowsPerPage() === 24 ? 'Show All' : 'Show 24 per page' }}
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ANNUAL SUMMARY TABLE -->
+      @if (scheduleViewMode() === 'annual') {
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100/60 dark:bg-slate-800/40 text-slate-600 dark:text-slate-300 font-semibold uppercase text-[11px] tracking-wider">
+                <th scope="col" class="py-3 px-4">Year</th>
+                <th scope="col" class="py-3 px-4">Calendar Year</th>
+                <th scope="col" class="py-3 px-4">Opening Balance</th>
+                <th scope="col" class="py-3 px-4">Total EMI Paid</th>
+                <th scope="col" class="py-3 px-4 text-indigo-600 dark:text-indigo-400">Principal Paid</th>
+                <th scope="col" class="py-3 px-4 text-amber-600 dark:text-amber-400">Interest Paid</th>
+                <th scope="col" class="py-3 px-4 text-emerald-600 dark:text-emerald-400">Prepayment</th>
+                <th scope="col" class="py-3 px-4 font-bold">Closing Balance</th>
+                <th scope="col" class="py-3 px-4 text-right">Progress</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+              @for (yr of simulation().annualSchedule; track yr.yearNumber) {
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors">
+                  <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">
+                    Year {{ yr.yearNumber }}
+                  </td>
+                  <td class="py-3 px-4 text-slate-600 dark:text-slate-400 font-medium">
+                    {{ yr.calendarYear }}
+                  </td>
+                  <td class="py-3 px-4 text-slate-600 dark:text-slate-400">
+                    {{ yr.openingBalance | inrCurrency:'compact' }}
+                  </td>
+                  <td class="py-3 px-4 font-medium text-slate-800 dark:text-slate-200">
+                    {{ yr.totalEmi | inrCurrency:'compact' }}
+                  </td>
+                  <td class="py-3 px-4 font-bold text-indigo-600 dark:text-indigo-400">
+                    {{ yr.totalPrincipal | inrCurrency:'compact' }}
+                  </td>
+                  <td class="py-3 px-4 font-bold text-amber-600 dark:text-amber-400">
+                    {{ yr.totalInterest | inrCurrency:'compact' }}
+                  </td>
+                  <td class="py-3 px-4 font-extrabold text-emerald-600 dark:text-emerald-400">
+                    @if (yr.totalPrepayment > 0) {
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs">
+                        +{{ yr.totalPrepayment | inrCurrency:'compact' }}
+                      </span>
+                    } @else {
+                      -
+                    }
+                  </td>
+                  <td class="py-3 px-4 font-extrabold text-slate-900 dark:text-white">
+                    {{ yr.closingBalance | inrCurrency:'compact' }}
+                  </td>
+                  <td class="py-3 px-4 text-right font-medium text-slate-500">
+                    {{ yr.endingProgressPercent }}%
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <!-- 6. SEO CONTENT, METHODOLOGY, FORMULAS & FAQ -->
+    <article class="rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/80 p-6 sm:p-10 shadow-xs space-y-8 backdrop-blur-sm">
+      <div class="space-y-3">
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
+          {{ currentSeoData().explanationTitle }}
+        </h2>
+        @for (p of currentSeoData().paragraphs; track p) {
+          <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+            {{ p }}
+          </p>
+        }
+      </div>
+
+      <!-- Key Highlights -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        @for (item of currentSeoData().keyHighlights; track item.title) {
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 space-y-1.5">
+            <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+              {{ item.title }}
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              {{ item.description }}
+            </p>
+          </div>
+        }
+      </div>
+
+      <!-- Formula Box -->
+      <div class="p-5 rounded-2xl bg-slate-900 text-slate-100 space-y-3">
+        <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">
+          {{ currentSeoData().formulaTitle }}
+        </div>
+        <p class="text-xs text-slate-400">
+          {{ currentSeoData().formulaDescription }}
+        </p>
+        <pre class="p-3 rounded-xl bg-slate-950 font-mono text-xs text-emerald-300 overflow-x-auto whitespace-pre-wrap">{{ currentSeoData().formulaCode }}</pre>
+      </div>
+
+      <!-- FAQ Section -->
+      @if (currentSeoData().faqs && currentSeoData().faqs.length > 0) {
+        <div class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+            Frequently Asked Questions
+          </h3>
+          <div class="space-y-3">
+            @for (faq of currentSeoData().faqs; track faq.question) {
+              <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-1.5">
+                <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                  {{ faq.question }}
+                </h4>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  {{ faq.answer }}
+                </p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Internal Links to Related Calculators -->
+      <div class="pt-6 border-t border-slate-200 dark:border-slate-800 space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          Related Financial Calculators
+        </h4>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <a routerLink="/emi-calculator" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition-colors">
+            Loan EMI Calculator
+          </a>
+          <a routerLink="/loan-amortization-calculator" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition-colors">
+            Amortization Schedule
+          </a>
+          <a routerLink="/home-loan-calculator" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition-colors">
+            Home Loan Calculator
+          </a>
+          <a routerLink="/car-loan-calculator" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition-colors">
+            Car Loan Calculator
+          </a>
+          <a routerLink="/step-up-sip-calculator" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition-colors">
+            Step-Up SIP Calculator
+          </a>
+          <a routerLink="/retirement-calculator" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition-colors">
+            Retirement Savings Calculator
+          </a>
+        </div>
+      </div>
+    </article>
+  </main>
+</div>

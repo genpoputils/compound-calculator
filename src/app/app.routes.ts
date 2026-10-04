@@ -4,12 +4,68 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
+      import('./pages/home/home.component').then(m => m.HomeComponent)
+  },
+  // Flagship Loan Prepayment Simulator & Loan Suite
+  {
+    path: 'loan-prepayment-calculator',
+    loadComponent: () =>
+      import('./pages/loan-calculator/loan-calculator.component').then(
+        m => m.LoanCalculatorComponent
+      )
+  },
+  {
+    path: 'emi-calculator',
+    loadComponent: () =>
+      import('./pages/loan-calculator/loan-calculator.component').then(
+        m => m.LoanCalculatorComponent
+      )
+  },
+  {
+    path: 'loan-amortization-calculator',
+    loadComponent: () =>
+      import('./pages/loan-calculator/loan-calculator.component').then(
+        m => m.LoanCalculatorComponent
+      )
+  },
+  {
+    path: 'loan-calculator',
+    loadComponent: () =>
+      import('./pages/loan-calculator/loan-calculator.component').then(
+        m => m.LoanCalculatorComponent
+      )
+  },
+  {
+    path: 'home-loan-calculator',
+    loadComponent: () =>
+      import('./pages/loan-calculator/loan-calculator.component').then(
+        m => m.LoanCalculatorComponent
+      )
+  },
+  {
+    path: 'car-loan-calculator',
+    loadComponent: () =>
+      import('./pages/loan-calculator/loan-calculator.component').then(
+        m => m.LoanCalculatorComponent
+      )
+  },
+  // Investment Suite
+  {
+    path: 'step-up-sip-calculator',
+    loadComponent: () =>
       import('./pages/calculator-view/calculator-view.component').then(
         m => m.CalculatorViewComponent
       )
   },
   {
     path: 'step-up-investment-calculator',
+    loadComponent: () =>
+      import('./pages/calculator-view/calculator-view.component').then(
+        m => m.CalculatorViewComponent
+      )
+  },
+  {
+    path: 'compound-interest-calculator',
     loadComponent: () =>
       import('./pages/calculator-view/calculator-view.component').then(
         m => m.CalculatorViewComponent
@@ -23,14 +79,14 @@ export const routes: Routes = [
       )
   },
   {
-    path: 'retirement-calculator',
+    path: 'sip-calculator',
     loadComponent: () =>
       import('./pages/calculator-view/calculator-view.component').then(
         m => m.CalculatorViewComponent
       )
   },
   {
-    path: 'sip-calculator',
+    path: 'retirement-calculator',
     loadComponent: () =>
       import('./pages/calculator-view/calculator-view.component').then(
         m => m.CalculatorViewComponent

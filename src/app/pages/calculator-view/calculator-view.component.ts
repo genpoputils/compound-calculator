@@ -38,6 +38,13 @@ import { ChartViewComponent } from '../../shared/components/chart-view/chart-vie
 import { ScenarioCompareComponent, ScenarioBParams } from '../../shared/components/scenario-compare/scenario-compare.component';
 import { AdBannerComponent } from '../../shared/components/ad-banner/ad-banner.component';
 
+import {
+  compareFlatVsStepUp,
+  FlatVsStepUpComparison,
+  calculateRetirement,
+  RetirementResult
+} from '../../core/finance';
+
 @Component({
   selector: 'app-calculator-view',
   standalone: true,
@@ -89,6 +96,30 @@ export class CalculatorViewComponent implements OnInit {
   // Main Calculation Result Signal
   readonly result = computed<CalculationResult>(() => {
     return this.engine.calculate(this.activeMode(), this.state());
+  });
+
+  // Flat vs Step-Up Comparison Signal
+  readonly flatVsStepUp = computed<FlatVsStepUpComparison | null>(() => {
+    if (this.activeMode() !== 'step-up') return null;
+    return compareFlatVsStepUp(this.state().stepUpInput);
+  });
+
+  // Retirement Status & Gap Analysis Signal
+  readonly retirementAnalysis = computed<RetirementResult | null>(() => {
+    if (this.activeMode() !== 'retirement') return null;
+    const s = this.state().retirementInput;
+    return calculateRetirement({
+      currentAge: s.currentAge,
+      retirementAge: s.retirementAge,
+      currentCorpus: s.currentCorpus,
+      currentMonthlyExpense: s.currentMonthlyExpense || 40000,
+      expectedInflation: s.inflationRate,
+      preRetirementReturn: s.expectedAnnualReturn,
+      postRetirementReturn: 8,
+      retirementDurationYears: s.retirementDurationYears || 25,
+      monthlyInvestment: s.startingMonthlyInvestment,
+      annualInvestmentIncreasePercent: s.annualStepUpPercent
+    });
   });
 
   // Scenario Comparison Result
@@ -424,6 +455,12 @@ export class CalculatorViewComponent implements OnInit {
   }
 
   private getModeFromPath(path: string): CalculationMode | null {
+    if (path === '/compound-interest-calculator' || path === '/compound-calculator') {
+      return 'compound-interest';
+    }
+    if (path === '/step-up-sip-calculator' || path === '/step-up-investment-calculator') {
+      return 'step-up';
+    }
     for (const [mode, config] of Object.entries(SEO_PAGES_DATA)) {
       if (config.path === path) {
         return mode as CalculationMode;
