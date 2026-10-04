@@ -133,10 +133,10 @@ import { DisclaimerComponent } from '../disclaimer/disclaimer.component';
                 </a>
               </li>
               <li>
-                <span class="text-slate-400">Reduce Tenure vs EMI Guide</span>
+                <span class="text-slate-500 dark:text-slate-400">Reduce Tenure vs EMI Guide</span>
               </li>
               <li>
-                <span class="text-slate-400">Safe Withdrawal 4% Rule</span>
+                <span class="text-slate-500 dark:text-slate-400">Safe Withdrawal 4% Rule</span>
               </li>
             </ul>
           </div>
@@ -147,11 +147,11 @@ import { DisclaimerComponent } from '../disclaimer/disclaimer.component';
               <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
               <span>Privacy & Architecture</span>
             </h5>
-            <p class="text-xs text-slate-500 leading-relaxed">
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
               100% Client-Side. Calculations execute in browser memory with zero tracking. Pure mathematical algorithms.
             </p>
             <div class="pt-1">
-              <span class="text-[11px] text-slate-400 font-mono">
+              <span class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                 CompoundCalc Financial Engine
               </span>
             </div>
@@ -162,7 +162,7 @@ import { DisclaimerComponent } from '../disclaimer/disclaimer.component';
         <app-disclaimer />
 
         <!-- Copyright & Bottom Bar -->
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-6">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800/80 pt-6">
           <p>© 2026 Compound Calculator. All mathematical formulas open & verified.</p>
           <div class="flex items-center gap-4">
             <span>Client-Side Execution</span>

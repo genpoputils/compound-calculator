@@ -27,10 +27,10 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
           class="text-xs sm:text-sm font-medium tracking-wide uppercase"
           [ngClass]="{
             'text-indigo-200': variant() === 'primary',
-            'text-slate-500 dark:text-slate-400': variant() === 'secondary',
-            'text-emerald-600 dark:text-emerald-400': variant() === 'success',
-            'text-purple-600 dark:text-purple-400': variant() === 'purple',
-            'text-rose-600 dark:text-rose-400': variant() === 'danger'
+            'text-slate-600 dark:text-slate-400 font-semibold': variant() === 'secondary',
+            'text-emerald-700 dark:text-emerald-300 font-semibold': variant() === 'success',
+            'text-purple-700 dark:text-purple-300 font-semibold': variant() === 'purple',
+            'text-rose-700 dark:text-rose-300 font-semibold': variant() === 'danger'
           }"
         >
           {{ label() }}
@@ -41,10 +41,10 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
             class="text-[11px] font-semibold px-2 py-0.5 rounded-full"
             [ngClass]="{
               'bg-indigo-500/30 text-indigo-100 border border-indigo-400/30': variant() === 'primary',
-              'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300': variant() === 'secondary',
-              'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300': variant() === 'success',
-              'bg-purple-500/20 text-purple-700 dark:text-purple-300': variant() === 'purple',
-              'bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30': variant() === 'danger'
+              'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300': variant() === 'secondary',
+              'bg-emerald-500/20 text-emerald-800 dark:text-emerald-300': variant() === 'success',
+              'bg-purple-500/20 text-purple-800 dark:text-purple-300': variant() === 'purple',
+              'bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/30': variant() === 'danger'
             }"
           >
             {{ badge() }}
@@ -73,7 +73,7 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
         class="text-xs mt-1 truncate"
         [ngClass]="{
           'text-indigo-200/80': variant() === 'primary',
-          'text-slate-500 dark:text-slate-400': variant() !== 'primary'
+          'text-slate-600 dark:text-slate-400 font-medium': variant() !== 'primary'
         }"
       >
         Exact: {{ value() | inrCurrency:'full' }}
@@ -84,7 +84,7 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
           class="text-xs mt-2 pt-2 border-t font-normal leading-relaxed"
           [ngClass]="{
             'border-indigo-800/60 text-indigo-200/70': variant() === 'primary',
-            'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400': variant() !== 'primary'
+            'border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400': variant() !== 'primary'
           }"
         >
           {{ subtext() }}

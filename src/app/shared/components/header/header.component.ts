@@ -18,14 +18,9 @@ import { CurrencyService } from '../../../core/services/currency.service';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
           </div>
-          <div class="flex flex-col">
-            <span class="font-extrabold text-base sm:text-lg tracking-tight text-slate-900 dark:text-white leading-tight">
-              Compound<span class="text-indigo-600 dark:text-indigo-400">Calc</span>
-            </span>
-            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 -mt-0.5">
-              Investment & Loan Engine
-            </span>
-          </div>
+          <span class="font-extrabold text-base sm:text-lg tracking-tight text-slate-900 dark:text-white leading-tight">
+            Compound<span class="text-indigo-600 dark:text-indigo-400">Calc</span>
+          </span>
         </a>
 
         <!-- Desktop Navigation Routes -->
@@ -122,7 +117,7 @@ import { CurrencyService } from '../../../core/services/currency.service';
                 <option [value]="c.code">{{ c.code }} ({{ c.symbol.trim() }})</option>
               }
             </select>
-            <div class="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400">
+            <div class="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>

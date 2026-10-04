@@ -111,7 +111,7 @@ import { CurrencyService } from '../../../core/services/currency.service';
           <div class="p-4 space-y-2">
             <div class="flex items-center justify-between">
               <span class="text-sm font-bold text-slate-900 dark:text-white">
-                Year {{ row.year }} @if (row.age) { <span class="text-xs font-normal text-slate-400">(Age {{ row.age }})</span> }
+                Year {{ row.year }} @if (row.age) { <span class="text-xs font-medium text-slate-600 dark:text-slate-400">(Age {{ row.age }})</span> }
               </span>
               <span class="text-sm font-bold text-indigo-600 dark:text-indigo-400">
                 {{ row.portfolioValue | inrCurrency:'compact' }}
@@ -120,20 +120,20 @@ import { CurrencyService } from '../../../core/services/currency.service';
 
             <div class="grid grid-cols-2 gap-2 text-xs">
               <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40">
-                <span class="text-slate-400 block">{{ mode() === 'swp' ? 'Monthly Payout' : 'Monthly Deposit' }}</span>
-                <span class="font-semibold text-slate-700 dark:text-slate-300">{{ row.monthlyContribution | inrCurrency:'compact' }}</span>
+                <span class="text-slate-600 dark:text-slate-400 font-medium block">{{ mode() === 'swp' ? 'Monthly Payout' : 'Monthly Deposit' }}</span>
+                <span class="font-semibold text-slate-800 dark:text-slate-200">{{ row.monthlyContribution | inrCurrency:'compact' }}</span>
               </div>
               <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40">
-                <span class="text-slate-400 block">{{ mode() === 'swp' ? 'Total Payout' : 'Total Invested' }}</span>
-                <span class="font-semibold text-slate-700 dark:text-slate-300">{{ row.totalInvested | inrCurrency:'compact' }}</span>
+                <span class="text-slate-600 dark:text-slate-400 font-medium block">{{ mode() === 'swp' ? 'Total Payout' : 'Total Invested' }}</span>
+                <span class="font-semibold text-slate-800 dark:text-slate-200">{{ row.totalInvested | inrCurrency:'compact' }}</span>
               </div>
               <div class="p-2 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20">
-                <span class="text-emerald-500 block">{{ mode() === 'swp' ? 'Year Returns' : 'Year Growth' }}</span>
-                <span class="font-semibold text-emerald-700 dark:text-emerald-400">+{{ row.interestEarnedYear | inrCurrency:'compact' }}</span>
+                <span class="text-emerald-700 dark:text-emerald-400 font-medium block">{{ mode() === 'swp' ? 'Year Returns' : 'Year Growth' }}</span>
+                <span class="font-semibold text-emerald-800 dark:text-emerald-300">+{{ row.interestEarnedYear | inrCurrency:'compact' }}</span>
               </div>
-              <div class="p-2 rounded-lg bg-purple-50/50 dark:purple-950/20">
-                <span class="text-purple-500 block">Purchasing Power</span>
-                <span class="font-semibold text-purple-700 dark:text-purple-400">{{ row.realPortfolioValue | inrCurrency:'compact' }}</span>
+              <div class="p-2 rounded-lg bg-purple-50/50 dark:bg-purple-950/20">
+                <span class="text-purple-700 dark:text-purple-400 font-medium block">Purchasing Power</span>
+                <span class="font-semibold text-purple-800 dark:text-purple-300">{{ row.realPortfolioValue | inrCurrency:'compact' }}</span>
               </div>
             </div>
           </div>

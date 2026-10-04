@@ -46,31 +46,31 @@ export interface ScenarioBParams {
       <!-- Delta Highlight Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-          <span class="text-xs text-slate-400 block font-medium">Corpus Difference</span>
+          <span class="text-xs text-slate-600 dark:text-slate-400 block font-semibold">Corpus Difference</span>
           <div class="text-xl sm:text-2xl font-extrabold mt-1" [ngClass]="comparison().deltaFutureValue >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'">
             {{ comparison().deltaFutureValue >= 0 ? '+' : '' }}{{ comparison().deltaFutureValue | inrCurrency:'compact' }}
           </div>
-          <span class="text-[11px] text-slate-500 block mt-0.5">
+          <span class="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
             {{ comparison().futureValuePercentageDifference >= 0 ? '+' : '' }}{{ comparison().futureValuePercentageDifference.toFixed(1) }}% vs Scenario A
           </span>
         </div>
 
         <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-          <span class="text-xs text-slate-400 block font-medium">Extra Capital Invested</span>
+          <span class="text-xs text-slate-600 dark:text-slate-400 block font-semibold">Extra Capital Invested</span>
           <div class="text-xl sm:text-2xl font-extrabold mt-1 text-slate-900 dark:text-white">
             {{ comparison().deltaTotalInvested >= 0 ? '+' : '' }}{{ comparison().deltaTotalInvested | inrCurrency:'compact' }}
           </div>
-          <span class="text-[11px] text-slate-500 block mt-0.5">
+          <span class="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
             Cumulative deposit change
           </span>
         </div>
 
         <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-          <span class="text-xs text-slate-400 block font-medium">Additional Growth Generated</span>
+          <span class="text-xs text-slate-600 dark:text-slate-400 block font-semibold">Additional Growth Generated</span>
           <div class="text-xl sm:text-2xl font-extrabold mt-1 text-indigo-600 dark:text-indigo-400">
             {{ comparison().deltaTotalGrowth >= 0 ? '+' : '' }}{{ comparison().deltaTotalGrowth | inrCurrency:'compact' }}
           </div>
-          <span class="text-[11px] text-slate-500 block mt-0.5">
+          <span class="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
             Compound interest leverage
           </span>
         </div>
@@ -85,24 +85,24 @@ export interface ScenarioBParams {
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
               Scenario A (Current)
             </span>
-            <span class="text-xs font-semibold text-slate-500">Baseline</span>
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Baseline</span>
           </div>
 
           <div class="space-y-2 text-xs sm:text-sm">
             <div class="flex justify-between py-1">
-              <span class="text-slate-500">Final Corpus:</span>
+              <span class="text-slate-600 dark:text-slate-400 font-medium">Final Corpus:</span>
               <span class="font-bold text-slate-900 dark:text-white">{{ comparison().scenarioA.futureValue | inrCurrency:'both' }}</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-500">Total Invested:</span>
+              <span class="text-slate-600 dark:text-slate-400 font-medium">Total Invested:</span>
               <span class="font-semibold text-slate-700 dark:text-slate-300">{{ comparison().scenarioA.totalInvested | inrCurrency:'compact' }}</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-500">Investment Growth:</span>
+              <span class="text-slate-600 dark:text-slate-400 font-medium">Investment Growth:</span>
               <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ comparison().scenarioA.totalGrowth | inrCurrency:'compact' }}</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-500">Purchasing Power:</span>
+              <span class="text-slate-600 dark:text-slate-400 font-medium">Purchasing Power:</span>
               <span class="font-semibold text-purple-600 dark:text-purple-400">{{ comparison().scenarioA.realFutureValue | inrCurrency:'compact' }}</span>
             </div>
           </div>

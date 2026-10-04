@@ -20,7 +20,7 @@ export interface AssumptionItem {
             Assumptions
           </h3>
         </div>
-        <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium">
+        <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold">
           Estimates Only
         </span>
       </div>
@@ -28,7 +28,7 @@ export interface AssumptionItem {
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-3">
         @for (item of items(); track item.label) {
           <div class="p-3 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80">
-            <span class="text-xs text-slate-500 dark:text-slate-400 block truncate">{{ item.label }}</span>
+            <span class="text-xs text-slate-600 dark:text-slate-400 font-medium block truncate">{{ item.label }}</span>
             <div class="flex items-baseline gap-1 mt-0.5">
               <span class="text-base font-bold text-slate-900 dark:text-white">{{ item.value }}</span>
               @if (item.badge) {
@@ -39,7 +39,7 @@ export interface AssumptionItem {
         }
       </div>
 
-      <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 pt-1">
+      <div class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 pt-1">
         <svg class="w-3.5 h-3.5 text-indigo-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>

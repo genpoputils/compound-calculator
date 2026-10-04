@@ -23,6 +23,7 @@ import {
   simulatePrepayment
 } from '../../core/finance';
 import { CurrencyService } from '../../core/services/currency.service';
+import { ThemeService } from '../../core/services/theme.service';
 import { ToastService } from '../../core/services/toast.service';
 import { StorageService } from '../../core/services/storage.service';
 import { SeoService } from '../../core/services/seo.service';
@@ -87,6 +88,7 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly currencyService = inject(CurrencyService);
+  readonly themeService = inject(ThemeService);
   private readonly toastService = inject(ToastService);
   private readonly storageService = inject(StorageService);
   private readonly seoService = inject(SeoService);
@@ -111,8 +113,9 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
 
   constructor() {
     effect(() => {
-      // Re-render chart automatically whenever active currency changes
+      // Re-render chart automatically whenever active currency or theme changes
       this.currencyService.selectedCurrency();
+      this.themeService.isDark();
       if (this.isBrowser) {
         this.renderOrUpdateChart();
       }
@@ -525,7 +528,21 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
+  private getChartThemeColors() {
+    const isDark = this.themeService.isDark();
+    return {
+      isDark,
+      textColor: isDark ? '#94a3b8' : '#334155',
+      gridColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)',
+      tooltipBg: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+      tooltipTitle: isDark ? '#ffffff' : '#0f172a',
+      tooltipBody: isDark ? '#cbd5e1' : '#334155',
+      tooltipBorder: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+    };
+  }
+
   private renderBalanceTrajectoryChart(ctx: CanvasRenderingContext2D, sim: PrepaymentSimulationResult): void {
+    const theme = this.getChartThemeColors();
     // Collect labels and points every 6 or 12 months for clean visualization
     const originalTenure = sim.originalLoan.tenureMonths;
     const step = originalTenure > 120 ? 12 : originalTenure > 60 ? 6 : 1;
@@ -612,17 +629,46 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
         maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
         plugins: {
-          legend: { position: 'top', labels: { boxWidth: 12, font: { size: 12, weight: 600 } } },
+          legend: {
+            position: 'top',
+            labels: {
+              color: theme.textColor,
+              boxWidth: 12,
+              font: { family: 'Inter, sans-serif', size: 12, weight: 600 }
+            }
+          },
           tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipTitle,
+            bodyColor: theme.tooltipBody,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1,
+            padding: 10,
+            cornerRadius: 8,
             callbacks: {
-              label: (ctx) => ` ${ctx.dataset.label}: ${this.currencyService.formatCompact(Number(ctx.raw) || 0)}`
+              label: (ctx) => {
+                const val = Number(ctx.raw) || 0;
+                const loanPrincipal = sim.prepaidLoan.totalPrincipal;
+                const principalPaid = Math.max(0, loanPrincipal - val);
+                const pctPaid = loanPrincipal > 0 ? ((principalPaid / loanPrincipal) * 100).toFixed(1) : '100';
+                return ` ${ctx.dataset.label}: ${this.currencyService.formatCompact(val)} balance (${this.currencyService.formatCompact(principalPaid)} principal paid, ${pctPaid}%)`;
+              }
             }
           }
         },
         scales: {
-          x: { grid: { display: false } },
-          y: {
+          x: {
+            grid: { display: false },
             ticks: {
+              color: theme.textColor,
+              font: { family: 'Inter, sans-serif', size: 11 }
+            }
+          },
+          y: {
+            grid: { color: theme.gridColor },
+            ticks: {
+              color: theme.textColor,
+              font: { family: 'Inter, sans-serif', size: 11 },
               callback: (val) => this.currencyService.formatCompact(Number(val))
             }
           }
@@ -632,17 +678,24 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private renderBreakdownDoughnutChart(ctx: CanvasRenderingContext2D, sim: PrepaymentSimulationResult): void {
+    const theme = this.getChartThemeColors();
     const principal = sim.prepaidLoan.totalPrincipal;
     const interest = sim.prepaidLoan.totalInterest;
+    const total = principal + interest;
+    const principalPct = total > 0 ? ((principal / total) * 100).toFixed(1) : '0';
+    const interestPct = total > 0 ? ((interest / total) * 100).toFixed(1) : '0';
 
     this.chartInstance = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: ['Principal Repaid', 'Total Interest'],
+        labels: [
+          `Principal Paid Off (${principalPct}%)`,
+          `Interest Paid (${interestPct}%)`
+        ],
         datasets: [
           {
             data: [principal, interest],
-            backgroundColor: ['#6366f1', '#f59e0b'], // Indigo, Amber
+            backgroundColor: ['#10b981', '#f59e0b'], // Emerald, Amber
             borderWidth: 0,
             hoverOffset: 6
           }
@@ -652,10 +705,28 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'bottom', labels: { boxWidth: 14, font: { size: 13, weight: 600 } } },
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: theme.textColor,
+              boxWidth: 14,
+              font: { family: 'Inter, sans-serif', size: 13, weight: 600 }
+            }
+          },
           tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipTitle,
+            bodyColor: theme.tooltipBody,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1,
+            padding: 10,
+            cornerRadius: 8,
             callbacks: {
-              label: (ctx) => ` ${ctx.label}: ${this.currencyService.formatFull(Number(ctx.raw) || 0)} (${this.currencyService.formatCompact(Number(ctx.raw) || 0)})`
+              label: (ctx) => {
+                const val = Number(ctx.raw) || 0;
+                const pct = total > 0 ? ((val / total) * 100).toFixed(1) : '0';
+                return ` ${ctx.label}: ${this.currencyService.formatFull(val)} (${this.currencyService.formatCompact(val)}) • ${pct}% of total payments`;
+              }
             }
           }
         }
@@ -664,17 +735,22 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private renderCumulativeInterestChart(ctx: CanvasRenderingContext2D, sim: PrepaymentSimulationResult): void {
+    const theme = this.getChartThemeColors();
     const rows = sim.monthlySchedule;
     const step = rows.length > 120 ? 12 : rows.length > 60 ? 6 : 1;
 
     const labels: string[] = [];
+    const principalPoints: number[] = [];
     const interestPoints: number[] = [];
+    const totalPoints: number[] = [];
 
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
-      if (r.paymentNumber % step === 0 || i === rows.length - 1) {
-        labels.push(r.dateStr);
+      if (r.paymentNumber % step === 0 || i === rows.length - 1 || i === 0) {
+        labels.push(r.dateStr || `Month ${r.paymentNumber}`);
+        principalPoints.push(Math.round(r.cumulativePrincipal));
         interestPoints.push(Math.round(r.cumulativeInterest));
+        totalPoints.push(Math.round(r.cumulativePrincipal + r.cumulativeInterest));
       }
     }
 
@@ -684,32 +760,91 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
         labels,
         datasets: [
           {
-            label: 'Cumulative Interest Paid',
+            label: 'Principal Paid Off',
+            data: principalPoints,
+            borderColor: '#10b981', // Emerald green
+            backgroundColor: 'rgba(16, 185, 129, 0.12)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 3,
+            pointRadius: 2
+          },
+          {
+            label: 'Interest Paid',
             data: interestPoints,
-            borderColor: '#f59e0b',
+            borderColor: '#f59e0b', // Amber
             backgroundColor: 'rgba(245, 158, 11, 0.12)',
             fill: true,
             tension: 0.35,
             borderWidth: 3,
             pointRadius: 2
+          },
+          {
+            label: 'Total Cumulative Outflow',
+            data: totalPoints,
+            borderColor: '#6366f1', // Indigo
+            backgroundColor: 'transparent',
+            borderDash: [5, 5],
+            fill: false,
+            tension: 0.35,
+            borderWidth: 2,
+            pointRadius: 0
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
         plugins: {
-          legend: { display: false },
+          legend: {
+            position: 'top',
+            labels: {
+              color: theme.textColor,
+              boxWidth: 12,
+              font: { family: 'Inter, sans-serif', size: 12, weight: 600 }
+            }
+          },
           tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipTitle,
+            bodyColor: theme.tooltipBody,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1,
+            padding: 10,
+            cornerRadius: 8,
             callbacks: {
-              label: (ctx) => ` Cumulative Interest: ${this.currencyService.formatCompact(Number(ctx.raw) || 0)}`
+              label: (ctx) => {
+                const val = Number(ctx.raw) || 0;
+                return ` ${ctx.dataset.label}: ${this.currencyService.formatFull(val)} (${this.currencyService.formatCompact(val)})`;
+              },
+              footer: (items) => {
+                if (!items.length) return '';
+                const idx = items[0].dataIndex;
+                const p = principalPoints[idx] || 0;
+                const intr = interestPoints[idx] || 0;
+                const tot = p + intr;
+                if (tot === 0) return '';
+                const pPct = ((p / tot) * 100).toFixed(1);
+                const iPct = ((intr / tot) * 100).toFixed(1);
+                return `Split to Date: ${pPct}% Principal | ${iPct}% Interest`;
+              }
             }
           }
         },
         scales: {
-          x: { grid: { display: false } },
-          y: {
+          x: {
+            grid: { display: false },
             ticks: {
+              color: theme.textColor,
+              font: { family: 'Inter, sans-serif', size: 11 }
+            }
+          },
+          y: {
+            grid: { color: theme.gridColor },
+            ticks: {
+              color: theme.textColor,
+              font: { family: 'Inter, sans-serif', size: 11 },
               callback: (val) => this.currencyService.formatCompact(Number(val))
             }
           }
@@ -719,6 +854,7 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private renderAnnualStackedBarChart(ctx: CanvasRenderingContext2D, sim: PrepaymentSimulationResult): void {
+    const theme = this.getChartThemeColors();
     const annual = sim.annualSchedule;
     const labels = annual.map(a => `Year ${a.yearNumber}`);
     const principalData = annual.map(a => a.totalPrincipal + a.totalPrepayment);
@@ -730,34 +866,74 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
         labels,
         datasets: [
           {
-            label: 'Principal + Prepayment',
+            label: 'Principal Paid Off',
             data: principalData,
-            backgroundColor: '#6366f1'
+            backgroundColor: '#10b981' // Emerald
           },
           {
             label: 'Interest Paid',
             data: interestData,
-            backgroundColor: '#f59e0b'
+            backgroundColor: '#f59e0b' // Amber
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
         scales: {
-          x: { stacked: true, grid: { display: false } },
+          x: {
+            stacked: true,
+            grid: { display: false },
+            ticks: {
+              color: theme.textColor,
+              font: { family: 'Inter, sans-serif', size: 11 }
+            }
+          },
           y: {
             stacked: true,
+            grid: { color: theme.gridColor },
             ticks: {
+              color: theme.textColor,
+              font: { family: 'Inter, sans-serif', size: 11 },
               callback: (val) => this.currencyService.formatCompact(Number(val))
             }
           }
         },
         plugins: {
-          legend: { position: 'top', labels: { boxWidth: 12, font: { size: 12, weight: 600 } } },
+          legend: {
+            position: 'top',
+            labels: {
+              color: theme.textColor,
+              boxWidth: 12,
+              font: { family: 'Inter, sans-serif', size: 12, weight: 600 }
+            }
+          },
           tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipTitle,
+            bodyColor: theme.tooltipBody,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1,
+            padding: 10,
+            cornerRadius: 8,
             callbacks: {
-              label: (ctx) => ` ${ctx.dataset.label}: ${this.currencyService.formatCompact(Number(ctx.raw) || 0)}`
+              label: (ctx) => {
+                const val = Number(ctx.raw) || 0;
+                const yearIndex = ctx.dataIndex;
+                const yearSummary = annual[yearIndex];
+                const yearTotal = yearSummary ? (yearSummary.totalPrincipal + yearSummary.totalPrepayment + yearSummary.totalInterest) : 0;
+                const pct = yearTotal > 0 ? ((val / yearTotal) * 100).toFixed(1) : '0';
+                return ` ${ctx.dataset.label}: ${this.currencyService.formatFull(val)} (${pct}%)`;
+              },
+              footer: (items) => {
+                if (!items.length) return '';
+                const yearIndex = items[0].dataIndex;
+                const yearSummary = annual[yearIndex];
+                if (!yearSummary) return '';
+                const yearTotal = yearSummary.totalPrincipal + yearSummary.totalPrepayment + yearSummary.totalInterest;
+                return `Total Paid this Year: ${this.currencyService.formatFull(yearTotal)}\nEnding Remaining Balance: ${this.currencyService.formatFull(yearSummary.closingBalance)}`;
+              }
             }
           }
         }

@@ -150,8 +150,8 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (!data || data.length === 0) return;
 
     const isDark = this.themeService.isDark();
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)';
-    const textColor = isDark ? '#94a3b8' : '#64748b';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)';
+    const textColor = isDark ? '#94a3b8' : '#334155';
 
     const labels = data.map(d => `Yr ${d.year}${d.age ? ' (' + d.age + ')' : ''}`);
 

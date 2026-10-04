@@ -66,21 +66,21 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
             <div class="p-3.5 rounded-2xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 space-y-1">
-              <div class="text-[11px] font-bold uppercase text-slate-400">Interest Saved</div>
+              <div class="text-[11px] font-bold uppercase text-slate-600 dark:text-slate-400">Interest Saved</div>
               <div class="text-xl font-black text-emerald-600 dark:text-emerald-400">{{ currencyService.formatCompact(1280000) }}+</div>
-              <div class="text-[11px] text-slate-500">On a {{ currencyService.formatCompact(5000000) }} Home Loan</div>
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">On a {{ currencyService.formatCompact(5000000) }} Home Loan</div>
             </div>
 
             <div class="p-3.5 rounded-2xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 space-y-1">
-              <div class="text-[11px] font-bold uppercase text-slate-400">Time Saved</div>
+              <div class="text-[11px] font-bold uppercase text-slate-600 dark:text-slate-400">Time Saved</div>
               <div class="text-xl font-black text-indigo-600 dark:text-indigo-400">3 yrs 5 mos</div>
-              <div class="text-[11px] text-slate-500">Debt-free much earlier</div>
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">Debt-free much earlier</div>
             </div>
 
             <div class="p-3.5 rounded-2xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 space-y-1">
-              <div class="text-[11px] font-bold uppercase text-slate-400">Decision Engine</div>
-              <div class="text-xl font-black text-amber-500">Tenure vs EMI</div>
-              <div class="text-[11px] text-slate-500">Mathematical insight</div>
+              <div class="text-[11px] font-bold uppercase text-slate-600 dark:text-slate-400">Decision Engine</div>
+              <div class="text-xl font-black text-amber-600 dark:text-amber-400">Tenure vs EMI</div>
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">Mathematical insight</div>
             </div>
           </div>
 
@@ -101,28 +101,28 @@
         <div class="lg:col-span-5">
           <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-950/80 p-5 shadow-lg space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <span class="text-xs font-bold text-slate-500 uppercase">Live Example</span>
-              <span class="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md">
+              <span class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">Live Example</span>
+              <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md">
                 {{ currencyService.formatCompact(5000000) }} @ 8.5% Loan
               </span>
             </div>
 
             <div class="space-y-3 text-xs">
               <div class="flex justify-between items-center">
-                <span class="text-slate-500">Original Tenure:</span>
+                <span class="text-slate-600 dark:text-slate-400 font-medium">Original Tenure:</span>
                 <span class="font-bold text-slate-900 dark:text-white">20 Years (240 mos)</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-slate-500">Prepayment Applied:</span>
-                <span class="font-bold text-emerald-600">{{ currencyService.formatFull(500000) }} at Month 36</span>
+                <span class="text-slate-600 dark:text-slate-400 font-medium">Prepayment Applied:</span>
+                <span class="font-bold text-emerald-700 dark:text-emerald-400">{{ currencyService.formatFull(500000) }} at Month 36</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-slate-500">New Tenure:</span>
+                <span class="text-slate-600 dark:text-slate-400 font-medium">New Tenure:</span>
                 <span class="font-extrabold text-indigo-600 dark:text-indigo-400">16 Years 7 Months</span>
               </div>
               <div class="p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-500/30 flex justify-between items-center font-bold">
                 <span class="text-emerald-800 dark:text-emerald-300">Total Interest Saved:</span>
-                <span class="text-emerald-600 dark:text-emerald-400 text-sm">{{ currencyService.formatCompact(1280000) }}</span>
+                <span class="text-emerald-700 dark:text-emerald-400 text-sm font-extrabold">{{ currencyService.formatCompact(1280000) }}</span>
               </div>
             </div>
 
@@ -144,7 +144,7 @@
       <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
         Popular Financial Calculators
       </h2>
-      <p class="text-sm text-slate-500 max-w-xl mx-auto">
+      <p class="text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
         Most accessed tools for wealth growth, early debt freedom, and retirement security.
       </p>
     </div>
@@ -159,12 +159,12 @@
           💸
         </div>
         <div>
-          <div class="text-xs uppercase font-extrabold text-emerald-600 dark:text-emerald-400">Flagship</div>
+          <div class="text-xs uppercase font-extrabold text-emerald-700 dark:text-emerald-300">Flagship</div>
           <h3 class="text-base font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">
             Loan Prepayment Simulator
           </h3>
-          <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-            See how lump sum & recurring part-payments save lakhs in interest and reduce tenure.
+          <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+            See how lump sum & recurring part-payments save in total interest and reduce tenure.
           </p>
         </div>
       </a>
@@ -178,11 +178,11 @@
           📈
         </div>
         <div>
-          <div class="text-xs uppercase font-extrabold text-indigo-600 dark:text-indigo-400">High Growth</div>
+          <div class="text-xs uppercase font-extrabold text-indigo-700 dark:text-indigo-300">High Growth</div>
           <h3 class="text-base font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors">
             Step-Up SIP Calculator
           </h3>
-          <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+          <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
             Model 10% annual increase in SIP contributions vs flat SIP to build exponential wealth.
           </p>
         </div>
@@ -197,11 +197,11 @@
           ⚡
         </div>
         <div>
-          <div class="text-xs uppercase font-extrabold text-purple-600 dark:text-purple-400">Core Engine</div>
+          <div class="text-xs uppercase font-extrabold text-purple-700 dark:text-purple-300">Core Engine</div>
           <h3 class="text-base font-bold text-slate-900 dark:text-white group-hover:text-purple-600 transition-colors">
             Compound Interest
           </h3>
-          <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+          <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
             Multi-frequency compounding on lump sum investments with real purchasing power.
           </p>
         </div>
@@ -216,11 +216,11 @@
           🏖️
         </div>
         <div>
-          <div class="text-xs uppercase font-extrabold text-amber-600 dark:text-amber-400">Life Planning</div>
+          <div class="text-xs uppercase font-extrabold text-amber-700 dark:text-amber-300">Life Planning</div>
           <h3 class="text-base font-bold text-slate-900 dark:text-white group-hover:text-amber-600 transition-colors">
             Retirement Calculator
           </h3>
-          <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+          <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
             Inflation-adjusted corpus requirement, future expense projections, and gap analysis.
           </p>
         </div>
@@ -242,7 +242,7 @@
             <h3 class="text-lg font-bold text-slate-900 dark:text-white">
               Loan & Mortgage Calculators
             </h3>
-            <p class="text-xs text-slate-500">
+            <p class="text-xs text-slate-600 dark:text-slate-400">
               Cut interest and become debt-free faster.
             </p>
           </div>
@@ -257,7 +257,7 @@
               <div class="text-xs font-extrabold text-emerald-700 dark:text-emerald-300">
                 Loan Prepayment Simulator (Flagship)
               </div>
-              <div class="text-[11px] text-slate-500">
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">
                 Compare Reduce Tenure vs Reduce EMI with side-by-side savings.
               </div>
             </div>
@@ -272,11 +272,11 @@
               <div class="text-xs font-bold text-slate-900 dark:text-white">
                 Loan EMI Calculator
               </div>
-              <div class="text-[11px] text-slate-500">
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">
                 Standard reducing-balance monthly installment & total interest.
               </div>
             </div>
-            <span class="text-xs font-bold text-slate-400">&rarr;</span>
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">&rarr;</span>
           </a>
 
           <a
@@ -287,11 +287,11 @@
               <div class="text-xs font-bold text-slate-900 dark:text-white">
                 Loan Amortization Schedule
               </div>
-              <div class="text-[11px] text-slate-500">
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">
                 Monthly & annual principal-interest tables with CSV export.
               </div>
             </div>
-            <span class="text-xs font-bold text-slate-400">&rarr;</span>
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">&rarr;</span>
           </a>
 
           <a
@@ -302,11 +302,11 @@
               <div class="text-xs font-bold text-slate-900 dark:text-white">
                 Home Loan Calculator
               </div>
-              <div class="text-[11px] text-slate-500">
-                Optimized for Indian real estate mortgages & tenure reduction.
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">
+                Optimized for real estate mortgages & tenure reduction.
               </div>
             </div>
-            <span class="text-xs font-bold text-slate-400">&rarr;</span>
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">&rarr;</span>
           </a>
 
           <a
@@ -317,11 +317,11 @@
               <div class="text-xs font-bold text-slate-900 dark:text-white">
                 Car Loan Calculator
               </div>
-              <div class="text-[11px] text-slate-500">
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">
                 Auto financing, down payments, and 3-7 year tenure trade-offs.
               </div>
             </div>
-            <span class="text-xs font-bold text-slate-400">&rarr;</span>
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">&rarr;</span>
           </a>
         </div>
       </div>
@@ -336,7 +336,7 @@
             <h3 class="text-lg font-bold text-slate-900 dark:text-white">
               Investment & Wealth Calculators
             </h3>
-            <p class="text-xs text-slate-500">
+            <p class="text-xs text-slate-600 dark:text-slate-400">
               Compound wealth and beat inflation.
             </p>
           </div>
@@ -351,7 +351,7 @@
               <div class="text-xs font-extrabold text-indigo-700 dark:text-indigo-300">
                 Step-Up SIP Calculator
               </div>
-              <div class="text-[11px] text-slate-500">
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">
                 Annual contribution step-up with Flat vs Step-Up comparison.
               </div>
             </div>
@@ -366,11 +366,11 @@
               <div class="text-xs font-bold text-slate-900 dark:text-white">
                 Compound Interest Calculator
               </div>
-              <div class="text-[11px] text-slate-500">
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">
                 Lump sum growth with custom compounding frequency & real value.
               </div>
             </div>
-            <span class="text-xs font-bold text-slate-400">&rarr;</span>
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">&rarr;</span>
           </a>
 
           <a
@@ -381,11 +381,11 @@
               <div class="text-xs font-bold text-slate-900 dark:text-white">
                 SIP Calculator
               </div>
-              <div class="text-[11px] text-slate-500">
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">
                 Standard monthly systematic investment plans in mutual funds/stocks.
               </div>
             </div>
-            <span class="text-xs font-bold text-slate-400">&rarr;</span>
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">&rarr;</span>
           </a>
 
           <a
@@ -396,11 +396,11 @@
               <div class="text-xs font-bold text-slate-900 dark:text-white">
                 Retirement Planning Calculator
               </div>
-              <div class="text-[11px] text-slate-500">
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">
                 Required retirement corpus, shortfall/surplus indicator & required SIP.
               </div>
             </div>
-            <span class="text-xs font-bold text-slate-400">&rarr;</span>
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">&rarr;</span>
           </a>
 
           <a
@@ -411,11 +411,11 @@
               <div class="text-xs font-bold text-slate-900 dark:text-white">
                 Inflation & Purchasing Power
               </div>
-              <div class="text-[11px] text-slate-500">
+              <div class="text-[11px] text-slate-600 dark:text-slate-400">
                 Future cost equivalent and real purchasing power erosion.
               </div>
             </div>
-            <span class="text-xs font-bold text-slate-400">&rarr;</span>
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">&rarr;</span>
           </a>
         </div>
       </div>
@@ -428,7 +428,7 @@
       <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
         Why Choose CompoundCalc?
       </h2>
-      <p class="text-sm text-slate-500 max-w-xl mx-auto">
+      <p class="text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
         Engineered as a serious decision-making utility rather than a basic toy calculator.
       </p>
     </div>
@@ -441,7 +441,7 @@
         <h3 class="text-base font-bold text-slate-900 dark:text-white">
           100% Client-Side & Private
         </h3>
-        <p class="text-xs text-slate-500 leading-relaxed">
+        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
           Zero database, zero logins, zero tracking. All sensitive financial numbers stay strictly inside your local browser memory.
         </p>
       </div>
@@ -453,7 +453,7 @@
         <h3 class="text-base font-bold text-slate-900 dark:text-white">
           Decision Simulator Engine
         </h3>
-        <p class="text-xs text-slate-500 leading-relaxed">
+        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
           Compare side-by-side scenarios, explore "What If?" questions, and get actionable mathematical guidance on reducing tenure vs EMI.
         </p>
       </div>
@@ -465,7 +465,7 @@
         <h3 class="text-base font-bold text-slate-900 dark:text-white">
           Multi-Currency Support ({{ currencyService.code() }})
         </h3>
-        <p class="text-xs text-slate-500 leading-relaxed">
+        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
           Native Lakhs/Crores for Indian Rupee (INR) alongside international standards (USD, EUR, GBP, CAD, AUD, JPY).
         </p>
       </div>

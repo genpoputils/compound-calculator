@@ -19,7 +19,7 @@ export interface QuickStep {
         </label>
         <div class="relative flex items-center">
           @if (prefix()) {
-            <span class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 dark:text-slate-500 select-none">
+            <span class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500 dark:text-slate-400 select-none">
               {{ prefix() }}
             </span>
           }
@@ -38,7 +38,7 @@ export interface QuickStep {
             [ngClass]="inputClasses()"
           />
           @if (suffix()) {
-            <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 dark:text-slate-500 select-none">
+            <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500 dark:text-slate-400 select-none">
               {{ suffix() }}
             </span>
           }

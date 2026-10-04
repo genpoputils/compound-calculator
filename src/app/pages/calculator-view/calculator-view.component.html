@@ -227,19 +227,19 @@
                 </span>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-700 dark:text-slate-300">
                   <div>
-                    <span class="text-slate-400 block text-[10px]">Year 1</span>
+                    <span class="text-slate-600 dark:text-slate-400 block text-[10px] font-medium">Year 1</span>
                     <span class="font-semibold">{{ state().stepUpInput.startingMonthlyInvestment | inrCurrency:'compact' }}/mo</span>
                   </div>
                   <div>
-                    <span class="text-slate-400 block text-[10px]">Year 2</span>
+                    <span class="text-slate-600 dark:text-slate-400 block text-[10px] font-medium">Year 2</span>
                     <span class="font-semibold">{{ (state().stepUpInput.startingMonthlyInvestment * (1 + state().stepUpInput.annualStepUpPercent / 100)) | inrCurrency:'compact' }}/mo</span>
                   </div>
                   <div>
-                    <span class="text-slate-400 block text-[10px]">Year 3</span>
+                    <span class="text-slate-600 dark:text-slate-400 block text-[10px] font-medium">Year 3</span>
                     <span class="font-semibold">{{ (state().stepUpInput.startingMonthlyInvestment * Math.pow(1 + state().stepUpInput.annualStepUpPercent / 100, 2)) | inrCurrency:'compact' }}/mo</span>
                   </div>
                   <div>
-                    <span class="text-slate-400 block text-[10px]">Year 4</span>
+                    <span class="text-slate-600 dark:text-slate-400 block text-[10px] font-medium">Year 4</span>
                     <span class="font-semibold">{{ (state().stepUpInput.startingMonthlyInvestment * Math.pow(1 + state().stepUpInput.annualStepUpPercent / 100, 3)) | inrCurrency:'compact' }}/mo</span>
                   </div>
                 </div>
@@ -542,13 +542,13 @@
                     @if (result().metadata?.estimatedRetirementMonthlyExpense) {
                       <div class="grid grid-cols-2 gap-2 text-xs pt-1">
                         <div class="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                          <span class="text-slate-400 block">Monthly at Retirement</span>
+                          <span class="text-slate-600 dark:text-slate-400 block font-medium">Monthly at Retirement</span>
                           <span class="font-extrabold text-sm text-slate-900 dark:text-white">
                             {{ result().metadata?.estimatedRetirementMonthlyExpense | inrCurrency:'compact' }}
                           </span>
                         </div>
                         <div class="p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                          <span class="text-slate-400 block">Annual at Retirement</span>
+                          <span class="text-slate-600 dark:text-slate-400 block font-medium">Annual at Retirement</span>
                           <span class="font-extrabold text-sm text-slate-900 dark:text-white">
                             {{ result().metadata?.estimatedRetirementAnnualExpense | inrCurrency:'compact' }}
                           </span>
@@ -1059,18 +1059,18 @@
               </div>
               <div class="grid grid-cols-2 gap-3 text-xs">
                 <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
-                  <div class="text-slate-500">Regular Flat SIP:</div>
+                  <div class="text-slate-600 dark:text-slate-400 font-medium">Regular Flat SIP:</div>
                   <div class="text-sm font-bold text-slate-800 dark:text-slate-200">
                     {{ flatVsStepUp()?.flatSip?.futureValue | inrCurrency:'compact' }}
                   </div>
-                  <div class="text-[10px] text-slate-400">Total Invested: {{ flatVsStepUp()?.flatSip?.totalInvested | inrCurrency:'compact' }}</div>
+                  <div class="text-[10px] text-slate-600 dark:text-slate-400 font-medium">Total Invested: {{ flatVsStepUp()?.flatSip?.totalInvested | inrCurrency:'compact' }}</div>
                 </div>
                 <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-indigo-200 dark:border-indigo-800">
                   <div class="text-indigo-600 dark:text-indigo-400 font-semibold">With Annual Step-Up:</div>
                   <div class="text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
                     {{ flatVsStepUp()?.stepUpSip?.futureValue | inrCurrency:'compact' }}
                   </div>
-                  <div class="text-[10px] text-slate-400">Total Invested: {{ flatVsStepUp()?.stepUpSip?.totalInvested | inrCurrency:'compact' }}</div>
+                  <div class="text-[10px] text-slate-600 dark:text-slate-400 font-medium">Total Invested: {{ flatVsStepUp()?.stepUpSip?.totalInvested | inrCurrency:'compact' }}</div>
                 </div>
               </div>
               <div class="text-xs text-slate-600 dark:text-slate-300">
@@ -1104,13 +1104,13 @@
               </div>
               <div class="grid grid-cols-2 gap-3 text-xs">
                 <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
-                  <div class="text-slate-500">Required Corpus:</div>
+                  <div class="text-slate-600 dark:text-slate-400 font-medium">Required Corpus:</div>
                   <div class="text-sm font-bold text-slate-900 dark:text-white">
                     {{ retirementAnalysis()?.requiredCorpus | inrCurrency:'compact' }}
                   </div>
                 </div>
                 <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
-                  <div class="text-slate-500">Projected Corpus:</div>
+                  <div class="text-slate-600 dark:text-slate-400 font-medium">Projected Corpus:</div>
                   <div class="text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
                     {{ retirementAnalysis()?.projectedCorpus | inrCurrency:'compact' }}
                   </div>
@@ -1275,7 +1275,7 @@
             <details class="group rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-4 transition-colors">
               <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer select-none list-none flex items-center justify-between gap-2">
                 <span>{{ faq.question }}</span>
-                <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                <span class="text-slate-500 dark:text-slate-400 group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <p class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 {{ faq.answer }}

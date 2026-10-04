@@ -85,6 +85,15 @@ describe('LoanCalculatorComponent', () => {
 
     comp.setChartTab('breakdown');
     expect(comp.activeChartTab()).toBe('breakdown');
+
+    comp.setChartTab('cumulative-interest');
+    expect(comp.activeChartTab()).toBe('cumulative-interest');
+
+    comp.setChartTab('annual-bar');
+    expect(comp.activeChartTab()).toBe('annual-bar');
+
+    comp.setChartTab('balance');
+    expect(comp.activeChartTab()).toBe('balance');
   });
 
   it('should support opting out of prepayment simulation with clean zero-savings fallback', () => {
