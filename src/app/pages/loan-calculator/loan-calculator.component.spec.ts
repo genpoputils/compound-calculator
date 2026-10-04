@@ -60,17 +60,71 @@ describe('LoanCalculatorComponent', () => {
     expect(comp.state().tenureYears).toBe(3);
   });
 
-  it('should apply interactive "What If" scenarios immediately', () => {
+  it('should apply interactive "What If" scenarios cleanly isolated without residual compounding', () => {
     const fixture = TestBed.createComponent(LoanCalculatorComponent);
     const comp = fixture.componentInstance;
 
+    // Apply yearly prepayment scenario
     comp.applyWhatIfScenario('prepay-1l-yearly');
     expect(comp.state().recurringPrepaymentAmount).toBe(100000);
     expect(comp.state().prepaymentFrequency).toBe('annually');
+    expect(comp.state().oneTimePrepaymentAmount).toBe(0);
+    expect(comp.state().showAdvanced).toBe(true);
+    expect(comp.activeScenario()).toBe('prepay-1l-yearly');
     expect(comp.simulation().interestSaved).toBeGreaterThan(0);
 
+    // Apply extra EMI increase scenario - verify recurring is reset to 0 (no compounding!)
     comp.applyWhatIfScenario('extra-5k-emi');
     expect(comp.state().annualEmiIncreaseAmount).toBe(5000);
+    expect(comp.state().recurringPrepaymentAmount).toBe(0);
+    expect(comp.state().oneTimePrepaymentAmount).toBe(0);
+    expect(comp.emiStepUnit()).toBe('amount');
+    expect(comp.activeScenario()).toBe('extra-5k-emi');
+
+    // Applying lump sum scenario resets EMI increase and closes drawer
+    comp.applyWhatIfScenario('prepay-5l-3yr');
+    expect(comp.state().oneTimePrepaymentAmount).toBe(500000);
+    expect(comp.state().oneTimePrepaymentMonth).toBe(36);
+    expect(comp.state().annualEmiIncreaseAmount).toBe(0);
+    expect(comp.state().recurringPrepaymentAmount).toBe(0);
+    expect(comp.state().showAdvanced).toBe(false);
+    expect(comp.activeScenario()).toBe('prepay-5l-3yr');
+
+    // User editing slider resets active scenario highlight to none
+    comp.updateField('oneTimePrepaymentAmount', 200000);
+    expect(comp.activeScenario()).toBe('none');
+  });
+
+  it('should dynamically adapt slider bounds and quick amounts to active loan preset', () => {
+    const fixture = TestBed.createComponent(LoanCalculatorComponent);
+    const comp = fixture.componentInstance;
+
+    // Default Home Loan
+    expect(comp.quickAmounts()).toEqual([2500000, 5000000, 7500000, 10000000]);
+    expect(comp.whatIfConfig().lumpAmount).toBe(500000);
+
+    // Car Loan
+    comp.setPreset('car');
+    expect(comp.quickAmounts()).toEqual([600000, 1000000, 1500000, 2500000]);
+    expect(comp.loanSliderConfig().min).toBe(100000);
+    expect(comp.whatIfConfig().lumpAmount).toBe(150000);
+    expect(comp.whatIfConfig().stepAmount).toBe(2000);
+
+    // Personal Loan
+    comp.setPreset('personal');
+    expect(comp.quickAmounts()).toEqual([100000, 300000, 500000, 1000000]);
+    expect(comp.loanSliderConfig().min).toBe(25000);
+    expect(comp.whatIfConfig().lumpAmount).toBe(50000);
+    expect(comp.whatIfConfig().stepAmount).toBe(1000);
+  });
+
+  it('should clamp prepayment amount so it never exceeds the loan amount', () => {
+    const fixture = TestBed.createComponent(LoanCalculatorComponent);
+    const comp = fixture.componentInstance;
+
+    comp.updateField('loanAmount', 300000);
+    comp.updateField('oneTimePrepaymentAmount', 500000);
+    expect(comp.state().oneTimePrepaymentAmount).toBe(300000);
   });
 
   it('should toggle schedule view mode and change chart tabs', () => {

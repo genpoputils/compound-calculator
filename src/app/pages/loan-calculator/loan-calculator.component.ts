@@ -111,8 +111,93 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
   // Active Chart Tab
   readonly activeChartTab = signal<LoanChartTab>('balance');
 
+  // Interactive Scenario and Step-up UI controls
+  readonly activeScenario = signal<'prepay-5l-3yr' | 'extra-5k-emi' | 'prepay-1l-yearly' | '1-extra-emi-yearly' | 'none'>('none');
+  readonly emiStepUnit = signal<'amount' | 'percent'>('percent');
+
   private isInternalUrlSync = false;
   private urlSyncTimeout: any = null;
+
+  // Dynamic scenario parameters tailored to active loan scale
+  readonly whatIfConfig = computed(() => {
+    const preset = this.state().activePreset;
+    if (preset === 'car') {
+      return {
+        lumpAmount: 150000,
+        lumpMonths: 24,
+        lumpYears: 2,
+        yearlyAmount: 50000,
+        stepAmount: 2000
+      };
+    }
+    if (preset === 'personal') {
+      return {
+        lumpAmount: 50000,
+        lumpMonths: 12,
+        lumpYears: 1,
+        yearlyAmount: 25000,
+        stepAmount: 1000
+      };
+    }
+    return {
+      lumpAmount: 500000,
+      lumpMonths: 36,
+      lumpYears: 3,
+      yearlyAmount: 100000,
+      stepAmount: 5000
+    };
+  });
+
+  // Dynamic preset quick amounts for Loan Amount input
+  readonly quickAmounts = computed<number[]>(() => {
+    const preset = this.state().activePreset;
+    if (preset === 'car') {
+      return [600000, 1000000, 1500000, 2500000];
+    }
+    if (preset === 'personal') {
+      return [100000, 300000, 500000, 1000000];
+    }
+    return [2500000, 5000000, 7500000, 10000000];
+  });
+
+  // Dynamic slider range for Loan Amount
+  readonly loanSliderConfig = computed(() => {
+    const preset = this.state().activePreset;
+    const amt = this.state().loanAmount;
+    if (preset === 'car') {
+      return { min: 100000, max: Math.max(5000000, amt), step: 50000 };
+    }
+    if (preset === 'personal') {
+      return { min: 25000, max: Math.max(2500000, amt), step: 25000 };
+    }
+    return { min: 100000, max: Math.max(25000000, amt), step: 50000 };
+  });
+
+  // Dynamic slider range for Tenure
+  readonly tenureSliderConfig = computed(() => {
+    const isYears = this.state().tenureUnit === 'years';
+    const preset = this.state().activePreset;
+    const current = this.state().tenureYears;
+    if (preset === 'car') {
+      return { min: isYears ? 1 : 12, max: isYears ? Math.max(10, current) : Math.max(120, current) };
+    }
+    if (preset === 'personal') {
+      return { min: isYears ? 1 : 12, max: isYears ? Math.max(7, current) : Math.max(84, current) };
+    }
+    return { min: isYears ? 1 : 12, max: isYears ? Math.max(30, current) : Math.max(360, current) };
+  });
+
+  readonly prepaymentSliderStep = computed<number>(() => {
+    const amt = this.state().loanAmount;
+    if (amt <= 500000) return 5000;
+    if (amt <= 2000000) return 10000;
+    return 25000;
+  });
+
+  readonly maxTenureMonths = computed<number>(() => {
+    const s = this.state();
+    return s.tenureUnit === 'years' ? s.tenureYears * 12 : s.tenureYears;
+  });
 
   constructor() {
     effect(() => {
@@ -321,8 +406,8 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
     let val = Number(raw);
     if (raw === '' || isNaN(val) || val < 0) {
       val = 0;
-    } else if (val > 100000000) {
-      val = 100000000;
+    } else if (val > this.state().loanAmount) {
+      val = this.state().loanAmount;
     }
     input.value = String(val);
     this.updateField('oneTimePrepaymentAmount', val);
@@ -360,15 +445,25 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
       if (next.oneTimePrepaymentMonth > maxMonths) {
         next.oneTimePrepaymentMonth = Math.max(1, maxMonths);
       }
+      if (next.oneTimePrepaymentAmount > next.loanAmount) {
+        next.oneTimePrepaymentAmount = next.loanAmount;
+      }
       return next;
     });
+    this.activeScenario.set('none');
     this.scheduleCurrentPage.set(1);
     this.onStateChanged();
   }
 
   setPreset(preset: LoanPresetType): void {
     this.state.update(s => {
-      const next = { ...s, activePreset: preset };
+      const next = { ...s, activePreset: preset, enablePrepayment: true };
+      // Clean slate for residual recurring and step-up amounts so outputs match the preset
+      next.recurringPrepaymentAmount = 0;
+      next.annualEmiIncreasePercent = 0;
+      next.annualEmiIncreaseAmount = 0;
+      next.showAdvanced = false;
+
       switch (preset) {
         case 'home':
           next.loanAmount = 5000000;
@@ -400,6 +495,7 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
       }
       return next;
     });
+    this.activeScenario.set('none');
     this.onStateChanged();
   }
 
@@ -422,33 +518,88 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
     this.scheduleRowsPerPage.update(r => (r === 24 ? 9999 : 24));
   }
 
-  // Quick "What If?" Scenario Presets
+  // --- Step-Up UI Handlers ---
+
+  setEmiStepUnit(unit: 'amount' | 'percent'): void {
+    this.emiStepUnit.set(unit);
+    if (unit === 'amount') {
+      this.updateField('annualEmiIncreasePercent', 0);
+    } else {
+      this.updateField('annualEmiIncreaseAmount', 0);
+    }
+  }
+
+  onEmiStepAmountChange(amount: number): void {
+    this.state.update(s => ({
+      ...s,
+      annualEmiIncreaseAmount: amount,
+      annualEmiIncreasePercent: 0
+    }));
+    this.activeScenario.set('none');
+    this.onStateChanged();
+  }
+
+  onEmiStepPercentChange(percent: number): void {
+    this.state.update(s => ({
+      ...s,
+      annualEmiIncreasePercent: percent,
+      annualEmiIncreaseAmount: 0
+    }));
+    this.activeScenario.set('none');
+    this.onStateChanged();
+  }
+
+  // Quick "What If?" Scenario Presets (Cleanly isolated, aligning outputs with visible form fields)
   applyWhatIfScenario(type: 'prepay-5l-3yr' | 'extra-5k-emi' | 'prepay-1l-yearly' | '1-extra-emi-yearly'): void {
     this.state.update(s => {
       const next = { ...s, enablePrepayment: true };
+      const cfg = this.whatIfConfig();
       const currentEmi = this.simulation().originalLoan.monthlyEmi;
+
+      // Ensure reduce-tenure mode is active for savings showcase
+      next.prepaymentMode = 'reduce-tenure';
 
       switch (type) {
         case 'prepay-5l-3yr':
-          next.oneTimePrepaymentAmount = 500000;
-          next.oneTimePrepaymentMonth = 36;
-          next.prepaymentMode = 'reduce-tenure';
+          next.oneTimePrepaymentAmount = cfg.lumpAmount;
+          next.oneTimePrepaymentMonth = cfg.lumpMonths;
+          next.recurringPrepaymentAmount = 0;
+          next.annualEmiIncreaseAmount = 0;
+          next.annualEmiIncreasePercent = 0;
+          next.showAdvanced = false;
+          this.activeScenario.set('prepay-5l-3yr');
           break;
+
         case 'extra-5k-emi':
-          next.annualEmiIncreaseAmount = 5000;
-          next.prepaymentMode = 'reduce-tenure';
+          next.oneTimePrepaymentAmount = 0;
+          next.recurringPrepaymentAmount = 0;
+          next.annualEmiIncreaseAmount = cfg.stepAmount;
+          next.annualEmiIncreasePercent = 0;
+          next.showAdvanced = true;
+          this.emiStepUnit.set('amount');
+          this.activeScenario.set('extra-5k-emi');
           break;
+
         case 'prepay-1l-yearly':
-          next.recurringPrepaymentAmount = 100000;
+          next.oneTimePrepaymentAmount = 0;
+          next.recurringPrepaymentAmount = cfg.yearlyAmount;
           next.prepaymentFrequency = 'annually';
           next.recurringStartMonth = 12;
-          next.prepaymentMode = 'reduce-tenure';
+          next.annualEmiIncreaseAmount = 0;
+          next.annualEmiIncreasePercent = 0;
+          next.showAdvanced = true;
+          this.activeScenario.set('prepay-1l-yearly');
           break;
+
         case '1-extra-emi-yearly':
+          next.oneTimePrepaymentAmount = 0;
           next.recurringPrepaymentAmount = Math.round(currentEmi);
           next.prepaymentFrequency = 'annually';
           next.recurringStartMonth = 12;
-          next.prepaymentMode = 'reduce-tenure';
+          next.annualEmiIncreaseAmount = 0;
+          next.annualEmiIncreasePercent = 0;
+          next.showAdvanced = true;
+          this.activeScenario.set('1-extra-emi-yearly');
           break;
       }
       return next;
