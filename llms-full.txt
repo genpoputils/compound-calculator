@@ -1,0 +1,68 @@
+# CompoundCalc — Full Documentation & Algorithmic Specifications
+
+> CompoundCalc is a free, privacy-first financial calculation and decision simulator engineered with client-side mathematical precision under GenPopUtils.
+
+## Purpose & Scope
+
+CompoundCalc is engineered to give consumers, investors, and homeowners full agency over their personal financial decisions by exposing exact mathematical models for compounding, inflation discounting, and debt amortization. The utility operates strictly inside the browser with zero external network dependencies for calculations.
+
+## Core Financial Algorithms
+
+### 1. Compound Interest Formula
+Future value $A$ with initial principal $P$, annual nominal interest rate $r$, compounding frequency $n$ times per year, recurring contribution $PMT$ made $k$ times per year, and total duration $t$ years:
+
+$$A = P \left(1 + \frac{r}{n}\right)^{nt} + PMT \times \frac{\left(1 + \frac{r}{n}\right)^{nt} - 1}{\frac{r}{n}}$$
+
+Compounding frequencies supported:
+- Daily ($n = 365$)
+- Monthly ($n = 12$)
+- Quarterly ($n = 4$)
+- Semi-Annually ($n = 2$)
+- Annually ($n = 1$)
+
+### 2. Step-Up Systematic Investment Plan (SIP)
+For annual step-up rate $s$ (e.g. 10% annual increase in monthly contributions):
+In Year $y$, monthly contribution:
+$$PMT_y = PMT_1 \times (1 + s)^{y - 1}$$
+Compounding is calculated month-by-month to reflect actual cash-flow timing.
+
+### 3. Equated Monthly Installment (EMI) Formula
+For loan principal $P$, monthly interest rate $r_m = \frac{\text{Annual Rate}}{12 \times 100}$, and total tenure in months $N$:
+
+$$\text{EMI} = P \times r_m \times \frac{(1 + r_m)^N}{(1 + r_m)^N - 1}$$
+
+### 4. Loan Prepayment Simulation Mechanics
+CompoundCalc simulates full monthly amortization step-by-step:
+1. $\text{Interest}_m = \text{Opening Balance}_m \times r_m$
+2. $\text{Principal}_m = \min(\text{Opening Balance}_m, \text{EMI} - \text{Interest}_m)$
+3. $\text{Prepayment}_m = \text{Lump Sum} + \text{Recurring Prepayment}$
+4. $\text{Closing Balance}_m = \max(0, \text{Opening Balance}_m - \text{Principal}_m - \text{Prepayment}_m)$
+
+Two prepayment impact modes:
+- **Reduce Tenure (Default & Recommended):** EMI stays constant; loan closes earlier, maximizing cumulative interest savings.
+- **Reduce EMI:** Loan duration remains constant; monthly payment is recalculated based on remaining principal, reducing monthly cash-flow obligations.
+
+### 5. Inflation Adjustment & Real Purchasing Power
+Real value adjusted for inflation rate $i$ over $t$ years:
+
+$$\text{Real Value} = \frac{\text{Nominal Value}}{(1 + i)^t}$$
+
+## Available Calculators & Direct URLs
+
+- [Home](https://compoundcalc.genpoputils.com/): Portal and feature directory.
+- [Compound Interest Calculator](https://compoundcalc.genpoputils.com/compound-calculator/): Multi-frequency compound growth simulator.
+- [Step-Up SIP Calculator](https://compoundcalc.genpoputils.com/step-up-sip-calculator/): Periodic percentage step-up investment calculator.
+- [SIP Calculator](https://compoundcalc.genpoputils.com/sip-calculator/): Standard mutual fund SIP growth simulator.
+- [Step-Up Investment Calculator](https://compoundcalc.genpoputils.com/step-up-investment-calculator/): Top-up investment modeling.
+- [Investment Calculator](https://compoundcalc.genpoputils.com/investment-calculator/): Multi-asset capital progression calculator.
+- [Retirement Calculator](https://compoundcalc.genpoputils.com/retirement-calculator/): Retirement corpus and safe withdrawal estimation.
+- [Inflation Calculator](https://compoundcalc.genpoputils.com/inflation-calculator/): Purchasing power erosion simulator.
+- [SWP Calculator](https://compoundcalc.genpoputils.com/swp-calculator/): Systematic withdrawal plan drawdown simulator.
+- [Savings Goal Calculator](https://compoundcalc.genpoputils.com/savings-goal-calculator/): Target milestone contribution solver.
+- [Loan Prepayment Calculator](https://compoundcalc.genpoputils.com/loan-prepayment-calculator/): Prepayment interest and tenure reduction engine.
+- [EMI Calculator](https://compoundcalc.genpoputils.com/emi-calculator/): Standard monthly debt installment calculator.
+- [Home Loan Calculator](https://compoundcalc.genpoputils.com/home-loan-calculator/): Housing mortgage amortization simulator.
+- [Car Loan Calculator](https://compoundcalc.genpoputils.com/car-loan-calculator/): Auto finance and loan schedule planner.
+- [Loan Amortization Calculator](https://compoundcalc.genpoputils.com/loan-amortization-calculator/): Month-by-month debt schedule with CSV export.
+- [Loan Calculator](https://compoundcalc.genpoputils.com/loan-calculator/): General loan repayment calculator.
+- [Sitemap](https://compoundcalc.genpoputils.com/sitemap.xml): Machine-readable XML sitemap index.
