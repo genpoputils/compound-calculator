@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Chart, registerables } from 'chart.js';
+import type { Chart as ChartType } from 'chart.js';
 import {
   AmortizationEntry,
   AnnualAmortizationSummary,
@@ -31,8 +31,23 @@ import { SEO_PAGES_DATA, SeoPageContent } from '../../core/seo/seo-content.data'
 import { CalculationMode } from '../../core/calculator/models/calculator.types';
 import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
 import { AdBannerComponent } from '../../shared/components/ad-banner/ad-banner.component';
+import { EditorialIllustrationComponent } from '../../shared/components/illustrations/editorial-illustration.component';
 
-Chart.register(...registerables);
+let chartJsPromise: Promise<typeof import('chart.js')> | null = null;
+let ChartClass: typeof import('chart.js').Chart | null = null;
+
+async function getChartJs(): Promise<typeof import('chart.js').Chart> {
+  if (ChartClass) return ChartClass;
+  if (!chartJsPromise) {
+    chartJsPromise = import('chart.js').then((module) => {
+      module.Chart.register(...module.registerables);
+      ChartClass = module.Chart;
+      return module;
+    });
+  }
+  const mod = await chartJsPromise;
+  return mod.Chart;
+}
 
 export type LoanPresetType = 'home' | 'car' | 'personal' | 'custom';
 export type LoanChartTab = 'balance' | 'breakdown' | 'cumulative-interest' | 'annual-bar';
@@ -78,7 +93,7 @@ const DEFAULT_LOAN_STATE: LoanCalculatorState = {
 @Component({
   selector: 'app-loan-calculator',
   standalone: true,
-  imports: [CommonModule, RouterLink, InrCurrencyPipe, AdBannerComponent],
+  imports: [CommonModule, RouterLink, InrCurrencyPipe, AdBannerComponent, EditorialIllustrationComponent],
   templateUrl: './loan-calculator.component.html'
 })
 export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -95,10 +110,20 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
 
   // View Child for Chart Canvas
   readonly chartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('chartCanvas');
-  private chartInstance: Chart | null = null;
+  private chartInstance: ChartType | null = null;
 
   // Active Mode for SEO and Navigation (e.g. 'loan-prepayment', 'emi', 'loan-amortization', 'home-loan', 'car-loan', 'loan')
-  readonly activeMode = signal<CalculationMode>('loan-prepayment');
+  readonly activeMode = signal<CalculationMode>(this.determineInitialMode());
+
+  private determineInitialMode(): CalculationMode {
+    const path = this.router.url.split('?')[0];
+    if (path.includes('home-loan')) return 'home-loan';
+    if (path.includes('car-loan')) return 'car-loan';
+    if (path.includes('emi-calculator')) return 'emi';
+    if (path.includes('loan-amortization')) return 'loan-amortization';
+    if (path.includes('loan-calculator')) return 'loan';
+    return 'loan-prepayment';
+  }
 
   // Master State
   readonly state = signal<LoanCalculatorState>({ ...DEFAULT_LOAN_STATE });
@@ -117,6 +142,7 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
 
   private isInternalUrlSync = false;
   private urlSyncTimeout: any = null;
+  private chartRafId: number | null = null;
 
   // Dynamic scenario parameters tailored to active loan scale
   readonly whatIfConfig = computed(() => {
@@ -293,6 +319,10 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnDestroy(): void {
+    if (this.chartRafId !== null) {
+      cancelAnimationFrame(this.chartRafId);
+      this.chartRafId = null;
+    }
     if (this.urlSyncTimeout) {
       clearTimeout(this.urlSyncTimeout);
       this.urlSyncTimeout = null;
@@ -831,11 +861,25 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
 
   private renderOrUpdateChart(): void {
     if (!this.isBrowser) return;
+    if (this.chartRafId !== null) {
+      cancelAnimationFrame(this.chartRafId);
+    }
+    this.chartRafId = requestAnimationFrame(async () => {
+      this.chartRafId = null;
+      await this.executeChartRender();
+    });
+  }
+
+  private async executeChartRender(): Promise<void> {
+    if (!this.isBrowser) return;
     const canvasRef = this.chartCanvas();
     if (!canvasRef) return;
 
     const ctx = canvasRef.nativeElement.getContext('2d');
     if (!ctx) return;
+
+    await getChartJs();
+    if (!this.chartCanvas()?.nativeElement) return;
 
     if (this.chartInstance) {
       this.chartInstance.destroy();
@@ -860,12 +904,12 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
     const isDark = this.themeService.isDark();
     return {
       isDark,
-      textColor: isDark ? '#94a3b8' : '#334155',
-      gridColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)',
-      tooltipBg: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-      tooltipTitle: isDark ? '#ffffff' : '#0f172a',
-      tooltipBody: isDark ? '#cbd5e1' : '#334155',
-      tooltipBorder: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+      textColor: isDark ? '#A8ADA3' : '#202A23',
+      gridColor: isDark ? 'rgba(217, 213, 201, 0.08)' : 'rgba(32, 42, 35, 0.08)',
+      tooltipBg: isDark ? '#1E2520' : '#FFFFFF',
+      tooltipTitle: isDark ? '#EAE6DF' : '#202A23',
+      tooltipBody: isDark ? '#A8ADA3' : '#686B61',
+      tooltipBorder: isDark ? '#2C362E' : '#D9D5C9'
     };
   }
 
@@ -915,17 +959,17 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
         {
           label: 'With Prepayment',
           data: prepaidPoints,
-          borderColor: '#10b981', // Emerald green
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          borderColor: '#356B4A', // Forest green
+          backgroundColor: 'rgba(53, 107, 74, 0.12)',
           fill: true,
           tension: 0.3,
-          borderWidth: 3,
+          borderWidth: 2.5,
           pointRadius: 2
         },
         {
           label: 'Original Without Prepayment',
           data: originalPoints,
-          borderColor: '#6366f1', // Indigo
+          borderColor: '#686B61', // Muted ink
           backgroundColor: 'transparent',
           borderDash: [5, 5],
           tension: 0.3,
@@ -937,16 +981,16 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
       datasets.push({
         label: 'Scheduled Loan Balance',
         data: originalPoints,
-        borderColor: '#6366f1', // Indigo
-        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        borderColor: '#356B4A', // Forest green
+        backgroundColor: 'rgba(53, 107, 74, 0.12)',
         fill: true,
         tension: 0.3,
-        borderWidth: 3,
+        borderWidth: 2.5,
         pointRadius: 2
       });
     }
 
-    this.chartInstance = new Chart(ctx, {
+    this.chartInstance = new ChartClass!(ctx, {
       type: 'line',
       data: {
         labels,
@@ -1013,7 +1057,7 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
     const principalPct = total > 0 ? ((principal / total) * 100).toFixed(1) : '0';
     const interestPct = total > 0 ? ((interest / total) * 100).toFixed(1) : '0';
 
-    this.chartInstance = new Chart(ctx, {
+    this.chartInstance = new ChartClass!(ctx, {
       type: 'doughnut',
       data: {
         labels: [
@@ -1023,7 +1067,7 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
         datasets: [
           {
             data: [principal, interest],
-            backgroundColor: ['#10b981', '#f59e0b'], // Emerald, Amber
+            backgroundColor: ['#356B4A', '#C47D3A'], // Forest green, Warm terracotta
             borderWidth: 0,
             hoverOffset: 6
           }
@@ -1082,7 +1126,7 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
       }
     }
 
-    this.chartInstance = new Chart(ctx, {
+    this.chartInstance = new ChartClass!(ctx, {
       type: 'line',
       data: {
         labels,
@@ -1090,27 +1134,27 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
           {
             label: 'Principal Paid Off',
             data: principalPoints,
-            borderColor: '#10b981', // Emerald green
-            backgroundColor: 'rgba(16, 185, 129, 0.12)',
+            borderColor: '#356B4A', // Forest green
+            backgroundColor: 'rgba(53, 107, 74, 0.12)',
             fill: true,
             tension: 0.35,
-            borderWidth: 3,
+            borderWidth: 2.5,
             pointRadius: 2
           },
           {
             label: 'Interest Paid',
             data: interestPoints,
-            borderColor: '#f59e0b', // Amber
-            backgroundColor: 'rgba(245, 158, 11, 0.12)',
+            borderColor: '#C47D3A', // Warm terracotta
+            backgroundColor: 'rgba(196, 125, 58, 0.12)',
             fill: true,
             tension: 0.35,
-            borderWidth: 3,
+            borderWidth: 2.5,
             pointRadius: 2
           },
           {
             label: 'Total Cumulative Outflow',
             data: totalPoints,
-            borderColor: '#6366f1', // Indigo
+            borderColor: '#202A23', // Dark ink
             backgroundColor: 'transparent',
             borderDash: [5, 5],
             fill: false,
@@ -1188,7 +1232,7 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
     const principalData = annual.map(a => a.totalPrincipal + a.totalPrepayment);
     const interestData = annual.map(a => a.totalInterest);
 
-    this.chartInstance = new Chart(ctx, {
+    this.chartInstance = new ChartClass!(ctx, {
       type: 'bar',
       data: {
         labels,
@@ -1196,12 +1240,12 @@ export class LoanCalculatorComponent implements OnInit, AfterViewInit, OnDestroy
           {
             label: 'Principal Paid Off',
             data: principalData,
-            backgroundColor: '#10b981' // Emerald
+            backgroundColor: '#356B4A' // Forest green
           },
           {
             label: 'Interest Paid',
             data: interestData,
-            backgroundColor: '#f59e0b' // Amber
+            backgroundColor: '#C47D3A' // Terracotta
           }
         ]
       },

@@ -1,0 +1,37 @@
+# CompoundCalc
+
+> CompoundCalc is a free, privacy-first financial calculation and decision simulator engineered with client-side mathematical precision. Built under GenPopUtils, it provides investors and borrowers with transparent tools to model compound interest, systematic investment plans (SIP), step-up contributions, inflation impact, and debt prepayment strategies with zero tracking or database storage.
+
+## Core Calculators & Decision Simulators
+
+- [Compound Interest Calculator](https://compoundcalc.genpoputils.com/compound-calculator/): Calculate exponential compound growth with custom lump sum, recurring contributions, and flexible compounding frequencies (daily, monthly, quarterly, semi-annually, annually).
+- [Step-Up SIP Calculator](https://compoundcalc.genpoputils.com/step-up-sip-calculator/): Model wealth accumulation with periodic percentage step-ups to match career income increments.
+- [SIP Calculator](https://compoundcalc.genpoputils.com/sip-calculator/): Evaluate systematic investment plans with monthly contributions, expected annual returns, and tenure breakdowns.
+- [Step-Up Investment Calculator](https://compoundcalc.genpoputils.com/step-up-investment-calculator/): Simulate investment portfolios combining lump-sum capital and annual top-up contributions.
+- [Investment Calculator](https://compoundcalc.genpoputils.com/investment-calculator/): General multi-asset growth calculator with nominal and inflation-adjusted real returns.
+- [Retirement Calculator](https://compoundcalc.genpoputils.com/retirement-calculator/): Plan target retirement corpus, post-retirement monthly drawdown, and longevity safety margins.
+- [Inflation Calculator](https://compoundcalc.genpoputils.com/inflation-calculator/): Gauge real future purchasing power eroded by price inflation over multi-decade horizons.
+- [SWP Calculator](https://compoundcalc.genpoputils.com/swp-calculator/): Plan systematic withdrawal plans for regular income while preserving underlying capital.
+- [Savings Goal Calculator](https://compoundcalc.genpoputils.com/savings-goal-calculator/): Determine required monthly savings to achieve target future financial milestones.
+
+## Debt & Loan Amortization Engines
+
+- [Loan Prepayment Calculator](https://compoundcalc.genpoputils.com/loan-prepayment-calculator/): Simulate loan prepayment strategies (one-time lump sum, recurring extra payments, or annual EMI increments) to quantify interest savings and tenure reduction.
+- [EMI Calculator](https://compoundcalc.genpoputils.com/emi-calculator/): Compute Equated Monthly Installments, total interest payable, and monthly amortization schedules.
+- [Home Loan Calculator](https://compoundcalc.genpoputils.com/home-loan-calculator/): Model housing mortgages, tax benefits, and multi-year repayment curves.
+- [Car Loan Calculator](https://compoundcalc.genpoputils.com/car-loan-calculator/): Calculate auto financing payments, total cost of ownership, and early settlement impact.
+- [Loan Amortization Calculator](https://compoundcalc.genpoputils.com/loan-amortization-calculator/): Generate complete month-by-month and year-by-year principal, interest, and balance schedules with CSV export.
+- [General Loan Calculator](https://compoundcalc.genpoputils.com/loan-calculator/): Flexible personal, student, and business loan payoff simulator.
+
+## Technical Architecture & Privacy Guarantees
+
+- **100% Client-Side:** All computations run locally in the browser memory using high-precision financial formulas.
+- **Zero Data Collection:** No databases, user tracking, authentication, or external API data transmissions.
+- **Multi-Currency:** Native Indian Rupee (INR with Lakhs and Crores formatting) alongside international currencies (USD, EUR, GBP, CAD, AUD, JPY).
+- **Export Capabilities:** Client-side CSV amortization schedule generation and browser-native print optimization.
+
+## Metadata & Navigation
+
+- [Home Page](https://compoundcalc.genpoputils.com/): Product overview and gateway to all financial planning tools.
+- [Sitemap](https://compoundcalc.genpoputils.com/sitemap.xml): XML index of all public URLs.
+- [LLMs Full Documentation](https://compoundcalc.genpoputils.com/llms-full.txt): Comprehensive algorithmic specifications, formulas, and usage guide for AI assistants.

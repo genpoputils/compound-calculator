@@ -1,7 +1,7 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CalculationResult, ScenarioComparison } from '../../../core/calculator/models/calculator.types';
+import { ScenarioComparison } from '../../../core/calculator/models/calculator.types';
 import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
 import { SliderInputComponent } from '../slider-input/slider-input.component';
 
@@ -18,60 +18,60 @@ export interface ScenarioBParams {
   standalone: true,
   imports: [CommonModule, FormsModule, InrCurrencyPipe, SliderInputComponent],
   template: `
-    <div class="rounded-2xl border border-indigo-200 dark:border-indigo-900/60 bg-gradient-to-b from-indigo-50/50 dark:from-indigo-950/20 to-transparent p-5 sm:p-6 shadow-xs">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div class="rounded-xl border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#181E19] p-5 sm:p-6 shadow-2xs">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-6 pb-3 border-b border-[#E8E2D4] dark:border-[#2C362E]">
         <div>
           <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded-md bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider">
-              Feature
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#E8E2D4] dark:bg-[#202722] text-[#356B4A] dark:text-[#8FA691] border border-[#D9D5C9] dark:border-[#2C362E]">
+              Ledger Analysis
             </span>
-            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-              Compare Scenarios (Scenario A vs Scenario B)
+            <h3 class="text-base sm:text-lg font-editorial font-bold text-[#202A23] dark:text-[#EDE8DE]">
+              Scenario Comparison (Scenario A vs Scenario B)
             </h3>
           </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            See the exact difference when tweaking returns, step-up rates, or duration.
+          <p class="text-xs text-[#686B61] dark:text-[#959B8E] mt-1 font-sans">
+            Quantify the exact leverage gained by tweaking return rates, annual step-up or tenure.
           </p>
         </div>
 
         <button
           type="button"
           (click)="close.emit()"
-          class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+          class="px-3 py-1.5 rounded border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF] dark:bg-[#141815] text-xs font-semibold text-[#202A23] dark:text-[#EDE8DE] hover:bg-[#E8E2D4] dark:hover:bg-[#202722] transition-colors cursor-pointer active:translate-y-0.5 font-sans"
         >
-          Exit Comparison
+          Close Comparison
         </button>
       </div>
 
       <!-- Delta Highlight Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-          <span class="text-xs text-slate-600 dark:text-slate-400 block font-semibold">Corpus Difference</span>
-          <div class="text-xl sm:text-2xl font-extrabold mt-1" [ngClass]="comparison().deltaFutureValue >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'">
+        <div class="p-4 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF] dark:bg-[#141815] shadow-2xs">
+          <span class="text-xs text-[#686B61] dark:text-[#959B8E] block font-semibold uppercase tracking-wider text-[10px]">Corpus Delta</span>
+          <div class="text-xl sm:text-2xl font-editorial font-bold mt-1 tabular-nums" [ngClass]="comparison().deltaFutureValue >= 0 ? 'text-[#356B4A] dark:text-[#66A87E]' : 'text-[#9B3D34]'">
             {{ comparison().deltaFutureValue >= 0 ? '+' : '' }}{{ comparison().deltaFutureValue | inrCurrency:'compact' }}
           </div>
-          <span class="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
-            {{ comparison().futureValuePercentageDifference >= 0 ? '+' : '' }}{{ comparison().futureValuePercentageDifference.toFixed(1) }}% vs Scenario A
+          <span class="text-[11px] text-[#686B61] dark:text-[#959B8E] block mt-0.5 font-mono">
+            {{ comparison().futureValuePercentageDifference >= 0 ? '+' : '' }}{{ comparison().futureValuePercentageDifference.toFixed(1) }}% vs Baseline
           </span>
         </div>
 
-        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-          <span class="text-xs text-slate-600 dark:text-slate-400 block font-semibold">Extra Capital Invested</span>
-          <div class="text-xl sm:text-2xl font-extrabold mt-1 text-slate-900 dark:text-white">
+        <div class="p-4 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF] dark:bg-[#141815] shadow-2xs">
+          <span class="text-xs text-[#686B61] dark:text-[#959B8E] block font-semibold uppercase tracking-wider text-[10px]">Invested Capital Delta</span>
+          <div class="text-xl sm:text-2xl font-editorial font-bold mt-1 text-[#202A23] dark:text-[#EDE8DE] tabular-nums">
             {{ comparison().deltaTotalInvested >= 0 ? '+' : '' }}{{ comparison().deltaTotalInvested | inrCurrency:'compact' }}
           </div>
-          <span class="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
+          <span class="text-[11px] text-[#686B61] dark:text-[#959B8E] block mt-0.5 font-sans">
             Cumulative deposit change
           </span>
         </div>
 
-        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-          <span class="text-xs text-slate-600 dark:text-slate-400 block font-semibold">Additional Growth Generated</span>
-          <div class="text-xl sm:text-2xl font-extrabold mt-1 text-indigo-600 dark:text-indigo-400">
+        <div class="p-4 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF] dark:bg-[#141815] shadow-2xs">
+          <span class="text-xs text-[#686B61] dark:text-[#959B8E] block font-semibold uppercase tracking-wider text-[10px]">Net Compound Growth Delta</span>
+          <div class="text-xl sm:text-2xl font-editorial font-bold mt-1 text-[#356B4A] dark:text-[#66A87E] tabular-nums">
             {{ comparison().deltaTotalGrowth >= 0 ? '+' : '' }}{{ comparison().deltaTotalGrowth | inrCurrency:'compact' }}
           </div>
-          <span class="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
-            Compound interest leverage
+          <span class="text-[11px] text-[#686B61] dark:text-[#959B8E] block mt-0.5 font-sans">
+            Pure compound leverage
           </span>
         </div>
       </div>
@@ -79,43 +79,43 @@ export interface ScenarioBParams {
       <!-- Side-by-Side Comparison Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Scenario A Column (Baseline) -->
-        <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 space-y-3">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-            <span class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-              Scenario A (Current)
+        <div class="p-5 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF]/60 dark:bg-[#141815] space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-[#D9D5C9] dark:border-[#2C362E]">
+            <span class="text-sm font-bold font-editorial text-[#202A23] dark:text-[#EDE8DE] flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#78947A]"></span>
+              Scenario A (Current Baseline)
             </span>
-            <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Baseline</span>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-[#686B61] dark:text-[#959B8E]">Baseline</span>
           </div>
 
-          <div class="space-y-2 text-xs sm:text-sm">
+          <div class="space-y-2 text-xs sm:text-sm font-sans">
             <div class="flex justify-between py-1">
-              <span class="text-slate-600 dark:text-slate-400 font-medium">Final Corpus:</span>
-              <span class="font-bold text-slate-900 dark:text-white">{{ comparison().scenarioA.futureValue | inrCurrency:'both' }}</span>
+              <span class="text-[#686B61] dark:text-[#959B8E] font-medium">Final Corpus:</span>
+              <span class="font-bold font-mono tabular-nums text-[#202A23] dark:text-[#EDE8DE]">{{ comparison().scenarioA.futureValue | inrCurrency:'both' }}</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600 dark:text-slate-400 font-medium">Total Invested:</span>
-              <span class="font-semibold text-slate-700 dark:text-slate-300">{{ comparison().scenarioA.totalInvested | inrCurrency:'compact' }}</span>
+              <span class="text-[#686B61] dark:text-[#959B8E] font-medium">Total Invested:</span>
+              <span class="font-semibold font-mono tabular-nums text-[#202A23] dark:text-[#EDE8DE]">{{ comparison().scenarioA.totalInvested | inrCurrency:'compact' }}</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600 dark:text-slate-400 font-medium">Investment Growth:</span>
-              <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ comparison().scenarioA.totalGrowth | inrCurrency:'compact' }}</span>
+              <span class="text-[#686B61] dark:text-[#959B8E] font-medium">Compound Growth:</span>
+              <span class="font-semibold font-mono tabular-nums text-[#356B4A] dark:text-[#66A87E]">{{ comparison().scenarioA.totalGrowth | inrCurrency:'compact' }}</span>
             </div>
             <div class="flex justify-between py-1">
-              <span class="text-slate-600 dark:text-slate-400 font-medium">Purchasing Power:</span>
-              <span class="font-semibold text-purple-600 dark:text-purple-400">{{ comparison().scenarioA.realFutureValue | inrCurrency:'compact' }}</span>
+              <span class="text-[#686B61] dark:text-[#959B8E] font-medium">Purchasing Power:</span>
+              <span class="font-semibold font-mono tabular-nums text-[#A8683B] dark:text-[#D49366]">{{ comparison().scenarioA.realFutureValue | inrCurrency:'compact' }}</span>
             </div>
           </div>
         </div>
 
         <!-- Scenario B Controls & Result -->
-        <div class="p-5 rounded-xl border border-indigo-300 dark:border-indigo-800 bg-indigo-50/20 dark:bg-indigo-950/30 space-y-4">
-          <div class="flex items-center justify-between pb-2 border-b border-indigo-200 dark:border-indigo-900/50">
-            <span class="text-sm font-bold text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+        <div class="p-5 rounded-lg border border-[#356B4A]/50 dark:border-[#356B4A]/40 bg-[#F0F6F2]/70 dark:bg-[#1B2920]/60 space-y-4">
+          <div class="flex items-center justify-between pb-2 border-b border-[#A8C4B0] dark:border-[#2A4836]">
+            <span class="text-sm font-bold font-editorial text-[#202A23] dark:text-[#EDE8DE] flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#356B4A]"></span>
               Scenario B (What-If Model)
             </span>
-            <span class="text-xs font-bold text-amber-600 dark:text-amber-400">
+            <span class="text-xs font-bold font-mono text-[#356B4A] dark:text-[#66A87E] tabular-nums">
               {{ comparison().scenarioB.futureValue | inrCurrency:'compact' }}
             </span>
           </div>

@@ -37,6 +37,7 @@ import { YearlyTableComponent } from '../../shared/components/yearly-table/yearl
 import { ChartViewComponent } from '../../shared/components/chart-view/chart-view.component';
 import { ScenarioCompareComponent, ScenarioBParams } from '../../shared/components/scenario-compare/scenario-compare.component';
 import { AdBannerComponent } from '../../shared/components/ad-banner/ad-banner.component';
+import { EditorialIllustrationComponent } from '../../shared/components/illustrations/editorial-illustration.component';
 
 import {
   compareFlatVsStepUp,
@@ -57,7 +58,8 @@ import {
     YearlyTableComponent,
     ChartViewComponent,
     ScenarioCompareComponent,
-    AdBannerComponent
+    AdBannerComponent,
+    EditorialIllustrationComponent
   ],
   templateUrl: './calculator-view.component.html'
 })
@@ -75,7 +77,12 @@ export class CalculatorViewComponent implements OnInit {
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   // Active Mode
-  readonly activeMode = signal<CalculationMode>('step-up');
+  readonly activeMode = signal<CalculationMode>(this.determineInitialMode());
+
+  private determineInitialMode(): CalculationMode {
+    const path = this.router.url.split('?')[0];
+    return this.getModeFromPath(path) || 'step-up';
+  }
 
   // Master State
   readonly state = signal<CalculatorState>(JSON.parse(JSON.stringify(DEFAULT_CALCULATOR_STATE)));
@@ -280,15 +287,15 @@ export class CalculatorViewComponent implements OnInit {
   updateSeo(): void {
     const rawUrl = this.router.url || '';
     const path = rawUrl.split('?')[0];
-    const isRoot = !path || path === '/' || path === '/compound-calculator';
+    const isRoot = !path || path === '/' || path === '/compound-calculator' || path === '/compound-calculator/';
     const seoData = this.currentSeoData();
 
     if (isRoot) {
       this.seoService.updateMeta({
         ...seoData.seo,
-        title: 'Compound Calculator – Compound Interest & Investment Calculator | GenPopUtils',
-        description: 'Calculate compound interest, investment growth, SIP returns and more.',
-        canonicalUrl: path === '/compound-calculator' ? 'https://compoundcalc.genpoputils.com/compound-calculator' : 'https://compoundcalc.genpoputils.com/'
+        title: 'Compound Interest Calculator | CompoundCalc',
+        description: 'Calculate compound interest with recurring contributions. Explore investment growth over time with our free compound interest calculator.',
+        canonicalUrl: path.startsWith('/compound-calculator') ? 'https://compoundcalc.genpoputils.com/compound-calculator/' : 'https://compoundcalc.genpoputils.com/'
       });
     } else {
       this.seoService.updateMeta(seoData.seo);
@@ -458,14 +465,16 @@ export class CalculatorViewComponent implements OnInit {
   }
 
   private getModeFromPath(path: string): CalculationMode | null {
-    if (path === '/compound-interest-calculator' || path === '/compound-calculator') {
+    const cleanPath = path.replace(/\/+$/, '') || '/';
+    if (cleanPath === '/compound-interest-calculator' || cleanPath === '/compound-calculator') {
       return 'compound-interest';
     }
-    if (path === '/step-up-sip-calculator' || path === '/step-up-investment-calculator') {
+    if (cleanPath === '/step-up-sip-calculator' || cleanPath === '/step-up-investment-calculator') {
       return 'step-up';
     }
     for (const [mode, config] of Object.entries(SEO_PAGES_DATA)) {
-      if (config.path === path) {
+      const configPath = config.path.replace(/\/+$/, '') || '/';
+      if (configPath === cleanPath) {
         return mode as CalculationMode;
       }
     }

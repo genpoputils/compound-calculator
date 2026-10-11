@@ -51,32 +51,32 @@ export type AdSlotType = 'leaderboard' | 'in-content' | 'bottom';
         </div>
 
         <div
-          class="relative w-full rounded-2xl border border-dashed border-slate-300/80 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/40 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 transition-colors shadow-2xs"
+          class="relative w-full rounded-xl border border-dashed border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF]/70 dark:bg-[#141815]/70 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 transition-colors shadow-2xs"
           [ngClass]="slotDimensionsClass()"
         >
           <div class="flex items-center gap-3 text-left">
-            <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+            <div class="w-9 h-9 rounded-lg bg-[#E8E2D4] dark:bg-[#202722] border border-[#D9D5C9] dark:border-[#2C362E] text-[#356B4A] dark:text-[#8FA691] flex items-center justify-center shrink-0">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
               </svg>
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">
+                <span class="text-xs font-bold text-[#202A23] dark:text-[#EDE8DE]">
                   {{ slotTitle() }}
                 </span>
-                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#E8E2D4] dark:bg-[#202722] text-[#356B4A] dark:text-[#8FA691] border border-[#D9D5C9] dark:border-[#2C362E]">
                   AdSense Ready
                 </span>
               </div>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              <p class="text-[11px] text-[#686B61] dark:text-[#959B8E] mt-0.5 font-sans">
                 {{ slotDescription() }}
               </p>
             </div>
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
-            <span class="text-[11px] font-mono font-medium text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-slate-800/80 px-2.5 py-1 rounded-lg">
+            <span class="text-[11px] font-mono font-medium text-[#686B61] dark:text-[#959B8E] bg-[#E8E2D4]/50 dark:bg-[#202722] border border-[#D9D5C9] dark:border-[#2C362E] px-2.5 py-1 rounded-md">
               {{ slotSizeLabel() }}
             </span>
           </div>

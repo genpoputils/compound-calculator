@@ -3,15 +3,81 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --font-serif: "Fraunces", "DM Serif Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-paper: #F8F6EF;
+  --color-ink: #202A23;
+  --color-brand-green: #356B4A;
+  --color-brand-green-hover: #29543A;
+  --color-secondary-green: #78947A;
+  --color-paper-secondary: #E8E2D4;
+  --color-card: #FFFFFF;
+  --color-border-subtle: #D9D5C9;
+  --color-ink-muted: #686B61;
+}
+
+:root {
+  --color-bg-paper: #F8F6EF;
+  --color-text-ink: #202A23;
+  --color-brand-green: #356B4A;
+  --color-brand-green-hover: #29543A;
+  --color-secondary-green: #78947A;
+  --color-paper-secondary: #E8E2D4;
+  --color-card: #FFFFFF;
+  --color-border-subtle: #D9D5C9;
+  --color-border-strong: #B8B3A4;
+  --color-ink-muted: #686B61;
+  --halftone-dot-color: rgba(32, 42, 35, 0.08);
+  --stamp-border-color: #356B4A;
+}
+
+.dark {
+  --color-bg-paper: #141815;
+  --color-text-ink: #EDE8DE;
+  --color-brand-green: #4E8A66;
+  --color-brand-green-hover: #3E7353;
+  --color-secondary-green: #8FA691;
+  --color-paper-secondary: #1F2721;
+  --color-card: #181E19;
+  --color-border-subtle: #2C362E;
+  --color-border-strong: #414F44;
+  --color-ink-muted: #959B8E;
+  --halftone-dot-color: rgba(237, 232, 222, 0.06);
+  --stamp-border-color: #4E8A66;
+}
+
 @layer base {
   html {
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    background-color: var(--color-bg-paper);
+    color: var(--color-text-ink);
   }
 
   body {
     overflow-x: hidden;
+    background-color: var(--color-bg-paper);
+    color: var(--color-text-ink);
+  }
+
+  /* Editorial typography classes */
+  h1, h2, h3, .font-editorial {
+    font-family: 'Fraunces', 'DM Serif Display', Georgia, serif;
+    font-feature-settings: "liga" 1, "dlig" 1;
+  }
+
+  /* Tabular numerals for monetary figures */
+  .tabular-nums, input[type="number"], .font-data {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tap highlight optimization for mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Hide number input spin buttons across browsers for clean prefix/suffix display */
@@ -27,7 +93,23 @@
   }
 }
 
-/* Custom range slider styling */
+/* Hide scrollbar for Chrome, Safari, Opera, Edge, Firefox */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Touch momentum scrolling */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Custom range slider styling matching forest-green ink aesthetic */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -42,11 +124,11 @@ input[type="range"]:focus {
 input[type="range"]::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 9999px;
-  background: #e2e8f0;
+  background: #D9D5C9;
 }
 
 .dark input[type="range"]::-webkit-slider-runnable-track {
-  background: #1e293b;
+  background: #2C362E;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -54,61 +136,149 @@ input[type="range"]::-webkit-slider-thumb {
   height: 20px;
   width: 20px;
   border-radius: 50%;
-  background: #6366f1;
-  border: 2px solid #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  background: #356B4A;
+  border: 2px solid #F8F6EF;
+  box-shadow: 0 1px 3px rgba(32, 42, 35, 0.25);
   margin-top: -7px;
-  transition: transform 0.15s ease, background-color 0.15s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .dark input[type="range"]::-webkit-slider-thumb {
-  border: 2px solid #0f172a;
-  background: #818cf8;
+  border: 2px solid #141815;
+  background: #4E8A66;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.15);
-  background: #4f46e5;
+  background: #29543A;
+  box-shadow: 0 2px 6px rgba(32, 42, 35, 0.35);
 }
 
 .dark input[type="range"]::-webkit-slider-thumb:hover {
-  background: #6366f1;
+  background: #5CA179;
 }
 
-/* Glassmorphism card utility */
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+/* Tactical button press interaction */
+button:active:not(:disabled), a.btn:active, .editorial-tab:active {
+  transform: translateY(1px);
 }
 
-.dark .glass-card {
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Halftone dot pattern utility inspired by comic book / financial gazette print */
+.halftone-dots {
+  background-image: radial-gradient(var(--halftone-dot-color) 1.2px, transparent 1.2px);
+  background-size: 14px 14px;
 }
 
-/* Subtle glow */
-.glow-primary {
-  box-shadow: 0 0 40px -10px rgba(99, 102, 241, 0.25);
+/* Editorial newspaper ruled divider line */
+.editorial-rule {
+  border-color: var(--color-border-subtle);
+  border-bottom-width: 1px;
+}
+
+.editorial-rule-double {
+  border-color: var(--color-border-subtle);
+  border-bottom: 3px double var(--color-border-subtle);
+}
+
+/* Editorial ink stamp badge */
+.editorial-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--color-brand-green);
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand-green);
+  background: rgba(53, 107, 74, 0.06);
+}
+
+.dark .editorial-stamp {
+  background: rgba(78, 138, 102, 0.12);
+  color: #8FA691;
+  border-color: #4E8A66;
+}
+
+/* Subtle hand-drawn underline accent */
+.editorial-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.editorial-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 3px;
+  background-color: #356B4A;
+  opacity: 0.7;
+  border-radius: 2px;
+  transform: rotate(-0.5deg);
+}
+
+/* Editorial Paper Card */
+.paper-card {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(32, 42, 35, 0.04);
+}
+
+/* Brief monetary value update flash */
+@keyframes inkValueFlash {
+  0% {
+    opacity: 0.55;
+    transform: translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-value-flash {
+  animation: inkValueFlash 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Marginal editorial annotation note */
+.marginal-note {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-style: italic;
+  color: var(--color-ink-muted);
 }
 
 /* Print styles */
 @media print {
-  nav, footer, .no-print {
+  nav, footer, .no-print, app-ad-banner {
     display: none !important;
   }
 
   body {
     background: white !important;
-    color: black !important;
+    color: #202A23 !important;
   }
 
-  .glass-card {
-    border: 1px solid #ccc !important;
+  .paper-card, .editorial-card {
+    border: 1px solid #D9D5C9 !important;
     background: white !important;
     box-shadow: none !important;
+  }
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-value-flash {
+    animation: none !important;
   }
 }

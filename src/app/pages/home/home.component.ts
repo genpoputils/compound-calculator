@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { SeoService } from '../../core/services/seo.service';
 import { CurrencyService } from '../../core/services/currency.service';
 import { AdBannerComponent } from '../../shared/components/ad-banner/ad-banner.component';
+import { EditorialIllustrationComponent } from '../../shared/components/illustrations/editorial-illustration.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, AdBannerComponent],
+  imports: [CommonModule, RouterLink, AdBannerComponent, EditorialIllustrationComponent],
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {

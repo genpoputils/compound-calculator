@@ -1,28 +1,34 @@
 <div class="relative overflow-hidden">
-  <!-- Subtle ambient decorative glow -->
-  <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-r from-indigo-500/15 via-purple-500/10 to-emerald-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
-
   <!-- SECTION 4: HERO -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-8 sm:pb-12 text-center space-y-4">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-900/60 bg-indigo-50/70 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-xs font-semibold backdrop-blur-xs">
-      <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping"></span>
-      <span>Accurate Financial Planning Engine</span>
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#D9D5C9] dark:border-[#2C362E] bg-[#E8E2D4]/50 dark:bg-[#202722] text-[#202A23] dark:text-[#EAE6DF] text-xs font-semibold">
+      <span class="w-1.5 h-1.5 rounded-full bg-[#356B4A] dark:bg-[#8FA691]"></span>
+      <span class="font-mono text-[11px] uppercase tracking-wider">The Illustrated Investor &bull; Precision Engine</span>
     </div>
 
-    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-[1.15]">
-      Compound Calculator
+    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold tracking-tight text-[#202A23] dark:text-[#EAE6DF] max-w-4xl mx-auto leading-tight">
+      {{ currentSeoData().heading }}
     </h1>
 
-    <p class="text-lg sm:text-xl font-medium text-slate-700 dark:text-slate-300 max-w-2xl mx-auto">
-      Calculate compound interest, investment growth, SIP returns and more.
+    <p class="text-sm sm:text-lg text-[#686B61] dark:text-[#A8ADA3] max-w-2xl mx-auto leading-relaxed">
+      {{ currentSeoData().subheading }}
     </p>
 
+    <!-- Editorial Motif (Deferred to idle to prioritize FCP/LCP) -->
+    <div class="flex justify-center py-1">
+      @defer (on idle) {
+        <app-editorial-illustration name="compounding-curve" [size]="84" />
+      } @placeholder {
+        <div class="w-[84px] h-[73px]"></div>
+      }
+    </div>
+
     <!-- CTAs -->
-    <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+    <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
       <button
         type="button"
         (click)="scrollToCalculator()"
-        class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-md shadow-indigo-600/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+        class="px-5 py-2.5 rounded-lg bg-[#356B4A] hover:bg-[#285238] text-white font-semibold text-sm border border-[#285238] shadow-xs transition-all active:scale-[0.98] cursor-pointer"
       >
         Start Calculating
       </button>
@@ -30,14 +36,14 @@
       <button
         type="button"
         (click)="setMode('retirement'); scrollToCalculator()"
-        class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all shadow-2xs"
+        class="px-5 py-2.5 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#1E2520] hover:bg-[#E8E2D4]/40 dark:hover:bg-[#252E27] text-[#202A23] dark:text-[#EAE6DF] font-semibold text-sm transition-all shadow-2xs cursor-pointer"
       >
-        Retirement Calculator
+        Retirement Calculator &rarr;
       </button>
     </div>
   </section>
 
-  <!-- TOP LEADERBOARD AD BANNER (High-RPM Above-the-Fold Placement) -->
+  <!-- TOP LEADERBOARD AD BANNER -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2 mb-6">
     <app-ad-banner slotType="leaderboard" />
   </section>
@@ -45,28 +51,28 @@
   <!-- SECTION 5: MAIN CALCULATOR CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8" id="main-calculator-card">
     <!-- BREADCRUMB / RETURN TO HOMEPAGE -->
-    <nav class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400" aria-label="Breadcrumb">
-      <a routerLink="/" class="hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 font-semibold transition-colors">
-        <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <nav class="flex items-center gap-2 text-xs text-[#686B61] dark:text-[#8E9487]" aria-label="Breadcrumb">
+      <a routerLink="/" class="text-[#356B4A] dark:text-[#8FA691] hover:underline flex items-center gap-1 font-semibold transition-colors cursor-pointer">
+        <svg class="w-3.5 h-3.5 text-[#356B4A] dark:text-[#8FA691]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
         </svg>
         <span>Home</span>
       </a>
-      <span class="text-slate-300 dark:text-slate-700">/</span>
-      <span class="text-slate-700 dark:text-slate-300 font-medium">{{ currentSeoData().heading }}</span>
+      <span class="text-[#D9D5C9] dark:text-[#2C362E]">/</span>
+      <span class="text-[#202A23] dark:text-[#EAE6DF] font-medium">{{ currentSeoData().heading }}</span>
     </nav>
 
     <!-- MODE SELECTOR TABS -->
-    <div class="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar py-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-      <div class="inline-flex items-center p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 shadow-xs backdrop-blur-md gap-1">
+    <div class="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar touch-scroll py-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+      <div class="inline-flex items-center p-1 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#1E2520] shadow-2xs gap-1">
         <button
           type="button"
           (click)="setMode('step-up')"
           [attr.aria-selected]="activeMode() === 'step-up'"
-          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer"
           [ngClass]="{
-            'bg-indigo-600 text-white shadow-xs': activeMode() === 'step-up',
-            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'step-up'
+            'bg-[#356B4A] text-white shadow-2xs': activeMode() === 'step-up',
+            'text-[#686B61] dark:text-[#8E9487] hover:text-[#202A23] dark:hover:text-[#EAE6DF] hover:bg-[#E8E2D4]/40': activeMode() !== 'step-up'
           }"
         >
           Step-Up SIP
@@ -76,10 +82,10 @@
           type="button"
           (click)="setMode('compound-interest')"
           [attr.aria-selected]="activeMode() === 'compound-interest'"
-          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer"
           [ngClass]="{
-            'bg-indigo-600 text-white shadow-xs': activeMode() === 'compound-interest',
-            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'compound-interest'
+            'bg-[#356B4A] text-white shadow-2xs': activeMode() === 'compound-interest',
+            'text-[#686B61] dark:text-[#8E9487] hover:text-[#202A23] dark:hover:text-[#EAE6DF] hover:bg-[#E8E2D4]/40': activeMode() !== 'compound-interest'
           }"
         >
           Compound Interest
@@ -89,10 +95,10 @@
           type="button"
           (click)="setMode('retirement')"
           [attr.aria-selected]="activeMode() === 'retirement'"
-          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer"
           [ngClass]="{
-            'bg-indigo-600 text-white shadow-xs': activeMode() === 'retirement',
-            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'retirement'
+            'bg-[#356B4A] text-white shadow-2xs': activeMode() === 'retirement',
+            'text-[#686B61] dark:text-[#8E9487] hover:text-[#202A23] dark:hover:text-[#EAE6DF] hover:bg-[#E8E2D4]/40': activeMode() !== 'retirement'
           }"
         >
           Retirement Savings
@@ -102,10 +108,10 @@
           type="button"
           (click)="setMode('sip')"
           [attr.aria-selected]="activeMode() === 'sip'"
-          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer"
           [ngClass]="{
-            'bg-indigo-600 text-white shadow-xs': activeMode() === 'sip',
-            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'sip'
+            'bg-[#356B4A] text-white shadow-2xs': activeMode() === 'sip',
+            'text-[#686B61] dark:text-[#8E9487] hover:text-[#202A23] dark:hover:text-[#EAE6DF] hover:bg-[#E8E2D4]/40': activeMode() !== 'sip'
           }"
         >
           SIP Growth
@@ -115,10 +121,10 @@
           type="button"
           (click)="setMode('regular-investment')"
           [attr.aria-selected]="activeMode() === 'regular-investment'"
-          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer"
           [ngClass]="{
-            'bg-indigo-600 text-white shadow-xs': activeMode() === 'regular-investment',
-            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'regular-investment'
+            'bg-[#356B4A] text-white shadow-2xs': activeMode() === 'regular-investment',
+            'text-[#686B61] dark:text-[#8E9487] hover:text-[#202A23] dark:hover:text-[#EAE6DF] hover:bg-[#E8E2D4]/40': activeMode() !== 'regular-investment'
           }"
         >
           Regular Investment
@@ -128,10 +134,10 @@
           type="button"
           (click)="setMode('savings-goal')"
           [attr.aria-selected]="activeMode() === 'savings-goal'"
-          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer"
           [ngClass]="{
-            'bg-indigo-600 text-white shadow-xs': activeMode() === 'savings-goal',
-            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'savings-goal'
+            'bg-[#356B4A] text-white shadow-2xs': activeMode() === 'savings-goal',
+            'text-[#686B61] dark:text-[#8E9487] hover:text-[#202A23] dark:hover:text-[#EAE6DF] hover:bg-[#E8E2D4]/40': activeMode() !== 'savings-goal'
           }"
         >
           Savings Goal
@@ -141,10 +147,10 @@
           type="button"
           (click)="setMode('inflation')"
           [attr.aria-selected]="activeMode() === 'inflation'"
-          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer"
           [ngClass]="{
-            'bg-indigo-600 text-white shadow-xs': activeMode() === 'inflation',
-            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'inflation'
+            'bg-[#356B4A] text-white shadow-2xs': activeMode() === 'inflation',
+            'text-[#686B61] dark:text-[#8E9487] hover:text-[#202A23] dark:hover:text-[#EAE6DF] hover:bg-[#E8E2D4]/40': activeMode() !== 'inflation'
           }"
         >
           Inflation
@@ -154,10 +160,10 @@
           type="button"
           (click)="setMode('swp')"
           [attr.aria-selected]="activeMode() === 'swp'"
-          class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
+          class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer"
           [ngClass]="{
-            'bg-indigo-600 text-white shadow-xs': activeMode() === 'swp',
-            'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white': activeMode() !== 'swp'
+            'bg-[#356B4A] text-white shadow-2xs': activeMode() === 'swp',
+            'text-[#686B61] dark:text-[#8E9487] hover:text-[#202A23] dark:hover:text-[#EAE6DF] hover:bg-[#E8E2D4]/40': activeMode() !== 'swp'
           }"
         >
           SWP Calculator
@@ -166,20 +172,20 @@
     </div>
 
     <!-- CALCULATOR CARD: 2-COLUMN GRID -->
-    <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 p-5 sm:p-8 backdrop-blur-xl shadow-lg space-y-8">
+    <div class="paper-card rounded-xl border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#1E2520] p-4 sm:p-8 space-y-6 sm:space-y-8">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- LEFT COLUMN: INPUT CONTROLS -->
         <div class="lg:col-span-6 space-y-6">
-          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-            <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+          <div class="flex items-center justify-between border-b border-[#D9D5C9] dark:border-[#2C362E] pb-3">
+            <h2 class="text-lg font-serif font-bold text-[#202A23] dark:text-[#EAE6DF] flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-[#356B4A] dark:bg-[#8FA691]"></span>
               {{ currentSeoData().heading }}
             </h2>
             <button
               type="button"
               (click)="resetToDefaults()"
-              class="text-xs font-semibold text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"
+              class="text-xs font-semibold text-[#686B61] hover:text-[#356B4A] dark:text-[#8E9487] dark:hover:text-[#8FA691] transition-colors cursor-pointer"
             >
               Reset
             </button>
@@ -221,26 +227,26 @@
               />
 
               <!-- Visual preview of Step-Up year 1-4 contributions per prompt -->
-              <div class="p-3.5 rounded-xl border border-indigo-100 dark:border-indigo-900/40 bg-indigo-50/40 dark:bg-indigo-950/20 text-xs">
-                <span class="font-bold text-indigo-900 dark:text-indigo-300 block mb-1.5">
-                  Contribution Growth Preview:
+              <div class="p-3.5 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF] dark:bg-[#181F1A] text-xs">
+                <span class="font-mono text-[11px] font-bold text-[#356B4A] dark:text-[#8FA691] uppercase tracking-wider block mb-1.5">
+                  Contribution Growth Schedule
                 </span>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-700 dark:text-slate-300">
-                  <div>
-                    <span class="text-slate-600 dark:text-slate-400 block text-[10px] font-medium">Year 1</span>
-                    <span class="font-semibold">{{ state().stepUpInput.startingMonthlyInvestment | inrCurrency:'compact' }}/mo</span>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[#202A23] dark:text-[#EAE6DF]">
+                  <div class="p-2 rounded bg-white dark:bg-[#202722] border border-[#D9D5C9]/60 dark:border-[#2C362E]">
+                    <span class="text-[#686B61] dark:text-[#8E9487] block text-[10px] font-medium">Year 1</span>
+                    <span class="font-bold tabular-nums">{{ state().stepUpInput.startingMonthlyInvestment | inrCurrency:'compact' }}/mo</span>
                   </div>
-                  <div>
-                    <span class="text-slate-600 dark:text-slate-400 block text-[10px] font-medium">Year 2</span>
-                    <span class="font-semibold">{{ (state().stepUpInput.startingMonthlyInvestment * (1 + state().stepUpInput.annualStepUpPercent / 100)) | inrCurrency:'compact' }}/mo</span>
+                  <div class="p-2 rounded bg-white dark:bg-[#202722] border border-[#D9D5C9]/60 dark:border-[#2C362E]">
+                    <span class="text-[#686B61] dark:text-[#8E9487] block text-[10px] font-medium">Year 2</span>
+                    <span class="font-bold tabular-nums">{{ (state().stepUpInput.startingMonthlyInvestment * (1 + state().stepUpInput.annualStepUpPercent / 100)) | inrCurrency:'compact' }}/mo</span>
                   </div>
-                  <div>
-                    <span class="text-slate-600 dark:text-slate-400 block text-[10px] font-medium">Year 3</span>
-                    <span class="font-semibold">{{ (state().stepUpInput.startingMonthlyInvestment * Math.pow(1 + state().stepUpInput.annualStepUpPercent / 100, 2)) | inrCurrency:'compact' }}/mo</span>
+                  <div class="p-2 rounded bg-white dark:bg-[#202722] border border-[#D9D5C9]/60 dark:border-[#2C362E]">
+                    <span class="text-[#686B61] dark:text-[#8E9487] block text-[10px] font-medium">Year 3</span>
+                    <span class="font-bold tabular-nums">{{ (state().stepUpInput.startingMonthlyInvestment * Math.pow(1 + state().stepUpInput.annualStepUpPercent / 100, 2)) | inrCurrency:'compact' }}/mo</span>
                   </div>
-                  <div>
-                    <span class="text-slate-600 dark:text-slate-400 block text-[10px] font-medium">Year 4</span>
-                    <span class="font-semibold">{{ (state().stepUpInput.startingMonthlyInvestment * Math.pow(1 + state().stepUpInput.annualStepUpPercent / 100, 3)) | inrCurrency:'compact' }}/mo</span>
+                  <div class="p-2 rounded bg-white dark:bg-[#202722] border border-[#D9D5C9]/60 dark:border-[#2C362E]">
+                    <span class="text-[#686B61] dark:text-[#8E9487] block text-[10px] font-medium">Year 4</span>
+                    <span class="font-bold tabular-nums">{{ (state().stepUpInput.startingMonthlyInvestment * Math.pow(1 + state().stepUpInput.annualStepUpPercent / 100, 3)) | inrCurrency:'compact' }}/mo</span>
                   </div>
                 </div>
               </div>
@@ -340,7 +346,7 @@
 
               <!-- Compounding Frequency Selector -->
               <div class="space-y-1.5">
-                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <label class="text-sm font-medium text-[#202A23] dark:text-[#EAE6DF]">
                   Compounding Frequency
                 </label>
                 <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5 text-xs font-semibold">
@@ -348,10 +354,10 @@
                     <button
                       type="button"
                       (click)="updateCompound('compoundingFrequency', freq)"
-                      class="py-2 px-2 rounded-lg border text-center transition-all capitalize truncate"
+                      class="py-2 px-2 rounded-lg border text-center transition-all capitalize truncate cursor-pointer"
                       [ngClass]="{
-                        'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400': state().compoundInput.compoundingFrequency === freq,
-                        'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800': state().compoundInput.compoundingFrequency !== freq
+                        'border-[#356B4A] bg-[#356B4A] text-white shadow-2xs': state().compoundInput.compoundingFrequency === freq,
+                        'border-[#D9D5C9] dark:border-[#2C362E] text-[#686B61] dark:text-[#8E9487] hover:bg-[#E8E2D4]/40 hover:text-[#202A23] dark:hover:text-[#EAE6DF]': state().compoundInput.compoundingFrequency !== freq
                       }"
                     >
                       {{ freq }}
@@ -363,15 +369,15 @@
               <!-- Duration and Duration Unit -->
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Duration Unit</span>
-                  <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 p-0.5 text-xs font-semibold">
+                  <span class="text-sm font-medium text-[#202A23] dark:text-[#EAE6DF]">Duration Unit</span>
+                  <div class="inline-flex rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] p-0.5 text-xs font-semibold bg-white dark:bg-[#1E2520]">
                     <button
                       type="button"
                       (click)="updateCompound('durationUnit', 'years')"
-                      class="px-2.5 py-1 rounded-md transition-colors"
+                      class="px-2.5 py-1 rounded-md transition-colors cursor-pointer"
                       [ngClass]="{
-                        'bg-indigo-600 text-white': state().compoundInput.durationUnit === 'years',
-                        'text-slate-600 dark:text-slate-400': state().compoundInput.durationUnit !== 'years'
+                        'bg-[#356B4A] text-white shadow-2xs': state().compoundInput.durationUnit === 'years',
+                        'text-[#686B61] dark:text-[#8E9487] hover:text-[#202A23] dark:hover:text-[#EAE6DF]': state().compoundInput.durationUnit !== 'years'
                       }"
                     >
                       Years
@@ -379,10 +385,10 @@
                     <button
                       type="button"
                       (click)="updateCompound('durationUnit', 'months')"
-                      class="px-2.5 py-1 rounded-md transition-colors"
+                      class="px-2.5 py-1 rounded-md transition-colors cursor-pointer"
                       [ngClass]="{
-                        'bg-indigo-600 text-white': state().compoundInput.durationUnit === 'months',
-                        'text-slate-600 dark:text-slate-400': state().compoundInput.durationUnit !== 'months'
+                        'bg-[#356B4A] text-white shadow-2xs': state().compoundInput.durationUnit === 'months',
+                        'text-[#686B61] dark:text-[#8E9487] hover:text-[#202A23] dark:hover:text-[#EAE6DF]': state().compoundInput.durationUnit !== 'months'
                       }"
                     >
                       Months
@@ -511,19 +517,19 @@
               />
 
               <!-- SECTION 11: RETIREMENT EXPENSE PROJECTION (OPTIONAL SECTION) -->
-              <div class="pt-3 border-t border-slate-200 dark:border-slate-800">
+              <div class="pt-3 border-t border-[#D9D5C9] dark:border-[#2C362E]">
                 <button
                   type="button"
                   (click)="showRetirementExpenseCalc.set(!showRetirementExpenseCalc())"
-                  class="flex items-center justify-between w-full p-3 rounded-xl border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50/30 dark:bg-indigo-950/20 text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
+                  class="flex items-center justify-between w-full p-3 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF] dark:bg-[#181F1A] text-xs font-semibold text-[#356B4A] dark:text-[#8FA691] hover:bg-[#E8E2D4]/40 dark:hover:bg-[#252E27] transition-colors cursor-pointer"
                 >
                   <span class="flex items-center gap-2">
-                    <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="w-4 h-4 text-[#356B4A] dark:text-[#8FA691]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
                     How much will my current expenses be at retirement?
                   </span>
-                  <span>{{ showRetirementExpenseCalc() ? '− Hide' : '+ Expand' }}</span>
+                  <span class="font-mono">{{ showRetirementExpenseCalc() ? '− Hide' : '+ Expand' }}</span>
                 </button>
 
                 @if (showRetirementExpenseCalc()) {
@@ -653,7 +659,7 @@
 
               <!-- Contribution Frequency Selector -->
               <div class="space-y-1.5">
-                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <label class="text-sm font-medium text-[#202A23] dark:text-[#EAE6DF]">
                   Contribution Frequency
                 </label>
                 <div class="grid grid-cols-3 gap-2 text-xs font-semibold">
@@ -661,10 +667,10 @@
                     <button
                       type="button"
                       (click)="updateRegular('contributionFrequency', freq)"
-                      class="py-2 px-3 rounded-lg border text-center transition-all capitalize"
+                      class="py-2 px-3 rounded-lg border text-center transition-all capitalize cursor-pointer"
                       [ngClass]="{
-                        'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400': state().regularInput.contributionFrequency === freq,
-                        'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800': state().regularInput.contributionFrequency !== freq
+                        'border-[#356B4A] bg-[#356B4A] text-white shadow-2xs': state().regularInput.contributionFrequency === freq,
+                        'border-[#D9D5C9] dark:border-[#2C362E] text-[#686B61] dark:text-[#8E9487] hover:bg-[#E8E2D4]/40 hover:text-[#202A23] dark:hover:text-[#EAE6DF]': state().regularInput.contributionFrequency !== freq
                       }"
                     >
                       {{ freq }}
@@ -820,7 +826,7 @@
               />
 
               <div class="space-y-1.5">
-                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <label class="text-sm font-medium text-[#202A23] dark:text-[#EAE6DF]">
                   Deposit Frequency
                 </label>
                 <div class="grid grid-cols-3 gap-2 text-xs font-semibold">
@@ -828,10 +834,10 @@
                     <button
                       type="button"
                       (click)="updateSavingsGoal('contributionFrequency', freq)"
-                      class="py-2 px-3 rounded-lg border text-center transition-all capitalize"
+                      class="py-2 px-3 rounded-lg border text-center transition-all capitalize cursor-pointer"
                       [ngClass]="{
-                        'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400': state().savingsGoalInput.contributionFrequency === freq,
-                        'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800': state().savingsGoalInput.contributionFrequency !== freq
+                        'border-[#356B4A] bg-[#356B4A] text-white shadow-2xs': state().savingsGoalInput.contributionFrequency === freq,
+                        'border-[#D9D5C9] dark:border-[#2C362E] text-[#686B61] dark:text-[#8E9487] hover:bg-[#E8E2D4]/40 hover:text-[#202A23] dark:hover:text-[#EAE6DF]': state().savingsGoalInput.contributionFrequency !== freq
                       }"
                     >
                       {{ freq }}
@@ -1048,79 +1054,79 @@
 
           <!-- Flat SIP vs Step-Up SIP Comparison (Section 11) -->
           @if (activeMode() === 'step-up' && flatVsStepUp()) {
-            <div class="p-4 sm:p-5 rounded-2xl border border-indigo-200 dark:border-indigo-900/60 bg-gradient-to-br from-indigo-50/80 via-purple-50/40 to-slate-50/20 dark:from-indigo-950/40 dark:via-purple-950/20 dark:to-slate-900/30 space-y-3">
+            <div class="p-4 sm:p-5 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF] dark:bg-[#181F1A] space-y-3">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
-                  Flat SIP vs Step-Up SIP Comparison
+                <span class="text-xs font-mono font-bold uppercase tracking-wider text-[#356B4A] dark:text-[#8FA691]">
+                  Flat SIP vs Step-Up Comparison
                 </span>
-                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md">
+                <span class="text-xs font-bold text-[#356B4A] dark:text-[#8FA691] bg-[#E8E2D4]/60 dark:bg-[#2C362E] px-2 py-0.5 rounded border border-[#D9D5C9]/60 dark:border-[#2C362E]">
                   +{{ flatVsStepUp()?.percentageCorpusIncrease }}% More Corpus
                 </span>
               </div>
               <div class="grid grid-cols-2 gap-3 text-xs">
-                <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
-                  <div class="text-slate-600 dark:text-slate-400 font-medium">Regular Flat SIP:</div>
-                  <div class="text-sm font-bold text-slate-800 dark:text-slate-200">
+                <div class="p-2.5 rounded-lg bg-white dark:bg-[#202722] border border-[#D9D5C9] dark:border-[#2C362E]">
+                  <div class="text-[#686B61] dark:text-[#8E9487] font-medium">Regular Flat SIP:</div>
+                  <div class="text-sm font-bold text-[#202A23] dark:text-[#EAE6DF] tabular-nums">
                     {{ flatVsStepUp()?.flatSip?.futureValue | inrCurrency:'compact' }}
                   </div>
-                  <div class="text-[10px] text-slate-600 dark:text-slate-400 font-medium">Total Invested: {{ flatVsStepUp()?.flatSip?.totalInvested | inrCurrency:'compact' }}</div>
+                  <div class="text-[10px] text-[#686B61] dark:text-[#8E9487] font-medium">Invested: {{ flatVsStepUp()?.flatSip?.totalInvested | inrCurrency:'compact' }}</div>
                 </div>
-                <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-indigo-200 dark:border-indigo-800">
-                  <div class="text-indigo-600 dark:text-indigo-400 font-semibold">With Annual Step-Up:</div>
-                  <div class="text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
+                <div class="p-2.5 rounded-lg bg-white dark:bg-[#202722] border border-[#356B4A]/50 dark:border-[#8FA691]/50">
+                  <div class="text-[#356B4A] dark:text-[#8FA691] font-semibold">With Annual Step-Up:</div>
+                  <div class="text-sm font-bold font-serif text-[#356B4A] dark:text-[#8FA691] tabular-nums">
                     {{ flatVsStepUp()?.stepUpSip?.futureValue | inrCurrency:'compact' }}
                   </div>
-                  <div class="text-[10px] text-slate-600 dark:text-slate-400 font-medium">Total Invested: {{ flatVsStepUp()?.stepUpSip?.totalInvested | inrCurrency:'compact' }}</div>
+                  <div class="text-[10px] text-[#686B61] dark:text-[#8E9487] font-medium">Invested: {{ flatVsStepUp()?.stepUpSip?.totalInvested | inrCurrency:'compact' }}</div>
                 </div>
               </div>
-              <div class="text-xs text-slate-600 dark:text-slate-300">
-                By stepping up your investment by <strong>{{ state().stepUpInput.annualStepUpPercent }}% each year</strong>, you build an extra <strong class="text-emerald-600 dark:text-emerald-400">{{ flatVsStepUp()?.extraWealthCreated | inrCurrency:'compact' }}</strong> in final wealth!
+              <div class="text-xs text-[#686B61] dark:text-[#A8ADA3]">
+                By stepping up your investment by <strong>{{ state().stepUpInput.annualStepUpPercent }}% each year</strong>, you build an extra <strong class="text-[#356B4A] dark:text-[#8FA691]">{{ flatVsStepUp()?.extraWealthCreated | inrCurrency:'compact' }}</strong> in final wealth!
               </div>
             </div>
           }
 
           <!-- Retirement Status & Gap Analysis (Section 12) -->
           @if (activeMode() === 'retirement' && retirementAnalysis()) {
-            <div class="p-4 sm:p-5 rounded-2xl border space-y-3"
+            <div class="p-4 sm:p-5 rounded-lg border space-y-3"
               [ngClass]="{
-                'border-emerald-500/50 bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-900 dark:text-emerald-200': retirementAnalysis()?.status === 'surplus',
-                'border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20 text-amber-900 dark:text-amber-200': retirementAnalysis()?.status === 'on-track',
-                'border-rose-500/50 bg-rose-50/50 dark:bg-rose-950/20 text-rose-900 dark:text-rose-200': retirementAnalysis()?.status === 'shortfall'
+                'border-[#356B4A]/60 bg-[#F8F6EF] dark:bg-[#181F1A] text-[#202A23] dark:text-[#EAE6DF]': retirementAnalysis()?.status === 'surplus',
+                'border-amber-500/50 bg-[#F8F6EF] dark:bg-[#181F1A] text-[#202A23] dark:text-[#EAE6DF]': retirementAnalysis()?.status === 'on-track',
+                'border-rose-500/50 bg-[#F8F6EF] dark:bg-[#181F1A] text-[#202A23] dark:text-[#EAE6DF]': retirementAnalysis()?.status === 'shortfall'
               }"
             >
               <div class="flex items-center justify-between">
-                <span class="text-xs font-extrabold uppercase tracking-wider">
+                <span class="text-xs font-mono font-bold uppercase tracking-wider text-[#686B61] dark:text-[#8E9487]">
                   Retirement Readiness Status
                 </span>
-                <span class="text-xs font-bold px-2 py-0.5 rounded-md uppercase"
+                <span class="text-xs font-bold px-2 py-0.5 rounded border uppercase"
                   [ngClass]="{
-                    'bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200': retirementAnalysis()?.status === 'surplus',
-                    'bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-200': retirementAnalysis()?.status === 'on-track',
-                    'bg-rose-200 dark:bg-rose-900 text-rose-900 dark:text-rose-200': retirementAnalysis()?.status === 'shortfall'
+                    'bg-[#E8E2D4] dark:bg-[#2C362E] text-[#356B4A] dark:text-[#8FA691] border-[#356B4A]/40': retirementAnalysis()?.status === 'surplus',
+                    'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300': retirementAnalysis()?.status === 'on-track',
+                    'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-300': retirementAnalysis()?.status === 'shortfall'
                   }"
                 >
                   {{ retirementAnalysis()?.status === 'surplus' ? 'Surplus' : retirementAnalysis()?.status === 'shortfall' ? 'Shortfall' : 'On Track' }}
                 </span>
               </div>
               <div class="grid grid-cols-2 gap-3 text-xs">
-                <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
-                  <div class="text-slate-600 dark:text-slate-400 font-medium">Required Corpus:</div>
-                  <div class="text-sm font-bold text-slate-900 dark:text-white">
+                <div class="p-2.5 rounded-lg bg-white dark:bg-[#202722] border border-[#D9D5C9] dark:border-[#2C362E]">
+                  <div class="text-[#686B61] dark:text-[#8E9487] font-medium">Required Corpus:</div>
+                  <div class="text-sm font-bold text-[#202A23] dark:text-[#EAE6DF] tabular-nums">
                     {{ retirementAnalysis()?.requiredCorpus | inrCurrency:'compact' }}
                   </div>
                 </div>
-                <div class="p-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800">
-                  <div class="text-slate-600 dark:text-slate-400 font-medium">Projected Corpus:</div>
-                  <div class="text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
+                <div class="p-2.5 rounded-lg bg-white dark:bg-[#202722] border border-[#D9D5C9] dark:border-[#2C362E]">
+                  <div class="text-[#686B61] dark:text-[#8E9487] font-medium">Projected Corpus:</div>
+                  <div class="text-sm font-bold font-serif text-[#356B4A] dark:text-[#8FA691] tabular-nums">
                     {{ retirementAnalysis()?.projectedCorpus | inrCurrency:'compact' }}
                   </div>
                 </div>
               </div>
-              <p class="text-xs leading-relaxed">
+              <p class="text-xs leading-relaxed text-[#686B61] dark:text-[#A8ADA3]">
                 {{ retirementAnalysis()?.statusReason }}
               </p>
               @if (retirementAnalysis()?.status === 'shortfall') {
-                <div class="text-xs font-semibold text-rose-600 dark:text-rose-400">
+                <div class="text-xs font-semibold text-rose-700 dark:text-rose-400">
                   Recommended Monthly SIP: {{ retirementAnalysis()?.requiredMonthlySip | inrCurrency:'compact' }}/month
                 </div>
               }
@@ -1129,11 +1135,11 @@
 
           <!-- Retirement Purchasing Power Benefit -->
           @if (activeMode() === 'retirement' && result().metadata?.monthlyPurchasingPowerAtRetirement) {
-            <div class="p-4 rounded-xl border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50/50 dark:bg-indigo-950/20 text-xs text-indigo-900 dark:text-indigo-200">
-              <span class="font-bold block text-sm mb-1">Sustainable Monthly Purchasing Power:</span>
-              <p>
+            <div class="p-4 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF] dark:bg-[#181F1A] text-xs text-[#202A23] dark:text-[#EAE6DF]">
+              <span class="font-serif font-bold block text-sm mb-1 text-[#356B4A] dark:text-[#8FA691]">Sustainable Monthly Purchasing Power:</span>
+              <p class="text-[#686B61] dark:text-[#A8ADA3] leading-relaxed">
                 Based on the 4% safe withdrawal rule, your retirement corpus can generate approximately
-                <strong class="text-indigo-600 dark:text-indigo-400 font-extrabold text-sm">{{ result().metadata?.monthlyPurchasingPowerAtRetirement | inrCurrency:'compact' }}/month</strong>
+                <strong class="text-[#356B4A] dark:text-[#8FA691] font-bold text-sm tabular-nums">{{ result().metadata?.monthlyPurchasingPowerAtRetirement | inrCurrency:'compact' }}/month</strong>
                 in today's purchasing power throughout retirement.
               </p>
             </div>
@@ -1144,9 +1150,9 @@
             <button
               type="button"
               (click)="copySummary()"
-              class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+              class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#202722] text-xs font-semibold text-[#202A23] dark:text-[#EAE6DF] hover:bg-[#E8E2D4]/40 dark:hover:bg-[#252E27] transition-colors shadow-2xs cursor-pointer"
             >
-              <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-[#356B4A] dark:text-[#8FA691]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
               <span>Copy Result</span>
@@ -1155,9 +1161,9 @@
             <button
               type="button"
               (click)="shareCalculation()"
-              class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+              class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#202722] text-xs font-semibold text-[#202A23] dark:text-[#EAE6DF] hover:bg-[#E8E2D4]/40 dark:hover:bg-[#252E27] transition-colors shadow-2xs cursor-pointer"
             >
-              <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-[#356B4A] dark:text-[#8FA691]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
               </svg>
               <span>Share Link</span>
@@ -1166,7 +1172,7 @@
             <button
               type="button"
               (click)="printCalculation()"
-              class="inline-flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              class="inline-flex items-center justify-center p-2 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#202722] text-[#202A23] dark:text-[#EAE6DF] hover:bg-[#E8E2D4]/40 dark:hover:bg-[#252E27] transition-colors cursor-pointer"
               title="Print Results"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1177,10 +1183,10 @@
             <button
               type="button"
               (click)="compareMode.set(!compareMode())"
-              class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-colors"
+              class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
               [ngClass]="{
-                'bg-indigo-600 text-white': compareMode(),
-                'border border-indigo-200 dark:border-indigo-900/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40': !compareMode()
+                'bg-[#356B4A] text-white shadow-2xs': compareMode(),
+                'border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#202722] text-[#356B4A] dark:text-[#8FA691] hover:bg-[#E8E2D4]/40': !compareMode()
               }"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1227,12 +1233,12 @@
     </div>
 
     <!-- SECTION 26: RICH SEO EDUCATIONAL CONTENT -->
-    <section class="mt-16 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-6 sm:p-10 space-y-8">
+    <section class="paper-card mt-16 rounded-xl border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#1E2520] p-6 sm:p-10 space-y-8">
       <div>
-        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-[#202A23] dark:text-[#EAE6DF] tracking-tight">
           {{ currentSeoData().explanationTitle }}
         </h2>
-        <div class="mt-4 space-y-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+        <div class="mt-4 space-y-3 text-sm sm:text-base text-[#686B61] dark:text-[#A8ADA3] leading-relaxed">
           @for (paragraph of currentSeoData().paragraphs; track $index) {
             <p>{{ paragraph }}</p>
           }
@@ -1242,12 +1248,12 @@
       <!-- Highlights Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         @for (item of currentSeoData().keyHighlights; track item.title) {
-          <div class="p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 space-y-2">
-            <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+          <div class="p-5 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF] dark:bg-[#181F1A] space-y-2">
+            <h3 class="text-sm font-serif font-bold text-[#202A23] dark:text-[#EAE6DF] flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#356B4A] dark:bg-[#8FA691]"></span>
               {{ item.title }}
             </h3>
-            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p class="text-xs sm:text-sm text-[#686B61] dark:text-[#8E9487] leading-relaxed">
               {{ item.description }}
             </p>
           </div>
@@ -1255,29 +1261,29 @@
       </div>
 
       <!-- Formula Code Block -->
-      <div class="p-5 sm:p-6 rounded-2xl border border-indigo-200/60 dark:border-indigo-900/40 bg-indigo-50/30 dark:bg-indigo-950/20 space-y-3">
-        <h3 class="text-sm sm:text-base font-bold text-indigo-950 dark:text-indigo-200">
+      <div class="p-5 sm:p-6 rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-[#F8F6EF] dark:bg-[#181F1A] space-y-3">
+        <h3 class="text-sm sm:text-base font-serif font-bold text-[#202A23] dark:text-[#EAE6DF]">
           {{ currentSeoData().formulaTitle }}
         </h3>
-        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+        <p class="text-xs sm:text-sm text-[#686B61] dark:text-[#8E9487]">
           {{ currentSeoData().formulaDescription }}
         </p>
-        <pre class="p-4 rounded-xl bg-slate-900 text-slate-100 text-xs sm:text-sm font-mono overflow-x-auto leading-relaxed">{{ currentSeoData().formulaCode }}</pre>
+        <pre class="p-4 rounded-lg bg-[#202A23] text-[#F8F6EF] text-xs sm:text-sm font-mono overflow-x-auto leading-relaxed border border-[#356B4A]/30">{{ currentSeoData().formulaCode }}</pre>
       </div>
 
       <!-- Frequently Asked Questions Accordion -->
-      <div class="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-        <h3 class="text-xl font-bold text-slate-900 dark:text-white">
+      <div class="space-y-4 pt-4 border-t border-[#D9D5C9] dark:border-[#2C362E]">
+        <h3 class="text-xl font-serif font-bold text-[#202A23] dark:text-[#EAE6DF]">
           Frequently Asked Questions
         </h3>
         <div class="space-y-3">
           @for (faq of currentSeoData().faqs; track faq.question) {
-            <details class="group rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-4 transition-colors">
-              <summary class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white cursor-pointer select-none list-none flex items-center justify-between gap-2">
+            <details class="group rounded-lg border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#202722] p-4 transition-colors">
+              <summary class="font-semibold text-sm sm:text-base text-[#202A23] dark:text-[#EAE6DF] cursor-pointer select-none list-none flex items-center justify-between gap-2">
                 <span>{{ faq.question }}</span>
-                <span class="text-slate-500 dark:text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                <span class="text-[#686B61] dark:text-[#8E9487] group-open:rotate-180 transition-transform">▼</span>
               </summary>
-              <p class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p class="mt-3 text-xs sm:text-sm text-[#686B61] dark:text-[#A8ADA3] leading-relaxed">
                 {{ faq.answer }}
               </p>
             </details>

@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, effect, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
 
@@ -8,29 +8,29 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
   imports: [CommonModule, InrCurrencyPipe],
   template: `
     <div
-      class="rounded-2xl p-5 sm:p-6 transition-all duration-300 relative overflow-hidden"
+      class="rounded-xl p-4 sm:p-6 transition-all duration-200 relative overflow-hidden border"
       [ngClass]="{
-        'bg-gradient-to-br from-indigo-900/90 via-indigo-950 to-slate-950 text-white border border-indigo-500/30 shadow-xl shadow-indigo-950/30 glow-primary': variant() === 'primary',
-        'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs': variant() === 'secondary',
-        'bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 text-emerald-950 dark:text-emerald-100': variant() === 'success',
-        'bg-purple-500/5 dark:bg-purple-500/10 border border-purple-500/20 text-purple-950 dark:text-purple-100': variant() === 'purple',
-        'bg-rose-500/5 dark:bg-rose-500/10 border border-rose-500/20 text-rose-950 dark:text-rose-100': variant() === 'danger'
+        'bg-[#1E3B29] dark:bg-[#182C20] text-[#F8F6EF] border-[#356B4A] shadow-xs': variant() === 'primary',
+        'bg-white dark:bg-[#181E19] text-[#202A23] dark:text-[#EDE8DE] border-[#D9D5C9] dark:border-[#2C362E] shadow-2xs': variant() === 'secondary',
+        'bg-[#F0F6F2] dark:bg-[#1B2920] border-[#A8C4B0] dark:border-[#2A4836] text-[#202A23] dark:text-[#EDE8DE]': variant() === 'success',
+        'bg-[#F5F2E9] dark:bg-[#252822] border-[#D9D5C9] dark:border-[#384034] text-[#202A23] dark:text-[#EDE8DE]': variant() === 'purple',
+        'bg-[#FDF3F2] dark:bg-[#2C1F1E] border-[#E8C2BF] dark:border-[#4D2E2B] text-[#202A23] dark:text-[#EDE8DE]': variant() === 'danger'
       }"
     >
+      <!-- Editorial Halftone accent for primary card -->
       @if (variant() === 'primary') {
-        <!-- Subtle background glow orb -->
-        <div class="absolute -right-8 -top-8 w-36 h-36 bg-indigo-500/20 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute right-0 top-0 w-28 h-28 opacity-10 pointer-events-none halftone-dots"></div>
       }
 
-      <div class="flex items-center justify-between gap-2 mb-1.5">
+      <div class="flex items-center justify-between gap-2 mb-2">
         <span
-          class="text-xs sm:text-sm font-medium tracking-wide uppercase"
+          class="text-xs font-semibold tracking-wider uppercase font-sans"
           [ngClass]="{
-            'text-indigo-200': variant() === 'primary',
-            'text-slate-600 dark:text-slate-400 font-semibold': variant() === 'secondary',
-            'text-emerald-700 dark:text-emerald-300 font-semibold': variant() === 'success',
-            'text-purple-700 dark:text-purple-300 font-semibold': variant() === 'purple',
-            'text-rose-700 dark:text-rose-300 font-semibold': variant() === 'danger'
+            'text-[#D4E4D9]': variant() === 'primary',
+            'text-[#686B61] dark:text-[#959B8E]': variant() === 'secondary',
+            'text-[#356B4A] dark:text-[#8FA691] font-bold': variant() === 'success',
+            'text-[#686B61] dark:text-[#959B8E] font-bold': variant() === 'purple',
+            'text-[#9B3D34] dark:text-[#E2837A] font-bold': variant() === 'danger'
           }"
         >
           {{ label() }}
@@ -38,13 +38,13 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
 
         @if (badge()) {
           <span
-            class="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+            class="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border"
             [ngClass]="{
-              'bg-indigo-500/30 text-indigo-100 border border-indigo-400/30': variant() === 'primary',
-              'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300': variant() === 'secondary',
-              'bg-emerald-500/20 text-emerald-800 dark:text-emerald-300': variant() === 'success',
-              'bg-purple-500/20 text-purple-800 dark:text-purple-300': variant() === 'purple',
-              'bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/30': variant() === 'danger'
+              'bg-[#2A5139] text-[#E8F3EB] border-[#447A58]': variant() === 'primary',
+              'bg-[#F8F6EF] dark:bg-[#202A23] text-[#686B61] dark:text-[#EDE8DE] border-[#D9D5C9] dark:border-[#2C362E]': variant() === 'secondary',
+              'bg-[#E1EDE4] dark:bg-[#24382B] text-[#356B4A] dark:text-[#A8C4B0] border-[#356B4A]/30': variant() === 'success',
+              'bg-[#E8E2D4] dark:bg-[#30332B] text-[#202A23] dark:text-[#EDE8DE] border-[#D9D5C9] dark:border-[#404838]': variant() === 'purple',
+              'bg-[#F9E2E0] dark:bg-[#3D2523] text-[#9B3D34] dark:text-[#F0AAA4] border-[#E8C2BF]': variant() === 'danger'
             }"
           >
             {{ badge() }}
@@ -52,16 +52,17 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
         }
       </div>
 
-      <!-- Main Number -->
+      <!-- Main Number (Tabular Editorial Typography with subtle update animation) -->
       <div class="flex items-baseline gap-2 mt-1">
         <span
-          class="font-extrabold tracking-tight"
+          class="font-editorial font-bold tracking-tight tabular-nums transition-transform inline-block"
+          [class.animate-value-flash]="isUpdating()"
           [ngClass]="{
-            'text-3xl sm:text-4xl text-white': variant() === 'primary',
-            'text-2xl sm:text-3xl text-slate-900 dark:text-white': variant() === 'secondary',
-            'text-2xl sm:text-3xl text-emerald-700 dark:text-emerald-300': variant() === 'success',
-            'text-2xl sm:text-3xl text-purple-700 dark:text-purple-300': variant() === 'purple',
-            'text-2xl sm:text-3xl text-rose-700 dark:text-rose-300': variant() === 'danger'
+            'text-3xl sm:text-4xl text-[#FFFFFF]': variant() === 'primary',
+            'text-2xl sm:text-3xl text-[#202A23] dark:text-[#FFFFFF]': variant() === 'secondary',
+            'text-2xl sm:text-3xl text-[#356B4A] dark:text-[#66A87E]': variant() === 'success',
+            'text-2xl sm:text-3xl text-[#202A23] dark:text-[#EDE8DE]': variant() === 'purple',
+            'text-2xl sm:text-3xl text-[#A6372D] dark:text-[#E87368]': variant() === 'danger'
           }"
         >
           {{ value() | inrCurrency:'compact' }}
@@ -70,10 +71,10 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
 
       <!-- Full Indian Number Subtitle -->
       <p
-        class="text-xs mt-1 truncate"
+        class="text-xs mt-1.5 tabular-nums font-mono break-all"
         [ngClass]="{
-          'text-indigo-200/80': variant() === 'primary',
-          'text-slate-600 dark:text-slate-400 font-medium': variant() !== 'primary'
+          'text-[#C1D7C8]': variant() === 'primary',
+          'text-[#686B61] dark:text-[#959B8E]': variant() !== 'primary'
         }"
       >
         Exact: {{ value() | inrCurrency:'full' }}
@@ -81,10 +82,10 @@ import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
 
       @if (subtext()) {
         <p
-          class="text-xs mt-2 pt-2 border-t font-normal leading-relaxed"
+          class="text-xs mt-2.5 pt-2 border-t leading-relaxed font-sans"
           [ngClass]="{
-            'border-indigo-800/60 text-indigo-200/70': variant() === 'primary',
-            'border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400': variant() !== 'primary'
+            'border-[#2A5139] text-[#D8E6DC]': variant() === 'primary',
+            'border-[#E8E2D4] dark:border-[#2C362E] text-[#686B61] dark:text-[#959B8E]': variant() !== 'primary'
           }"
         >
           {{ subtext() }}
@@ -99,4 +100,22 @@ export class MetricCardComponent {
   readonly variant = input<'primary' | 'secondary' | 'success' | 'purple' | 'danger'>('secondary');
   readonly badge = input<string>();
   readonly subtext = input<string>();
+
+  readonly isUpdating = signal<boolean>(false);
+  private prevValue: number | null = null;
+  private flashTimeout: any = null;
+
+  constructor() {
+    effect(() => {
+      const current = this.value();
+      if (this.prevValue !== null && this.prevValue !== current) {
+        this.isUpdating.set(true);
+        if (this.flashTimeout) clearTimeout(this.flashTimeout);
+        this.flashTimeout = setTimeout(() => {
+          this.isUpdating.set(false);
+        }, 260);
+      }
+      this.prevValue = current;
+    });
+  }
 }

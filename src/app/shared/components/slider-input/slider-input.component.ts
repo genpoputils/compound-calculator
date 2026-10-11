@@ -14,12 +14,14 @@ export interface QuickStep {
   template: `
     <div class="space-y-2">
       <div class="flex items-center justify-between gap-2">
-        <label [for]="'input-' + id()" class="text-sm font-medium text-slate-700 dark:text-slate-300">
-          {{ label() }}
+        <label [for]="'input-' + id()" class="text-xs sm:text-sm font-semibold text-[#202A23] dark:text-[#EDE8DE] flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#356B4A]"></span>
+          <span>{{ label() }}</span>
         </label>
+
         <div class="relative flex items-center">
           @if (prefix()) {
-            <span class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500 dark:text-slate-400 select-none">
+            <span class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#686B61] dark:text-[#959B8E] select-none font-mono">
               {{ prefix() }}
             </span>
           }
@@ -36,11 +38,11 @@ export interface QuickStep {
             (blur)="onTextCommit($event)"
             (keydown.enter)="$any($event.target).blur()"
             [attr.aria-label]="label()"
-            class="py-1.5 text-right font-semibold text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all shadow-2xs"
+            class="h-9 sm:h-8 py-1 text-right font-mono font-bold text-base sm:text-sm rounded-md border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#181E19] text-[#202A23] dark:text-[#EDE8DE] focus:outline-none focus:ring-2 focus:ring-[#356B4A]/50 focus:border-[#356B4A] transition-all tabular-nums shadow-2xs"
             [ngClass]="inputClasses()"
           />
           @if (suffix()) {
-            <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500 dark:text-slate-400 select-none">
+            <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#686B61] dark:text-[#959B8E] select-none font-mono">
               {{ suffix() }}
             </span>
           }
@@ -48,7 +50,7 @@ export interface QuickStep {
       </div>
 
       <!-- Range Slider -->
-      <div class="pt-1">
+      <div class="pt-0.5">
         <input
           type="range"
           [id]="'slider-' + id()"
@@ -60,18 +62,18 @@ export interface QuickStep {
           (input)="onSliderChange($event)"
           (change)="onSliderChange($event)"
           [attr.aria-label]="label() + ' slider'"
-          class="w-full accent-indigo-600 dark:accent-indigo-500 cursor-pointer"
+          class="w-full cursor-pointer"
         />
       </div>
 
-      <!-- Quick Step Buttons -->
+      <!-- Quick Step Buttons (Editorial Pill Chips) -->
       @if (quickSteps() && quickSteps()!.length > 0) {
-        <div class="flex items-center gap-1.5 pt-0.5 overflow-x-auto no-scrollbar">
+        <div class="flex items-center gap-1.5 pt-0.5 overflow-x-auto no-scrollbar touch-scroll">
           @for (step of quickSteps(); track step.label) {
             <button
               type="button"
               (click)="applyDelta(step.delta)"
-              class="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+              class="px-2.5 py-1 sm:py-0.5 text-xs sm:text-[11px] min-h-[30px] sm:min-h-0 font-semibold rounded border border-[#D9D5C9] dark:border-[#2C362E] bg-[#E8E2D4]/50 hover:bg-[#E8E2D4] dark:bg-[#202A23] dark:hover:bg-[#2A362D] text-[#202A23] dark:text-[#EDE8DE] transition-colors cursor-pointer active:translate-y-0.5 select-none font-sans shrink-0"
             >
               {{ step.label }}
             </button>
@@ -106,16 +108,16 @@ export class SliderInputComponent {
 
     const padLeft = hasPre ? 'pl-7' : 'pl-3';
     let padRight = 'pr-3';
-    let width = 'w-32 sm:w-36';
+    let width = 'w-28 sm:w-36';
 
     if (suf === '%') {
       padRight = 'pr-7';
     } else if (suf.length > 3) { // e.g. "Years"
-      padRight = 'pr-14';
-      width = 'w-36 sm:w-40';
+      padRight = 'pr-12 sm:pr-14';
+      width = 'w-32 sm:w-40';
     } else if (suf.length > 0) { // e.g. "Yrs"
-      padRight = 'pr-10';
-      width = 'w-32 sm:w-36';
+      padRight = 'pr-9 sm:pr-10';
+      width = 'w-28 sm:w-36';
     }
 
     return `${width} ${padLeft} ${padRight}`;
@@ -132,13 +134,10 @@ export class SliderInputComponent {
     const input = event.target as HTMLInputElement;
     const raw = input.value.trim();
     if (raw === '') {
-      // User is clearing the input to backspace or type a new number.
-      // Do not clamp to min() or force numbers while actively typing.
       return;
     }
     const val = Number(raw);
     if (!isNaN(val)) {
-      // Allow fluid typing without premature lower-bound snapping (e.g. typing 2500 when min is 500)
       this.valueChange.emit(val);
     }
   }

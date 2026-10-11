@@ -13,12 +13,21 @@ import {
   viewChild
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Chart, registerables } from 'chart.js';
+import type { Chart as ChartType } from 'chart.js';
 import { CalculationMode, YearlyBreakdownItem } from '../../../core/calculator/models/calculator.types';
 import { CurrencyService } from '../../../core/services/currency.service';
 import { ThemeService } from '../../../core/services/theme.service';
 
-Chart.register(...registerables);
+let chartJsPromise: Promise<typeof import('chart.js')> | null = null;
+function getChartJs(): Promise<typeof import('chart.js')> {
+  if (!chartJsPromise) {
+    chartJsPromise = import('chart.js').then((module) => {
+      module.Chart.register(...module.registerables);
+      return module;
+    });
+  }
+  return chartJsPromise;
+}
 
 export type ChartTab = 'growth' | 'real-vs-nominal' | 'contributions';
 
@@ -27,26 +36,32 @@ export type ChartTab = 'growth' | 'real-vs-nominal' | 'contributions';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-6 shadow-xs">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+    <div class="rounded-xl border border-[#D9D5C9] dark:border-[#2C362E] bg-white dark:bg-[#181E19] p-4 sm:p-6 shadow-2xs relative">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[#E8E2D4] dark:border-[#2C362E]">
         <div>
-          <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-            Wealth Trajectory Chart
-          </h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">
-            Interactive visual modeling of wealth accumulation and growth curves.
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#356B4A]"></span>
+            <h2 class="text-base sm:text-lg font-editorial font-bold text-[#202A23] dark:text-[#EDE8DE] tracking-tight">
+              Projected Growth & Wealth Trajectory
+            </h2>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#E8E2D4] dark:bg-[#252C26] text-[#356B4A] dark:text-[#8FA691]">
+              Hypothetical
+            </span>
+          </div>
+          <p class="text-xs text-[#686B61] dark:text-[#959B8E] mt-0.5 font-sans">
+            Clean logarithmic & linear progression of compound growth over your duration.
           </p>
         </div>
 
-        <!-- View Mode Segmented Controls -->
-        <div class="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 text-xs font-semibold">
+        <!-- View Mode Segmented Controls (Editorial paper tabs) -->
+        <div class="flex items-center p-1 rounded-lg bg-[#F8F6EF] dark:bg-[#141815] border border-[#D9D5C9] dark:border-[#2C362E] text-xs font-semibold overflow-x-auto no-scrollbar touch-scroll max-w-full">
           <button
             type="button"
             (click)="setTab('growth')"
-            class="px-2.5 py-1 rounded-lg transition-all"
+            class="px-2.5 py-1 rounded transition-all cursor-pointer font-sans"
             [ngClass]="{
-              'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-2xs': activeTab() === 'growth',
-              'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white': activeTab() !== 'growth'
+              'bg-white dark:bg-[#1F2721] text-[#356B4A] dark:text-[#EDE8DE] border border-[#D9D5C9] dark:border-[#35483B] shadow-2xs font-bold': activeTab() === 'growth',
+              'text-[#686B61] dark:text-[#959B8E] hover:text-[#202A23] dark:hover:text-[#EDE8DE]': activeTab() !== 'growth'
             }"
           >
             Growth Breakdown
@@ -54,10 +69,10 @@ export type ChartTab = 'growth' | 'real-vs-nominal' | 'contributions';
           <button
             type="button"
             (click)="setTab('real-vs-nominal')"
-            class="px-2.5 py-1 rounded-lg transition-all"
+            class="px-2.5 py-1 rounded transition-all cursor-pointer font-sans"
             [ngClass]="{
-              'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-2xs': activeTab() === 'real-vs-nominal',
-              'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white': activeTab() !== 'real-vs-nominal'
+              'bg-white dark:bg-[#1F2721] text-[#356B4A] dark:text-[#EDE8DE] border border-[#D9D5C9] dark:border-[#35483B] shadow-2xs font-bold': activeTab() === 'real-vs-nominal',
+              'text-[#686B61] dark:text-[#959B8E] hover:text-[#202A23] dark:hover:text-[#EDE8DE]': activeTab() !== 'real-vs-nominal'
             }"
           >
             Inflation Adjusted
@@ -66,10 +81,10 @@ export type ChartTab = 'growth' | 'real-vs-nominal' | 'contributions';
             <button
               type="button"
               (click)="setTab('contributions')"
-              class="px-2.5 py-1 rounded-lg transition-all"
+              class="px-2.5 py-1 rounded transition-all cursor-pointer font-sans"
               [ngClass]="{
-                'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-2xs': activeTab() === 'contributions',
-                'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white': activeTab() !== 'contributions'
+                'bg-white dark:bg-[#1F2721] text-[#356B4A] dark:text-[#EDE8DE] border border-[#D9D5C9] dark:border-[#35483B] shadow-2xs font-bold': activeTab() === 'contributions',
+                'text-[#686B61] dark:text-[#959B8E] hover:text-[#202A23] dark:hover:text-[#EDE8DE]': activeTab() !== 'contributions'
               }"
             >
               Contributions
@@ -98,32 +113,36 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
   readonly currencyService = inject(CurrencyService);
 
   readonly activeTab = signal<ChartTab>('growth');
-  private chartInstance: Chart | null = null;
+  private chartInstance: ChartType | null = null;
+  private rafId: number | null = null;
 
   constructor() {
     effect(() => {
-      // Re-render chart whenever theme or currency changes
       this.themeService.isDark();
       this.currencyService.selectedCurrency();
       if (this.isBrowser && this.chartCanvas()) {
-        this.renderChart();
+        this.scheduleRender(true);
       }
     });
   }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
-      this.renderChart();
+      this.scheduleRender(true);
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.isBrowser && this.chartCanvas() && (changes['breakdown'] || changes['comparisonBreakdown'] || changes['mode'])) {
-      this.renderChart();
+      this.scheduleRender(false);
     }
   }
 
   ngOnDestroy(): void {
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
     if (this.chartInstance) {
       this.chartInstance.destroy();
       this.chartInstance = null;
@@ -132,31 +151,47 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   setTab(tab: ChartTab): void {
     this.activeTab.set(tab);
-    this.renderChart();
+    this.scheduleRender(true);
   }
 
-  private renderChart(): void {
+  private scheduleRender(forceRebuild = false): void {
+    if (!this.isBrowser) return;
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+    }
+    this.rafId = requestAnimationFrame(async () => {
+      this.rafId = null;
+      await this.renderChart(forceRebuild);
+    });
+  }
+
+  private async renderChart(forceRebuild = false): Promise<void> {
     if (!this.isBrowser) return;
 
     const canvasEl = this.chartCanvas()?.nativeElement;
     if (!canvasEl) return;
 
-    if (this.chartInstance) {
-      this.chartInstance.destroy();
-      this.chartInstance = null;
-    }
-
     const data = this.breakdown();
     if (!data || data.length === 0) return;
 
+    const { Chart } = await getChartJs();
+    if (!this.chartCanvas()?.nativeElement) return;
+
     const isDark = this.themeService.isDark();
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)';
-    const textColor = isDark ? '#94a3b8' : '#334155';
+    // Warm paper grid colors
+    const gridColor = isDark ? 'rgba(237, 232, 222, 0.07)' : 'rgba(32, 42, 35, 0.08)';
+    const textColor = isDark ? '#959B8E' : '#686B61';
 
     const labels = data.map(d => `Yr ${d.year}${d.age ? ' (' + d.age + ')' : ''}`);
 
     const ctx = canvasEl.getContext('2d');
     if (!ctx) return;
+
+    // Check reduced motion preference
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let chartConfigData: any;
 
@@ -168,23 +203,25 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
           {
             label: 'Nominal Future Corpus',
             data: data.map(d => d.portfolioValue),
-            borderColor: '#6366f1',
-            backgroundColor: 'rgba(99, 102, 241, 0.12)',
+            borderColor: '#356B4A', // Primary brand forest green
+            backgroundColor: 'rgba(53, 107, 74, 0.12)',
             fill: true,
             tension: 0.35,
             borderWidth: 2.5,
-            pointRadius: data.length > 25 ? 0 : 3
+            pointRadius: data.length > 25 ? 0 : 3,
+            pointBackgroundColor: '#356B4A'
           },
           {
             label: 'Real Purchasing Power (Today’s Value)',
             data: data.map(d => d.realPortfolioValue),
-            borderColor: '#a855f7',
-            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+            borderColor: '#A8683B', // Warm copper / terracotta
+            backgroundColor: 'rgba(168, 104, 59, 0.08)',
             fill: true,
             tension: 0.35,
-            borderWidth: 2.5,
-            borderDash: [5, 5],
-            pointRadius: data.length > 25 ? 0 : 3
+            borderWidth: 2,
+            borderDash: [5, 4],
+            pointRadius: data.length > 25 ? 0 : 3,
+            pointBackgroundColor: '#A8683B'
           }
         ]
       };
@@ -196,8 +233,8 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
           {
             label: 'Annual Contribution',
             data: data.map(d => d.annualContribution),
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            borderColor: '#356B4A',
+            backgroundColor: 'rgba(53, 107, 74, 0.18)',
             fill: true,
             tension: 0.3,
             borderWidth: 2.5,
@@ -206,8 +243,8 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
           {
             label: 'Monthly Contribution',
             data: data.map(d => d.monthlyContribution),
-            borderColor: '#06b6d4',
-            backgroundColor: 'rgba(6, 182, 212, 0.2)',
+            borderColor: '#78947A',
+            backgroundColor: 'transparent',
             fill: false,
             tension: 0.3,
             borderWidth: 2,
@@ -223,22 +260,24 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
           {
             label: 'Invested Capital',
             data: data.map(d => d.totalInvested),
-            borderColor: '#0284c7',
-            backgroundColor: 'rgba(2, 132, 199, 0.25)',
+            borderColor: '#78947A', // Secondary green
+            backgroundColor: 'rgba(120, 148, 122, 0.16)',
             fill: true,
             tension: 0.3,
             borderWidth: 2,
-            pointRadius: data.length > 25 ? 0 : 3
+            pointRadius: data.length > 25 ? 0 : 3,
+            pointBackgroundColor: '#78947A'
           },
           {
             label: 'Total Portfolio Value',
             data: data.map(d => d.portfolioValue),
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.25)',
+            borderColor: '#356B4A', // Forest green growth curve
+            backgroundColor: 'rgba(53, 107, 74, 0.18)',
             fill: true,
             tension: 0.35,
             borderWidth: 2.5,
-            pointRadius: data.length > 25 ? 0 : 3
+            pointRadius: data.length > 25 ? 0 : 3,
+            pointBackgroundColor: '#356B4A'
           }
         ]
       };
@@ -249,7 +288,7 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         chartConfigData.datasets.push({
           label: 'Scenario B Total',
           data: comp.map(d => d.portfolioValue),
-          borderColor: '#f59e0b',
+          borderColor: '#C67D38', // Editorial amber
           backgroundColor: 'transparent',
           borderDash: [4, 4],
           fill: false,
@@ -260,12 +299,28 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
       }
     }
 
+    if (this.chartInstance && !forceRebuild) {
+      this.chartInstance.data.labels = labels;
+      this.chartInstance.data.datasets = chartConfigData.datasets;
+      this.chartInstance.update('none');
+      return;
+    }
+
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+      this.chartInstance = null;
+    }
+
     this.chartInstance = new Chart(ctx, {
       type: 'line',
       data: chartConfigData,
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: prefersReducedMotion ? false : {
+          duration: 750,
+          easing: 'easeOutQuart'
+        },
         interaction: {
           mode: 'index',
           intersect: false
@@ -274,9 +329,9 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
           legend: {
             position: 'top',
             labels: {
-              color: textColor,
+              color: isDark ? '#EDE8DE' : '#202A23',
               boxWidth: 12,
-              padding: 16,
+              padding: 14,
               font: {
                 family: 'Inter, sans-serif',
                 size: 11,
@@ -285,13 +340,22 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             }
           },
           tooltip: {
-            backgroundColor: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-            titleColor: isDark ? '#ffffff' : '#0f172a',
-            bodyColor: isDark ? '#cbd5e1' : '#334155',
-            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-            borderWidth: 1,
+            backgroundColor: isDark ? '#141815' : '#FFFFFF',
+            titleColor: isDark ? '#EDE8DE' : '#202A23',
+            bodyColor: isDark ? '#C4C9BE' : '#454940',
+            borderColor: '#356B4A',
+            borderWidth: 1.5,
             padding: 12,
-            cornerRadius: 10,
+            cornerRadius: 8,
+            titleFont: {
+              family: 'Fraunces, serif',
+              size: 13,
+              weight: 'bold'
+            },
+            bodyFont: {
+              family: 'Inter, monospace',
+              size: 11
+            },
             callbacks: {
               label: (context) => {
                 const label = context.dataset.label || '';
@@ -325,7 +389,7 @@ export class ChartViewComponent implements AfterViewInit, OnChanges, OnDestroy {
               color: textColor,
               callback: (val) => this.currencyService.formatCompact(Number(val)),
               font: {
-                family: 'Inter, sans-serif',
+                family: 'JetBrains Mono, monospace',
                 size: 11
               }
             }

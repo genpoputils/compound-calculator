@@ -17,7 +17,7 @@ import { ToastService } from '../../../core/services/toast.service';
           class="pointer-events-auto flex items-center justify-between gap-3 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium transition-all duration-300 transform translate-y-0"
           [ngClass]="{
             'bg-emerald-950/90 border-emerald-700/50 text-emerald-200': toast.type === 'success',
-            'bg-indigo-950/90 border-indigo-700/50 text-indigo-200': toast.type === 'info',
+            'bg-[#1E3B29] border-[#356B4A] text-[#F8F6EF]': toast.type === 'info',
             'bg-amber-950/90 border-amber-700/50 text-amber-200': toast.type === 'warning'
           }"
         >
@@ -27,7 +27,7 @@ import { ToastService } from '../../../core/services/toast.service';
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
             } @else if (toast.type === 'info') {
-              <svg class="w-5 h-5 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-5 h-5 text-[#8FA691] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             } @else {

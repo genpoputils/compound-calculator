@@ -26,9 +26,9 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     mode: 'compound-interest',
     path: '/compound-calculator',
     seo: {
-      title: 'Compound Calculator – Compound Interest & Investment Calculator | GenPopUtils',
-      description: 'Calculate compound interest, investment growth, SIP returns and more.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/compound-calculator',
+      title: 'Compound Interest Calculator | CompoundCalc',
+      description: 'Calculate compound interest with recurring contributions. Explore investment growth over time with our free compound interest calculator.',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/compound-calculator/',
       keywords: 'compound interest calculator, investment growth, interest compounding, lump sum calculator, compound interest formula',
       schema: {
         '@context': 'https://schema.org',
@@ -38,7 +38,8 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
         operatingSystem: 'All',
         offers: {
           '@type': 'Offer',
-          price: '0'
+          price: '0',
+          priceCurrency: 'USD'
         }
       }
     },
@@ -88,7 +89,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Regular Investment Calculator - Recurring Monthly & Annual Portfolio Growth',
       description: 'Model recurring contributions into your investment portfolio. Plan monthly, quarterly, or yearly investments and project wealth accumulation over time.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/investment-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/investment-calculator/',
       keywords: 'regular investment calculator, recurring deposit, monthly investment growth, wealth builder, portfolio projection',
       schema: {
         '@context': 'https://schema.org',
@@ -140,7 +141,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'SIP Calculator - Systematic Investment Plan Growth & Mutual Fund Returns',
       description: 'Calculate future wealth from your monthly Systematic Investment Plan (SIP). See total invested capital, estimated returns, and final corpus.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/sip-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/sip-calculator/',
       keywords: 'sip calculator, mutual fund sip, systematic investment plan, monthly sip returns, wealth corpus',
       schema: {
         '@context': 'https://schema.org',
@@ -192,7 +193,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Step-Up SIP Calculator - Annual Contribution Increase & Accelerated Wealth',
       description: 'Model the compounding power of increasing your monthly investment by 5%, 10%, or 15% each year as your income grows. See how Step-Up SIP doubles your wealth.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/step-up-investment-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/step-up-investment-calculator/',
       keywords: 'step up sip calculator, top up sip, annual contribution increase, step up investment, accelerated compounding',
       schema: {
         '@context': 'https://schema.org',
@@ -244,7 +245,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Retirement Savings Calculator - Future Corpus & Inflation-Adjusted Purchasing Power',
       description: 'Plan your retirement with step-up investments, nominal corpus forecasts, inflation-adjusted purchasing power, and retirement expense projections.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/retirement-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/retirement-calculator/',
       keywords: 'retirement calculator, retirement savings, fire calculator, inflation adjusted retirement, pension planning, retirement expense projection',
       schema: {
         '@context': 'https://schema.org',
@@ -296,7 +297,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Inflation Calculator - Future Living Costs & Purchasing Power Erosion',
       description: 'Calculate the real cost of inflation. See how price increases erode purchasing power and what today\'s money will buy 10, 20, or 30 years from now.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/inflation-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/inflation-calculator/',
       keywords: 'inflation calculator, purchasing power loss, future cost of living, rupee depreciation, inflation impact',
       schema: {
         '@context': 'https://schema.org',
@@ -348,7 +349,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Savings Goal Calculator - Required Monthly Investment to Reach Target Corpus',
       description: 'Reverse-engineer your financial goals. Calculate the exact monthly or annual investment required to achieve your dream corpus, house down payment, or college fund.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/savings-goal-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/savings-goal-calculator/',
       keywords: 'savings goal calculator, target corpus, goal planner, required monthly investment, financial goal calculator',
       schema: {
         '@context': 'https://schema.org',
@@ -399,7 +400,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'SWP Calculator - Systematic Withdrawal Plan & Portfolio Longevity',
       description: 'Calculate your systematic monthly payouts, portfolio longevity, and ending capital balance with our interactive global SWP calculator.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/swp-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/swp-calculator/',
       keywords: 'swp calculator, systematic withdrawal plan, portfolio longevity, retirement withdrawal calculator, regular payout calculator',
       schema: {
         '@context': 'https://schema.org',
@@ -454,7 +455,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Loan Prepayment Calculator – Calculate Interest Savings | CompoundCalc',
       description: 'Simulate loan prepayment scenarios. Compare reducing tenure vs reducing EMI, discover how much interest you save, and see how many years earlier you become debt-free.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/loan-prepayment-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/loan-prepayment-calculator/',
       keywords: 'loan prepayment calculator, home loan prepayment, reduce tenure vs reduce emi, part payment calculator, interest savings simulator',
       schema: {
         '@context': 'https://schema.org',
@@ -518,7 +519,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'EMI Calculator – Calculate Loan EMI & Interest | CompoundCalc',
       description: 'Calculate monthly loan EMI, total interest payable, and view detailed amortization schedules for home, car, and personal loans.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/emi-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/emi-calculator/',
       keywords: 'emi calculator, loan emi, calculate emi, home loan emi, car loan emi, personal loan emi',
       schema: {
         '@context': 'https://schema.org',
@@ -569,7 +570,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Loan Amortization Calculator – Complete Schedule | CompoundCalc',
       description: 'Generate an interactive monthly and annual loan amortization schedule with principal, interest, and balance tracking.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/loan-amortization-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/loan-amortization-calculator/',
       keywords: 'loan amortization calculator, amortization schedule, mortgage schedule, monthly principal interest breakdown',
       schema: {
         '@context': 'https://schema.org',
@@ -620,7 +621,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Home Loan Calculator – EMI & Prepayment Savings | CompoundCalc',
       description: 'Calculate home loan EMI and discover how prepayments save lakhs in interest and close your housing mortgage years early.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/home-loan-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/home-loan-calculator/',
       keywords: 'home loan calculator, housing loan emi, home loan prepayment, mortgage calculator india, sbi home loan emi',
       schema: {
         '@context': 'https://schema.org',
@@ -671,7 +672,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Car Loan EMI Calculator – Auto Loan Interest & Repayment | CompoundCalc',
       description: 'Calculate car loan EMI, compare 3 to 7 year tenures, and check total interest costs for new and used vehicles.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/car-loan-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/car-loan-calculator/',
       keywords: 'car loan calculator, auto loan emi, vehicle loan calculator, car emi calculator india',
       schema: {
         '@context': 'https://schema.org',
@@ -722,7 +723,7 @@ export const SEO_PAGES_DATA: Record<CalculationMode, SeoPageContent> = {
     seo: {
       title: 'Loan Calculator – Calculate EMI, Total Interest & Early Payoff | CompoundCalc',
       description: 'Comprehensive financial loan calculator. Calculate monthly payments, interest cost, amortization schedules, and prepayment savings.',
-      canonicalUrl: 'https://compoundcalc.genpoputils.com/loan-calculator',
+      canonicalUrl: 'https://compoundcalc.genpoputils.com/loan-calculator/',
       keywords: 'loan calculator, personal loan calculator, calculate emi, total interest paid, loan payoff calculator',
       schema: {
         '@context': 'https://schema.org',
